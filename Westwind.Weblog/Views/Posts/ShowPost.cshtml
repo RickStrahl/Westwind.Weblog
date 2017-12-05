@@ -3,8 +3,7 @@
 @{
     ViewData["Title"] = "Show Post";
 
-    string postUrl;    
-    postUrl = 
+    string postUrl;        
 }
 
 <h2>@Model.Title</h2>
@@ -143,7 +142,7 @@
                 <a href='<%= postUrl %>' style="text-decoration:none;">@Model.Title</a>
                 <a id="lnkEditPost" runat="server"
                    Visible="false" class="hoverbutton"
-                   target="_blank">@Westwind.Utilities.HtmlUtils.ImgRef("~/images/editwhite.gif")</a>
+                   target="_blank"><img src="~/images/editwhite.gif"/></a>
             </h2>
         </header>
         <hr />

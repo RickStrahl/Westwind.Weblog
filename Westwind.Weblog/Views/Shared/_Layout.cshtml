@@ -49,7 +49,7 @@
 
             <form id="form1" runat="server">
                 <div class="pagemarquee">
-                    <img class="hero-image" src="<%=HeroImage(" />
+                    <img class="hero-image" src="~/images/RickHero1.jpg" />
                     <img class="author-image" src="~/images/rick175x175.jpg"/>
                     <header class="blog-name-container" onclick="window.location='~/';">
                     <h2>Rick Strahl's Web Log</h2>
@@ -113,11 +113,11 @@
 
                         <nav style="margin-top: 10px;">
                             <a href="http://aspinsiders.com">
-                                <img src=" ~/images/asp-insiders.jpg"
+                                <img src="~/images/asp-insiders.jpg"
                                 style="box-shadow: #535353 2px 2px 3px; height: 36px;" />
                             </a>
                             <a href="http://mvp.microsoft.com/en-us/MVP/Rick%20Strahl-5000249">
-                                <img src=" ~/images/MsMvp.png"
+                                <img src="~/images/MsMvp.png"
                                 style="box-shadow: #535353 2px 2px 3px; height: 36px" />
                             </a>
                         </nav>
@@ -225,7 +225,9 @@
         </div>
     </div>
     
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="~/scripts/jquery.min.js"></script>
+    <script src="~/scripts/ww.jquery.min.js"></script>
+    @*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>*@
     <script src="~/scripts/weblog.js"></script>
     <script>
         (function (i, s, o, g, r, a, m) {

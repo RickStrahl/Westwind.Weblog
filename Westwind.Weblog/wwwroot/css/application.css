@@ -1,82 +1,11 @@
-﻿/*  core color summary:
-	block background: #003399
-    block alternate: #0066cc
-    light alternate: #b5c7d6
-    grey: #eeeeee
-    warning colors: cornsilk, maroon
-*/
-/* BROWSER RESET (based on Eric Meyer's Reset) */
-html, body, div, span,  object, iframe, table, caption, tbody, tfoot, thead, tr, th, td, 
-del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, 
-h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, 
-dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
-	padding: 0;
-	margin: 0;
-	border: 0;
-	outline: 0;		
-	line-height: inherit;
-	vertical-align: baseline;
-	font-family: inherit;
-	font-size: 100%;
-    min-width: 0; 
-}
-:focus {
-	outline: 0;
-	}
-body {
-    background: white;
-	line-height: 1.35;
-	color: black;
-	}
-ol, ul {
-	list-style: disc;
-	margin: 10px 40px;
-	}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-	}
-caption, th, td {
-	font-weight: normal;
-	/* text-align: inherit; */
-	padding: 4px;
-	}
-blockquote:before, blockquote:after, q:before, q:after {
-	content: "";	
-	}
-blockquote, q {
-	quotes: "" "";
-	margin: 15px;
-	}
-input,select,textarea
-{
-	font-size: inherit;
-	font-weight: inherit;
-	font-style: inherit;
-}	
-p
-{
-	margin: 10px 0;
-}
-/* END BROWSER RESET */
-
-
-/* BUILT-IN ELEMENT CUSTOMIZATION */
-html,body,table,td,th,input,textarea,select
+﻿/* BUILT-IN ELEMENT CUSTOMIZATION */
+html,body
 {
     color: #3e433e;    
     font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;        
     font-size: 15px;
     -webkit-font-smoothing: antialiased;
 }
-html,body {
-    
-}
-main {
-    display: block
-}
-
-
 img
 {
     border: none;
@@ -100,8 +29,13 @@ blockquote h3, blockquote h4, blockquote h5 {
     margin-top: 0;
 }
 hr {
-    margin: 12px 0;    
+    margin: 12px 0;
+    color: silver;
+    background: silver;
+    border: 0;
+    height: 1px;
 }
+
 
 .post-content a {
     font-weight: 600;
@@ -119,6 +53,7 @@ h1,h2,h3,h4,h5 {
     font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: bold;
 }
+
 h1 {
     font-size: 1.7em;
     padding-bottom: 10px;
@@ -144,42 +79,6 @@ h4
     font-size: 1.1em;        
     margin-top: 14px;
 }
-table {
-    width: 100%;
-    overflow: auto;
-    display: block;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin: 15px 0;
-    border-color: gray;
-}
-
-td, th {
-    border: 1px solid #ddd;
-    padding: 6px 13px;
-    display: table-cell;
-    vertical-align: inherit;
-}
-th {
-    font-weight: bold;
-    background: #555;
-    color: #eee;
-}
-
-tbody > tr:nth-child(even) {
-    background: #eee;
-}
-table.blackborder td
-{	
-	border-width: 1px;
-	border-color: lightgrey;
-}
-th
-{
-	border-collapse: collapse;
-	font-weight: bold;
-	text-align: center;
-}
 a 
 { color: navy; }
 a:visited
@@ -193,8 +92,6 @@ small, .smalltext, .small
     font-size: 0.85em;
     font-weight: normal;
 }
-hr 
-{ color: silver; background: silver; border: 0; height:1px;}
 b,strong {
     font-weight: 600;
 }
@@ -209,6 +106,7 @@ li
 footer {
     margin: 20px 10px;
 }
+
 fieldset
 {
 	border: solid 1px darkgrey;	   
@@ -231,6 +129,7 @@ legend
 	border: solid 1px maroon;
 	text-align: left;
 }    
+
 input[type=text], input[type=password],input[type=email], select, textarea
 {    	    	
 	background-color: #F5F7FA;    	
@@ -245,6 +144,7 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
 	background-color: Ivory !important;	
     box-shadow: 2px 2px 6px lightgray;
 }
+
 .clearfix,.clear
 {
     clear: both;
@@ -267,6 +167,7 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
         display: none !important;
     }
 }
+
 .shown {
     display: block;
 }
@@ -276,11 +177,11 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
 }
 .date
 {
-    width: 75px;
+    width: 80px;
 }
 .datetime 
 {
-    width: 100px;
+    width: 110px;
 }
 .label, label , .label-left
 {
@@ -291,18 +192,11 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     float: left;
     width: 150px;
 }
-.rightalign {
+.right {
     float: right;
     text-align: right;
 }
-.blackborder
-{
-	border-style: solid;
-	border-width: 2px;
-	border-color: #003399;
-	background: white;
-	text-align: left;
-}
+
 /* 
    used on the main page left table column 
    the default contains the wave background
@@ -315,38 +209,15 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
 	padding-left: 4pt;
 }
 
-/* block backgrounds for headers etc. */
-.menuband, .gridheader, .gridheaderbig, .buttonlinks, .blockheader, .roundedcorner_center
-{
-	color: cornsilk;
-	background-color: #003399;
-}
-/* alternate background color color to offset the background
-   used for the category list and banner strips for color
-   variety. should be a companion color to the block background
-   colors (previous tag
-*/
-.alternatebackground
-{
-	color: white;
-	background-color: #0066cc;
-}
+/* Page Marquee*/
 
-/* used for any block tags like headers on tables etc. */
-.blockheader
-{
-	font-weight:bold;
-}
 .pagemarquee
 {
     position: relative;  
-
 }
-
-
 .marquee-bottom-menu {
     background: #535353;    
-    background-image: url('../../images/FloralBackground_darkgrey.gif');
+    background-image: url('../images/FloralBackground_darkgrey.gif');
     color: white;    
     padding: 7px;    
     padding-left: 265px;    
@@ -360,6 +231,10 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     display: block;   
     transition: height 0.7s ease-in-out;      
 }
+
+
+
+
 .post-container {
        display: flex;    
        width: 100%;       
@@ -416,8 +291,8 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     left: 15px;
     bottom: -65px;
     border-radius: 10px;
-    border: 5px white solid;    
-    width: 178px;        
+    border: 5px white solid;        
+    width: 194px;
     z-index: 1000;
     transition: bottom 0.7s ease-in-out;
 }
@@ -435,14 +310,14 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     bottom: 10px;
     width: auto;
     z-index: 1001;
-    width: 375px;
+    width: 380px;
     border-radius: 4px;
     box-shadow: 4px 4px 6px #535353;
     transition: top 0.7s ease-in-out;
 }
 .blog-name-container h2 {
     color: white;
-    font-size: 2.4em;  
+    font-size: 2.35em;  
     padding: 0;
     font-weight: bold;
 }
@@ -1265,7 +1140,7 @@ pre > code, pre.csharpcode {
         margin: 10px -35px 10px -35px !important;        
     }
 }
-@media(min-width: 1100px) {
+/*@media(min-width: 1100px) {
     .pagemarquee {
         height: auto
     }
@@ -1285,9 +1160,9 @@ pre > code, pre.csharpcode {
     pre {
         margin: 10px -75px 10px -75px !important;
     }
-}
+}*/
 
- @media(min-width: 1400px) {
+ /*@media(min-width: 1400px) {
     #toplevel {
         max-width: 1500px;
         margin: 0 auto; 
@@ -1308,4 +1183,4 @@ pre > code, pre.csharpcode {
         background: linear-gradient(to bottom, #333 0, #444 100%) !important;
         color: #eee;   
     }
-}
+}*/

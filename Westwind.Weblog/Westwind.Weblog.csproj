@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -13,7 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
     <ProjectReference Include="..\..\Westwind.Utilities\Westwind.Utilities\Westwind.Utilities.csproj" />
+    <ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+  </ItemGroup>
 </Project>

@@ -9,8 +9,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Westwind.Weblog.Business.Models
 {
-    public class WeblogPost
-    {
+    public class Post
+    {        
         public int Id { get; set; }
         
         [MaxLength(128)]
@@ -64,13 +64,15 @@ namespace Westwind.Weblog.Business.Models
         public string Markdown { get; set; }
 
         [MaxLength(256)]
-        public string FeatureImageUrl { get; set; }
+        public string FeaturedImageUrl { get; set; }
         
 
+        public List<Comment> Comments { get; set; }
 
-        public WeblogPost()
+
+        public Post()
         {
-
+            Comments = new List<Comment>();
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace Westwind.Weblog.Business.Models
 {
     public class Weblog
-    {
+    {        
         public int Id { get; set; }
 
         [MaxLength(256)]

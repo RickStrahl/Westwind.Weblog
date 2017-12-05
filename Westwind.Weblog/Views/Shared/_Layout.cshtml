@@ -1,71 +1,243 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string FeedUrl = "http://feeds.feedburner.com/rickstrahl";
+}
+<!DOCTYPE HTML>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Westwind.Weblog</title>
+<head runat="server">
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
+    
+    <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="http://feeds.feedburner.com/RickStrahl" />
+    <meta id="metaKeyWords" name="Keywords" content="DotNet,.Net,C#,ASP.NET,JavScript,Angular,jQuery,Rick Strahl,HTML,CSS,West Wind Technologies,WebLog,Blog" runat="server" />
+    <meta id="metaDescription" name="Description" content="Rick Strahl's Weblog - Wind, Waves, Code and everything in between..." runat="server" />
+    
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link id="TempCssLink" href="~/css/application.css" rel="stylesheet" type="text/css" visible="false" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" async />
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Rick Strahl" />
+    <meta name="twitter:description" content="Life, Code, Surf and everything in between" />
+    <meta name="twitter:image" content="images/rick.jpg" />
+    <meta name="twitter:creator" content="@@rickstrahl" />
+    <meta name="twitter:domain" content="west-wind.com" />
 
-    <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-    </environment>
-    <environment exclude="Development">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    <style type="text/css">
+        .blogimgtag {
+            border: none;
+            margin-top: 5px;
+        }
+    </style>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    
+    <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="~/favicon.ico" />
+    <link rel="search" type="application/opensearchdescription+xml" href="~/opensearch.xml" title="Search Rick Strahl's Blog">
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="~/rsd.xml" />
+    
+    @RenderSection("headers",false)
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Westwind.Weblog</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
-            </div>
+
+    <div id="page-wrapper">
+        <div id="toplevel">
+
+            <form id="form1" runat="server">
+                <div class="pagemarquee">
+                    <img class="hero-image" src="<%=HeroImage(" />
+                    <img class="author-image" src="~/images/rick175x175.jpg"/>
+                    <header class="blog-name-container" onclick="window.location='~/';">
+                    <h2>Rick Strahl's Web Log</h2>
+                    <b>
+                        Wind, waves, code and everything in between...<br />
+                        ASP.NET &bull; C# &bull; HTML5 &bull; JavaScript &bull; AngularJs
+                    </b>
+                    </header>
+                </div>
+
+                <div class="marquee-bottom-menu" style="margin-bottom: 0;">
+                    <div class="marquee-bottom-sharing" style="float: right; margin-right: 20px; margin-top: -6px;">
+                        <a href="http://twitter.com/rickstrahl"><img src="~/images/twitter32.png"  title="Rick Strahl on Twitter" /></a>
+                        &nbsp; &nbsp;
+                        <a href="@FeedUrl"><img src="~/images/rss32.png" title="RSS feed for Rick Strahl's Web Log" /></a>
+
+                    </div>
+
+                    <span class="marquee-bottom-links">
+                        <a href="https://west-wind.com/contact/" title="">Contact</a> &nbsp; &bull; &nbsp;
+                        <a href="https://west-wind.com/articles.aspx">Articles</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
+                        <a href="https://store.west-wind.com" class="hide-small">Products</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
+                        <a href="https://support.west-wind.com" class="hide-small">Support</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
+                        <a href="https://weblog.west-wind.com/search" class="hide-small">Search</a>
+                    </span>
+                </div>
+
+                <div id="SponsorPanel"
+                     onclick="window.location.href='http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored'"
+                     style="cursor: pointer">
+
+                    <div class="ad-free-msg">
+                        Ad-free experience sponsored by:
+                    </div>
+                    <div style="flex: auto;">
+                        <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
+                           title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
+                            <img src="~/images/Sponsors/AspPoseLogoIconTransparent.png" style="height: 20px;  vertical-align:top" />
+                            <b>ASPOSE</b>
+                        </a>
+                        - the market leader of .NET and Java APIs for file formats – natively work with DOCX, XLSX, PPT, PDF, images and more
+                        <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
+                           title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
+                            <i class="fa fa-external-link" style="color: #333; padding: 0 5px; font-weight: bold"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
+
+
+                <div class="post-container">
+
+                    <aside class="post-sidebar">
+                        <div class="author-name">Rick Strahl</div>
+                        <nav class="twitter-name" style="font-weight: bold;">
+                            <a href="https://twitter.com/rickstrahl" title="Rick Strahl on Twitter">
+                                @@RickStrahl
+                            </a>
+                        </nav>
+
+                        <nav style="margin-top: 10px;">
+                            <a href="http://aspinsiders.com">
+                                <img src=" ~/images/asp-insiders.jpg"
+                                style="box-shadow: #535353 2px 2px 3px; height: 36px;" />
+                            </a>
+                            <a href="http://mvp.microsoft.com/en-us/MVP/Rick%20Strahl-5000249">
+                                <img src=" ~/images/MsMvp.png"
+                                style="box-shadow: #535353 2px 2px 3px; height: 36px" />
+                            </a>
+                        </nav>
+
+                        <nav class="sidebar-group" style="margin-top: 10px;">
+                            <%=WebLogStats %>
+                            <div>
+                                <a href="<%= FeedUrl %>"
+                                   title="RSS feed for this Weblog">RSS Feed</a>
+                            </div>
+                        </nav>
+
+                        <div class="sidebar-header">Rick's Sites</div>
+                        <nav class="sidebar-group">
+                            <div>
+                                <a href="https://west-wind.com"
+                                   title="Rick's company home page.">West Wind Technologies</a>
+                            </div>
+                            <div>
+                                <a href="https://github.com/RickStrahl?tab=repositories"
+                                   title="Rick Strahl's Open Source and Sample projects on GitHub">Rick's GitHub Projects</a>
+                            </div>
+                            <div>
+                                <a href="https://west-wind.com/wconnect/weblog/"
+                                   title="Rick's other blog to discuss FoxPro and Web Connection topics">
+                                    Rick's FoxPro
+                                    Web Log
+                                </a>
+                            </div>
+                            <div>
+                                <a href="https://support.west-wind.com/"
+                                   title="West Wind Technologies Support forum">West Wind Message Board</a>
+                            </div>
+
+                            <div>
+                                <a href="https://codepaste.net" title="Paste and link code snippets for twitter and social media">
+                                    CodePaste.net
+                                </a>
+                            </div>
+                            <div>
+                                <a href="https://geocrumbs.net" title="Keep track of your favorite locations on your mobile device">
+                                    GeoCrumbs.net
+                                </a>
+                            </div>
+                        </nav>
+
+                        <div class="sidebar-header">Rick's Products</div>
+                        <nav class="sidebar-group">
+                            <div>
+                                <a href="https://markdownmonster.west-wind.com"
+                                   title="Markdown Monster - extensible Markdown Editing on Windows">Markdown Monster</a>
+                            </div>
+                            <div>
+                                <a href="https://websurge.west-wind.com"
+                                   title="West Wind WebSurge Web URL and Load Tester">WebSurge</a>
+                            </div>
+                            <div>
+                                <a href="https://helpbuilder.west-wind.com"
+                                   title="West Wind Html Help Builder">Html Help Builder</a>
+                            </div>
+                            <div>
+                                <a href="https://west-wind.com/webmonitor"
+                                   title="West Wind Web Monitor">Web Monitor</a>
+                            </div>
+                        </nav>
+
+                  
+
+                        <hr />
+                        <div style="text-align: center; margin: 15px 0 15px;">
+                            <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
+                                 title="Find this content useful? Consider making a small donation."
+                                 alt="Make Donation"
+                                 style="text-decoration: none;"
+                                 src=" ~/images/donation.gif">
+                            <br />
+                            <small style="font-size: 8pt; font-family: Arial, Sans-Serif">
+                                Find this content useful? Consider making a small donation to show your support.
+                            </small>
+                        </div>
+
+                        <hr />
+                        <!-- Twitter List -->
+                        <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/RickStrahl" data-widget-id="243833136067264512">Tweets by @@RickStrahl</a>
+                        <script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https'; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + "://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs); } }(document, "script", "twitter-wjs");</script>
+                    </aside>
+
+                    <main class="post-content">
+                       @RenderBody()
+                    </main>
+                </div>
+
+
+                <footer>
+
+                    <a href="https://west-wind.com"><asp:Image ID="Image1" runat="server" ImageUrl="~/images/wwToolbarlogo.png" align="right" border="0" alt="West Wind" /></a>
+                    &nbsp;<small>&copy; Rick Strahl, West Wind Technologies, 2005 - @DateTime.Now.Year</small>
+                    <p>&nbsp;</p>
+                </footer>
+
+
+
+            </form>
+
         </div>
-    </nav>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2017 - Westwind.Weblog</p>
-        </footer>
     </div>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="~/scripts/weblog.js"></script>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
+        ga('create', 'UA-9492219-4', 'west-wind.com');
+        ga('send', 'pageview');
+    </script>
 
-    @RenderSection("Scripts", required: false)
 </body>
 </html>

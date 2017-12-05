@@ -1,0 +1,10 @@
+<rsd version="1.0">
+  <service>
+    <engineName>West Wind Weblog</engineName>
+    <engineLink>https://weblog.west-wind.com</engineLink>
+    <homePageLink>https://weblog.west-wind.com/</homePageLink>
+    <apis>
+      <api name="MetaWeblog" blogID="1" preferred="true" apiLink="https://weblog.west-wind.com/metaweblogapi.ashx" />
+    </apis>
+  </service>
+</rsd>

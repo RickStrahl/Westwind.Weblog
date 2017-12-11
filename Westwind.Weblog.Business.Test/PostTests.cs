@@ -34,7 +34,7 @@ namespace Westwind.Weblog.Business.Test
             var slug = "ASPNET-Core-and-CORS-Gotchas";
 
             var ctx = GetContext();
-            var postRepo = new PostRepository(ctx);
+            var postRepo = new PostRepository(ctx, new Configuration.WeblogConfiguration());
             var post = await postRepo.GetPost(slug);
 
             Assert.IsNotNull(post);
@@ -42,6 +42,25 @@ namespace Westwind.Weblog.Business.Test
             Console.WriteLine($"{post.Title} - {post.Markdown}");
         }
 
+
+        [Test]
+        public async Task GetPosts()
+        {
+            var config = new Configuration.WeblogConfiguration()
+            {
+                 PostPageSize = 10
+            };
+            var ctx = GetContext();
+            var postRepo = new PostRepository(ctx, config);
+
+            var posts = await postRepo.GetLastPosts(config.PostPageSize);
+
+            Assert.IsNotNull(posts);
+            Assert.IsTrue(posts.Count > 0 && posts.Count <= config.PostPageSize);
+            foreach(var post in posts)
+                Console.WriteLine(post.Title);
+        }
+        
 
         WeblogContext GetContext()
         {

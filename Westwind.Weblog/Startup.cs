@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Westwind.Weblog.Business;
+using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog
@@ -33,7 +35,10 @@ namespace Westwind.Weblog
                 builder.UseSqlServer(connStr, opt => opt.EnableRetryOnFailure());                
             });
 
-
+            var config = new WeblogConfiguration();
+            Configuration.Bind("Weblog", config);
+            services.AddSingleton(config);
+            
             // Instance injection
             services.AddScoped<PostRepository>();
 

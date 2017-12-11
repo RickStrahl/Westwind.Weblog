@@ -1,10 +1,10 @@
 ﻿/* BUILT-IN ELEMENT CUSTOMIZATION */
 html,body
 {
-    color: #3e433e;    
+    color: #383838;    
     font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;        
     font-size: 15px;
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;    
 }
 img
 {
@@ -37,34 +37,23 @@ hr {
 }
 
 
-.post-content a {
-    font-weight: 600;
-    color: #4e92c9;
-    text-decoration: none;
-}
-    .post-content a:hover {
-        color: steelblue;
-    }
-.post-content li {
-    margin-bottom: 0.6em;
-}
 
 h1,h2,h3,h4,h5 {    
     font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-weight: bold;
+    font-weight: bold;      
 }
 
 h1 {
     font-size: 1.7em;
     padding-bottom: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 1.2em;
     color: steelblue;
     border-bottom: 1px solid #eee;
 }
 h2
 {    
     color: Steelblue;
-    font-size: 1.45em;        
+    font-size: 1.5em;        
 }
 h3
 {
@@ -196,21 +185,14 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     float: right;
     text-align: right;
 }
-
-/* 
-   used on the main page left table column 
-   the default contains the wave background
-*/
-.categorylistbackground
-{
-	width: 170px;	
-	/* background: #fff8ad; */
-	vertical-align: top;
-	padding-left: 4pt;
+.margin-top {
+    margin-top: 1em;
+}
+.margin-bottom {
+    margin-bottom: 1em;
 }
 
 /* Page Marquee*/
-
 .pagemarquee
 {
     position: relative;  
@@ -238,9 +220,9 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
 .post-container {
        display: flex;    
        width: 100%;       
-       background: #f5f8fa;    
-       
+       background: #f5f8fa;
     }
+
 #ArticleBody {
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, Helvetica, sans-serif;
     margin: 5px 10px;
@@ -259,10 +241,26 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     display: none;  
 }
 
+
+.post-content a {
+    font-weight: 600;
+    color: #4e92c9;
+    text-decoration: none;
+}
+.post-content a:hover {
+    color: steelblue;
+}
+.post-content li {
+    margin-bottom: 0.6em;
+}
+
     .post-content { 
-        flex: 1 1 auto;        
+        flex: 1 1 auto;
         width: 100%;
+        overflow-x: hidden;
+        width: 100px !important;
         
+
         min-height: 500px;
         background: white;
   
@@ -1140,7 +1138,7 @@ pre > code, pre.csharpcode {
         margin: 10px -35px 10px -35px !important;        
     }
 }
-/*@media(min-width: 1100px) {
+@media(min-width: 1100px) {
     .pagemarquee {
         height: auto
     }
@@ -1160,9 +1158,9 @@ pre > code, pre.csharpcode {
     pre {
         margin: 10px -75px 10px -75px !important;
     }
-}*/
+}
 
- /*@media(min-width: 1400px) {
+ @media(min-width: 1400px) {
     #toplevel {
         max-width: 1500px;
         margin: 0 auto; 
@@ -1183,4 +1181,4 @@ pre > code, pre.csharpcode {
         background: linear-gradient(to bottom, #333 0, #444 100%) !important;
         color: #eee;   
     }
-}*/
+}

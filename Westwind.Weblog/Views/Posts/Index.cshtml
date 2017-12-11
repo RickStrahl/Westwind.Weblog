@@ -1,7 +1,47 @@
-﻿
+﻿@model Westwind.Weblog.PostViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = Model.PostRepo.WeblogConfiguration.ApplicationName;
+    var posts = Model.Posts;
+    var repo = Model.PostRepo;
+    var config = Model.PostRepo.WeblogConfiguration;
 }
 
-<h2>Index</h2>
 
+<div style="margin-top:12px">
+    @{
+        int counter = 0;
+        foreach (var post in posts)
+        {
+            counter++;
+
+
+
+            if (post.IsFeatured)
+            {
+                <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
+            }
+            <h2 class="margin-top">
+                <a href="@Model.PostRepo.GetPostUrl(post.SafeTitle, post.Entered)"
+                        style="text-decoration: none;">@post.Title</a>
+            </h2>
+            <hr/>
+    @*<div class="rightalign">
+        <%= AppWebUtils.ShowCommentCount( (int)row["Feedback"],(int) row["pk"] ) %>
+    </div>*@
+            <div class="byline">
+                <i class="fa fa-clock-o"></i>                
+                @AppWebUtils.WebLogDateString(post.Entered,false )
+                @(string.IsNullOrEmpty(post.Location) ? "" : "- " + post.Location)
+            </div>
+
+
+            <div class="postcontent" style="margin-bottom: 20px">
+                @post.Abstract.TrimEnd()  
+                
+                <p class="margin-top margin-bottom">
+                    <a href="@repo.GetPostUrl(post)">Read more...</a>
+                </p>
+            </div>
+        }
+    }
+</div>

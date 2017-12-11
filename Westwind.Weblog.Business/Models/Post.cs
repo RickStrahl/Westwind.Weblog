@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -33,13 +34,16 @@ namespace Westwind.Weblog.Business.Models
         [MaxLength(256)]
         public string TitleUrl { get; set; }
 
-        public int CommentCount { get; set; }
 
         [MaxLength(128)]
         public string Author { get; set; }
 
         public int BodyMode { get; set; }
-        
+
+
+        [DefaultValue(0)]
+        public int CommentCount { get; set; }
+
         public bool CommentsClosed { get; set; }
 
         [MaxLength(256)]

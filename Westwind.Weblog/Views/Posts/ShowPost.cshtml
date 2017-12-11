@@ -1,33 +1,32 @@
-﻿@model Westwind.Weblog.Business.Models.Post
+﻿@model PostViewModel
 
 @{
-    ViewData["Title"] = "Show Post";
+    var post = Model.Post;
+    var repo = Model.PostRepo;
+    var config = Model.PostRepo.WeblogConfiguration;
 
-    string postUrl;        
+    ViewData["Title"] = post.Title;
+    string postUrl;
+
+  
 }
-
-<h2>@Model.Title</h2>
-
-
-<article>
-@Html.Raw(Model.Body)
-</article>
 
 @section headers
 {
-    <meta property="og:title" content="@Model.Title %>" />
-    <meta property="og:description" content="@Model.Abstract" />
-    <meta property="og:url" content="@Context.Request.Path.Value" />
+    <meta property="og:title" content="@post.Title %>"/>
+    <meta property="og:description" content="@post.Abstract"/>
+    <meta property="og:url" content="@Context.Request.Path.Value"/>
 
-    @if (!string.IsNullOrEmpty(Model.FeaturedImageUrl)) 
+    @if (!string.IsNullOrEmpty(post.FeaturedImageUrl))
     {
-    <meta property="og:image" content="@Model.FeaturedImageUrl" />
-    <meta property="og:image:secure_url" content="@Model.FeaturedImageUrl.Replace("http:","https:")" />
+        <meta property="og:image" content="@post.FeaturedImageUrl"/>
+        <meta property="og:image:secure_url" content="@post.FeaturedImageUrl.Replace("http:", "https:")"/>
     }
-    
 
-<style>
-        .comment>a:first-child { text-decoration: none; }
+
+    <style>
+        .test { }
+        .comment > a:first-child { text-decoration: none; }
         .contenteditable { background: azure; padding: 10px; border: solid 1px orange; }
 
         .linkicon {
@@ -44,54 +43,54 @@
         .link-hidden {
             opacity: 0.1;
         }
-        .postcontent>h3 {
+        .postcontent > h3 {
             cursor: pointer;
             transition: opacity 0.5s ease-in-out;
         }
-        .postcontent>h3:hover {
+        .postcontent > h3:hover {
             opacity: 0.85;
 
         }
 
-    .comment-dialog-header {
-        color: #535353;
-        text-align: center;
-        font-size: 14pt;
-        font-weight: bold;
-        padding: 5px;
-        margin-bottom: 10px;
-    }
-    .comment-dialog {
-        width:95%;
-        text-align: left;
-        margin: 0 auto;
-        padding: 7px 5px;
-    }
-    .comment-dialog input[type=text],
-    .comment-dialog input[type=email],
-    .comment-dialog textarea
-    {
-        width: 95%;
-        font-family: 'Trebuchet MS','Trebuchet',sans-serif;
-        font-size: 1.05em;
-        font-weight: bold;
-        margin-bottom: 8px;
-        padding: 5px 10px;
-    }
-    .comment-dialog textarea {
-        font-size: 1em;
-    }
-    .comment-directions {
-        width: 95%;
-        color:#535353;
-        background: cornsilk;
-        text-align:center;
-        font-size:0.8em;
-        padding: 10px 10px;
-        margin-top: 13px;
-    }
+        .comment-dialog-header {
+            color: #535353;
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .comment-dialog {
+            width: 95%;
+            text-align: left;
+            margin: 0 auto;
+            padding: 7px 5px;
+        }
+        .comment-dialog input[type=text],
+        .comment-dialog input[type=email],
+        .comment-dialog textarea
+        {
+            width: 95%;
+            font-family: 'Trebuchet MS', 'Trebuchet', sans-serif;
+            font-size: 1.05em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding: 5px 10px;
+        }
+        .comment-dialog textarea {
+            font-size: 1em;
+        }
+        .comment-directions {
+            width: 95%;
+            color: #535353;
+            background: cornsilk;
+            text-align: center;
+            font-size: 0.8em;
+            padding: 10px 10px;
+            margin-top: 13px;
+        }
 
-        @@media(max-width: 639px) {
+        @@media (max-width: 639px) {
             .linkicon {
                 display: none;
             }
@@ -113,46 +112,46 @@
             width: 95%;
             height: 29px;
         }
-        .edit-toolbar>* {
+        .edit-toolbar > * {
             color: white;
             padding: 6px 11px;
             margin-left: 1px;
             float: left;
             display: block;
         }
-            .edit-toolbar>a:focus, .edit-toolbar>a:hover {
-                background-color: #888 !important;
-                color: white !important;
-                text-decoration: none;
-                }
-
-</style>
+        .edit-toolbar > a:focus, .edit-toolbar > a:hover {
+            background-color: #888 !important;
+            color: white !important;
+            text-decoration: none;
+        }
+    </style>
 }
 
+    <article itemscope itemtype="http://schema.org/BlogPosting" itemprop="blogPost">
 
+    <header>
+        <h2 itemprop="headline_name">
+            <a href='@repo.GetPostUrl(post)' style="text-decoration:none;">@post.Title</a>            
+        </h2>
+    </header>
     
-
-
-    <article style="width: 100%;" itemscope itemtype="http://schema.org/BlogPosting" itemprop="blogPost">
-
-        <header>
-            <h2 itemprop="headline_name">
-                <a href='<%= postUrl %>' style="text-decoration:none;">@Model.Title</a>
-                <a id="lnkEditPost" runat="server"
-                   Visible="false" class="hoverbutton"
-                   target="_blank"><img src="~/images/editwhite.gif"/></a>
-            </h2>
-        </header>
         <hr />
 
 
         <div class="byline">
             <div class="leftbox">
-                <img src="<%= ResolveUrl(" ~/images/time.gif") %>" /> <%=  AppWebUtils.WebLogDateString(Entry.Entity.Entered, DateTime.Today == Entry.Entity.Entered.Date) %>
-                <%= string.IsNullOrEmpty(Entry.Entity.Location) ? "" : " - from " + Entry.Entity.Location %>
+                <i class="fa fa-clock-o" ></i>
+                @(AppWebUtils.WebLogDateString(post.Entered,false))
+                @(string.IsNullOrEmpty(post.Location) ? "" : " - from " + post.Location)
             </div>
             <div class="leftbox" style="float: right;">
-                <%= AppWebUtils.ShowCommentCount(Entry.Entity.FeedBack) %>
+                @if (post.CommentCount > 0)
+                {
+                    <a href="@(repo.GetPostUrl(post))#Feedback">
+                        <i class="fa fa-comments-o"></i>
+                        @repo.ShowCommentCount(post)
+                    </a>
+                }
             </div>
 
             <div class="leftbox" id="ShareIconContainer" style="float: right;">
@@ -174,14 +173,14 @@
 
 
         <div id="ArticleBody" class="postcontent" itemprop="articleBody">
-            <% if (!string.IsNullOrEmpty(App.SponsoredTopAd)) { %>
+            @*@if (!string.IsNullOrEmpty(App.SponsoredTopAd)) { 
             <%= App.SponsoredTopAd %>
-            <% } %>
+            }*@
 
-            <%= Entry.Entity.Body %>
+            @Html.Raw(post.Body)
 
 
-            <% if (RelatedPosts != null && RelatedPosts.Rows.Count > 0)
+            @*<% if (RelatedPosts != null && RelatedPosts.Rows.Count > 0)
             { %>
             <div style="margin: 30px 0">
                 <h3 style="margin-top: 30px">
@@ -196,40 +195,35 @@
                     </asp:Repeater>
                 </ul>
             </div>
-            <% } %>
+            <% } %>*@
         </div>
 
 
 
-        <div class="advert">
+        @*<div class="advert">
             <%= App.GoogleImageAd %>
-        </div>
+        </div>*@
 
         <style>
-       .donate-buttons {
-           display: flex; flex-direction: row; justify-content:space-between;
-       }
-       .social-button-container {
-           margin-left: 15px;
-           flex: 250 250 auto;
-           display: flex; flex-direction: row; justify-content:space-around; margin-top: 3px;
-       }
-       @@media(max-width: 600px) {
-           .donate-buttons { flex-direction: column; }
+            .donate-buttons {
+                display: flex; flex-direction: row; justify-content:space-between;
+            }
+            .social-button-container {
+                margin-left: 15px;
+                flex: 250 250 auto;
+                display: flex; flex-direction: row; justify-content:space-around; margin-top: 3px;
+            }
+            @@media(max-width: 600px) {
+                .donate-buttons { flex-direction: column; }
 
-       }
+            }
 
         </style>
         <div class='borderbox'
              style='min-height:30px;box-shadow: 2px 2px 3px #535353;'>
             <% if (!string.IsNullOrEmpty(App.Configuration.PayPalEmail)) { %>
 
-            <div class="donate-buttons">
-
-                <%--  <a class="coinbase-button" style="flex: none"
-                         href="https://www.coinbase.com/checkouts/397caa2a194b7538beba7250bec24915">
-                    <img src="https://www.coinbase.com/assets/buttons/donation_small-c2401ae30dd0ad6018deadfc4bb506bf56b5b7062738ee449bee97c4e80ec70c.png" />
-                </a>--%>
+            <div class="donate-buttons">     
 
                 <div style="flex: none;">
                     <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
@@ -442,4 +436,3 @@
         trackback:ping="<%= Entry.GetPostUrl() + "?Trackback=True" %>" />
     </rdf:RDF>
     -->
-</asp:Content>

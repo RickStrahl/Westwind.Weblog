@@ -87,6 +87,37 @@ namespace Westwind.Weblog.Business
             string url = $"{WeblogConfiguration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";                         
             return url;
         }
+
+
+
+        /// <summary>
+        /// Returns a string of x comments,1 comment or blank if there are no comments
+        /// </summary>
+        /// <param name="feedBackCount"></param>
+        /// <param name="entryPk"></param>
+        /// <returns></returns>
+        public string ShowCommentCount(Post post)
+        {
+            if (post.CommentCount == 0)
+                return "";
+
+            string commentCountText;
+
+            if (post.CommentCount == 1)
+                commentCountText = "1 comment";
+            else
+                commentCountText = post.CommentCount + " comments";
+
+            return commentCountText;
+            var postUrl = GetPostUrl(post) + "#Feedback";
+            return 
+
+$@"<a class='hoverbutton' href='{WeblogConfiguration.ApplicationBasePath}posts/{post.Id}.aspx#Feedback'>
+    <img src='{WeblogConfiguration.ApplicationBasePath}images/comment.gif' />{commentCountText}
+</a>";
+
+            return commentCountText;         
+        }
         #endregion
     }
 }

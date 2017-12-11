@@ -31,7 +31,7 @@ namespace Westwind.Weblog
         public async Task<IActionResult> ShowPost(int year, string month, int day, string slug)
         {
             var post = await PostRepo.GetPost(slug);            
-            return View(post);
+            return View(new PostViewModel { Post = post, PostRepo = PostRepo});
         }
 
         //[Route("ShowPost.aspx?id={postId:int}")]

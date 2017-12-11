@@ -25,9 +25,16 @@
                         style="text-decoration: none;">@post.Title</a>
             </h2>
             <hr/>
-    @*<div class="rightalign">
-        <%= AppWebUtils.ShowCommentCount( (int)row["Feedback"],(int) row["pk"] ) %>
-    </div>*@
+            <div class="rightalign">
+                
+                @if (post.CommentCount > 0)
+                {
+                    <a href="@(repo.GetPostUrl(post))#Feedback">
+                        <i class="fa fa-comments-o"></i>
+                        @repo.ShowCommentCount(post)
+                    </a>
+                }
+            </div>
             <div class="byline">
                 <i class="fa fa-clock-o"></i>                
                 @AppWebUtils.WebLogDateString(post.Entered,false )

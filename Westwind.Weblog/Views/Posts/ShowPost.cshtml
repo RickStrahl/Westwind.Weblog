@@ -6,9 +6,7 @@
     var config = Model.PostRepo.WeblogConfiguration;
 
     ViewData["Title"] = post.Title;
-    string postUrl;
-
-  
+    string postUrl = repo.GetPostUrl(post);
 }
 
 @section headers
@@ -24,8 +22,7 @@
     }
 
 
-    <style>
-        .test { }
+    <style>        
         .comment > a:first-child { text-decoration: none; }
         .contenteditable { background: azure; padding: 10px; border: solid 1px orange; }
 
@@ -155,14 +152,14 @@
             </div>
 
             <div class="leftbox" id="ShareIconContainer" style="float: right;">
-                <div style="display:inline-block;width: 95px; overflow:hidden;">
-                    <%= ShareButtons.ShareOnTwitter(Entry.Entity.Title, "RickStrahl", postUrl) %>
+                <div style="display:inline-block;width: 80px; overflow:hidden;">
+                    @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
                 </div>
-                <div style="display:inline-block;width: 95px; overflow:hidden;">
-                    <%= ShareButtons.ShareOnFacebook(postUrl) %>
+                <div style="display:inline-block;width: 80px; overflow:hidden">
+                    @ShareButtons.ShareOnFacebook(postUrl)
                 </div>
-                <div style="display:inline-block;width: 75px; overflow:hidden;">
-                    <%= ShareButtons.GooglePlusPlusOneButton(postUrl) %>
+                <div style="display:inline-block;width: 80px; overflow:hidden;">
+                    @ShareButtons.GooglePlusPlusOneButton(postUrl)
                 </div>
             </div>
         </div>
@@ -221,41 +218,42 @@
         </style>
         <div class='borderbox'
              style='min-height:30px;box-shadow: 2px 2px 3px #535353;'>
-            <% if (!string.IsNullOrEmpty(App.Configuration.PayPalEmail)) { %>
 
-            <div class="donate-buttons">     
+        <div class="donate-buttons">
+            
+            
+            @if (!string.IsNullOrEmpty(config.PayPalEmail))
+            {
 
                 <div style="flex: none;">
                     <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
                          title="Find this content useful? Consider making a small donation."
-                         alt="Make Donation"
-                         style="text-decoration: none;" src="<%= ResolveUrl(" ~/images/donation.png") %>" />
-
+                        alt="Make Donation"
+                        style="text-decoration: none;" src="~/images/donation.png" />
                 </div>
                 <div style="font-size: 0.8em; width: 233px" class="hidable-xs">
                     Find this content useful? <b>Consider making a small donation</b> to show your support.
+                </div>                
+            }
+
+
+            <div class="social-button-container">
+                <div style="margin-top: -2px">
+                    @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
                 </div>
-
-
-                <% } %>
-
-
-                <div class="social-button-container">
-                    <div style="margin-top: -2px">
-                        <%= ShareButtons.ShareOnTwitter(Entry.Entity.Title,"RickStrahl",postUrl) %>
-                    </div>
-                    <div>
-                        <%= ShareButtons.ShareOnFacebook(postUrl) %>
-                    </div>
-                    <div>
-                        <%= ShareButtons.GooglePlusPlusOneButton(postUrl) %>
-                    </div>
+                <div>
+                    @ShareButtons.ShareOnFacebook(postUrl)
+                </div>
+                <div>
+                    @ShareButtons.GooglePlusPlusOneButton(postUrl)
                 </div>
             </div>
+        </div>
 
-            <div style="margin-top: 20px">
-                <%= AppWebUtils.CategoryLinks(Entry) %>
-            </div>
+
+        <div style="margin-top: 20px">
+            <%= AppWebUtils.CategoryLinks(Entry) %>
+        </div>
 
         </div>
 
@@ -298,9 +296,9 @@
                             {
                             %>
                             <div style="margin-top: 10px;">
-                                <a href='javascript:{}' data-id="<%# Eval(" pk") %>
-                                    " class="hoverbutton remove-comment">
-                                    <img src="<%= ResolveUrl(" ~/App_Themes/Standard/images/remove.gif") %>" />
+                                <a href='javascript:{}' data-id="@post.Id"
+                                     class="hoverbutton remove-comment">
+                                    fa-  <img src="~/App_Themes/Standard/images/remove.gif" />
                                     Remove Comment
                                 </a>
                                 <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" class="hoverbutton commentedit" />
@@ -362,7 +360,7 @@
                              target="top"
                              class="hidable-xs"
                              style="cursor: pointer; float: right; font-size: 0.8em; margin:auto">
-                            <img src="<%= ResolveUrl(" ~/images/markdown.png") %>"/>
+                            <img src="~/images/markdown.png" />
                             Markdown styling is supported.
                         </div>
                     </div>

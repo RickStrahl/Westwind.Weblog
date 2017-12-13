@@ -70,7 +70,7 @@ namespace Westwind.Weblog.Business.Test
 
             var ctx = new WeblogContext(options);
 
-            WeblogDataImporter.EnsureWeblogData(ctx);
+            WeblogDataImporter.EnsureWeblogData(ctx,"server=.;database=Weblog;integrated security=true;");
             return ctx;
 
         }

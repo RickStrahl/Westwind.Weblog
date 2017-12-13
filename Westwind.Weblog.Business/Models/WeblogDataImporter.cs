@@ -19,7 +19,13 @@ namespace Westwind.Weblog.Business.Models
     /// </summary>
     public  class WeblogDataImporter
     {
-        public static bool EnsureWeblogData(WeblogContext context)
+        /// <summary>
+        /// Ensures that the database and table structure exists
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="oldConnectionString"></param>
+        /// <returns></returns>
+        public static bool EnsureWeblogData(WeblogContext context,string oldConnectionString)
         {
             bool hasData = false;
             try
@@ -32,106 +38,95 @@ namespace Westwind.Weblog.Business.Models
             if (!hasData)
             {
                 context.Database.EnsureCreated(); // just create the schema - no migrations
-                hasData = ImportFromExistingDb(context) > 0;                
+                hasData = ImportFromExistingDb(context,oldConnectionString) > 0;                
             }
 
             if (!hasData)
                 throw new InvalidOperationException("No data found and no data created...");
 
-
-
             return true;
         }
 
         /// <summary>
-        /// Imports data from json
+        /// Imports data from existing Weblog database
         /// </summary>
-        /// <param name="json"></param>
+        /// <param name="context">The context to work with</param>
+        /// <param name="oldConnectionString">The old connection string of the DB to import from</param>
         /// <returns></returns>
-        public static int ImportFromExistingDb(WeblogContext context)
+        public static int ImportFromExistingDb(WeblogContext context, string oldConnectionString)
         {
-            var sql = new SqlDataAccess("server=.;database=weblog;integrated security=true");
+
+            var sql = new SqlDataAccess(oldConnectionString);
             var data = sql.ExecuteTable("weblogposts", "select * from blog_entries where EntryType=1");
 
-            //var sql2 = new SqlDataAccess("server=.;database=weblogCore;integrated security=true");
-
-
-            //var conn = context.Database.GetDbConnection();
-            //if (conn.State != ConnectionState.Open)
-            //    conn.Open();
+            var conn = context.Database.GetDbConnection();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
 
             var count = 0;
 
-            // use transaction to force connection open and keep open for IDENTITY INSERT to work
-            using (var tx = context.Database.BeginTransaction())
+            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Posts ON");
+
+            foreach (DataRow row in data.Rows)
             {
-                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Posts ON");
-   
-                foreach (DataRow row in data.Rows)
-                {
-                    var pk = (int) row["pk"];
+                var pk = (int) row["pk"];
 
-                    var post = new Post();
+                var post = new Post();
 
-                    DataUtils.CopyObjectFromDataRow(row, post);
+                DataUtils.CopyObjectFromDataRow(row, post);
 
-                    post.Id = pk;
+                post.Id = pk;
 
-                    context.Posts.Add(post);
+                context.Posts.Add(post);
 
-                    
+                // save on every 20th record to avoid 
+                // change tracking to overload
+                if (count % 20 == 0)
                     context.SaveChanges();
-                    //context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Weblogs ON; " +
-                    //                                   "update weblogs set id={0} where id={1};" +
-                    //                                   "SET IDENTITY_INSERT dbo.Weblogs OFF;", pk, post.Id); 
-                    
-                }
-                
-                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Posts OFF");
-                tx.Commit();
-            }
 
+                count++;
+            }
+            context.SaveChanges();
+
+            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Posts OFF");
             
             data = sql.ExecuteTable("weblogcomments", "select * from blog_entries where EntryType=3");
 
             count = 0;
-            using (var tx = context.Database.BeginTransaction())
+            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments ON");
+
+            foreach (DataRow row in data.Rows)
             {
-                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments ON");
+                var pk = (int) row["pk"];
+                var postPk = (int) row["ParentPk"];
+                if (postPk < 1)
+                    continue;
 
-                foreach (DataRow row in data.Rows)
-                {
-                    var pk = (int)row["pk"];
-                    var postPk = (int) row["ParentPk"];
-                    if (postPk < 1)
-                        continue;
+                if (!context.Posts.Any(p => p.Id == postPk))
+                    continue;
 
-                    if (!context.Posts.Any(p => p.Id == postPk)) 
-                        continue;
+                var comment = new Comment();
 
-                    var comment = new Comment();                    
+                DataUtils.CopyObjectFromDataRow(row, comment);
 
-                    DataUtils.CopyObjectFromDataRow(row, comment);
+                comment.Id = pk;
+                comment.PostId = postPk;
 
-                    comment.Id = pk;
-                    comment.PostId = postPk;
+                context.Comments.Add(comment);
 
-                    context.Comments.Add(comment);
+                // save on every 20th record to avoid 
+                // change tracking to overload
+                if (count % 20 == 0)
+                    context.SaveChanges();
 
-                    // save on every 20th record to avoid 
-                    // change tracking to overload
-                    if (count % 20 == 0)
-                        context.SaveChanges();
-                    
-                    count++;
-                }
-
-                // save remainder
-                context.SaveChanges();
-
-                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments OFF");
-                tx.Commit();
+                count++;
             }
+
+            // save remainder
+            context.SaveChanges();
+
+            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments OFF");
+
 
             return count;
         }

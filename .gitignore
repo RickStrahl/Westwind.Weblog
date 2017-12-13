@@ -70,3 +70,5 @@ publishprofile.xml
 dist
 *.sqlite
 *.lock.json
+images/2017
+/Westwind.Weblog/wwwroot/images/2017

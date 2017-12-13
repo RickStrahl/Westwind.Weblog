@@ -1,0 +1,21 @@
+﻿@model AdminViewModel
+
+@inject WeblogConfiguration Config
+@{
+    ViewData["Title"] = "Weblog Administration";
+}
+<h1>Weblog Configuration</h1>
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-warning">
+        @Html.Raw(Model.Message)
+    </div>
+}
+    <div class="list-group">
+        <a class="list-group-item list-group-item-action"
+           onclick="if(!confirm('Are you sure you want to re-import Weblog data?')) return false;"
+           asp-action="Import">Import from Weblog</a>
+        <a class="list-group-item list-group-item-action "
+           asp-action="DeleteUnusedImages">Delete Unused Images</a>
+    </div>
+

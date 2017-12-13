@@ -6,8 +6,24 @@ namespace Westwind.Weblog.Business.Models
 {
     public class WeblogContext : DbContext
     {
-        public string ConnectionString { get; set; }
-     
+        
+        public string ConnectionString
+        {
+            get
+            {
+                if (_connectionString == null)
+                {
+                    var conn = Database.GetDbConnection();
+                    _connectionString = conn?.ConnectionString;
+                    conn = null;
+                }
+                return _connectionString;
+            }
+            set { _connectionString = value; }
+        }
+        private string _connectionString;
+
+
         public WeblogContext(DbContextOptions options) : base(options)
         {
         }

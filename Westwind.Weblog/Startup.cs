@@ -28,22 +28,29 @@ namespace Westwind.Weblog
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<WeblogContext>(builder =>
-            {                
-                var connStr = Configuration["Data:SqlServerConnectionString"];
-                connStr = "server=.;database=WeblogCore;integrated security=true;";
-                builder.UseSqlServer(connStr, opt => opt.EnableRetryOnFailure());                
-            });
 
+            services.AddOptions();
+            
             var config = new WeblogConfiguration();
             Configuration.Bind("Weblog", config);
             services.AddSingleton(config);
-            
-            // Instance injection
+                        
             services.AddScoped<PostRepository>();
+            services.AddScoped<AdminRepository>();
 
-            //services.AddScoped<WeblogContext>();
-            
+            services.AddDbContext<WeblogContext>(builder =>
+            {
+                var connStr = config.ConnectionString;
+                if (string.IsNullOrEmpty(connStr))
+                    connStr = "server=.;database=WeblogCore; integrated security=true;MultipleActiveResultSets=true";
+
+                builder.UseSqlServer(connStr, opt =>
+                {
+                    opt.EnableRetryOnFailure();
+                    opt.CommandTimeout(15);
+                });
+            });
+
             services.AddMvc();
         }
 
@@ -63,12 +70,7 @@ namespace Westwind.Weblog
             app.UseStatusCodePages();
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvcWithDefaultRoute();
         }
     }
 }

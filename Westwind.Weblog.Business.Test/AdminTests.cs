@@ -21,6 +21,13 @@ namespace Westwind.Weblog.Business.Test
             repo.DeleteOldImages(@"C:\projects2010\Westwind.Weblog\Westwind.Weblog\wwwroot\images");
         }
 
+        [Test]
+        public void UpdatePostCounts()
+        {
+            var repo = GetAdminRepo();
+            repo.UpdatePostCommentCounts();
+        }
+
 
         WeblogContext GetContext()
         {
@@ -32,7 +39,12 @@ namespace Westwind.Weblog.Business.Test
 
             WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=Weblog;integrated security=true;");
             return ctx;
+        }
 
+        AdminRepository GetAdminRepo()
+        {
+            var context = GetContext();
+            return new AdminRepository(context, new Configuration.WeblogConfiguration());
         }
     }
 }

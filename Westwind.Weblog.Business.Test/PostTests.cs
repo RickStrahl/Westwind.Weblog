@@ -60,7 +60,25 @@ namespace Westwind.Weblog.Business.Test
             foreach(var post in posts)
                 Console.WriteLine(post.Title);
         }
-        
+
+
+        [Test]
+        public async Task GetRecentComments()
+        {
+            var config = new Configuration.WeblogConfiguration()
+            {
+                PostPageSize = 10
+            };
+            var ctx = GetContext();
+            var postRepo = new PostRepository(ctx, config);
+
+            var comments = await postRepo.GetRecentComments(config.PostPageSize);
+
+            Assert.IsNotNull(comments);
+            Assert.IsTrue(comments.Count > 0 && comments.Count <= config.PostPageSize);
+            foreach (var comment in comments)
+                Console.WriteLine(comment.Title);
+        }
 
         WeblogContext GetContext()
         {

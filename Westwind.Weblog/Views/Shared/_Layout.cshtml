@@ -51,7 +51,7 @@
                 <div class="pagemarquee">
                     <img class="hero-image" src="~/images/RickHero1.jpg" />
                     <img class="author-image" src="~/images/rick175x175.jpg"/>
-                    <header class="blog-name-container" onclick="window.location='~/';">
+                    <header class="blog-name-container" onclick="window.location='@Url.Content("~/")';">
                     <h2>Rick Strahl's Web Log</h2>
                     <b>
                         Wind, waves, code and everything in between...<br />
@@ -114,16 +114,16 @@
                         <nav style="margin-top: 10px;">
                             <a href="http://aspinsiders.com">
                                 <img src="~/images/asp-insiders.jpg"
-                                style="box-shadow: #535353 2px 2px 3px; height: 36px;" />
+                                style="box-shadow: #535353 2px 2px 3px; height: 35px;" />
                             </a>
                             <a href="http://mvp.microsoft.com/en-us/MVP/Rick%20Strahl-5000249">
                                 <img src="~/images/MsMvp.png"
-                                style="box-shadow: #535353 2px 2px 3px; height: 36px" />
+                                style="box-shadow: #535353 2px 2px 3px; height: 35px" />
                             </a>
                         </nav>
 
                         <nav class="sidebar-group" style="margin-top: 10px;">
-                            <%=WebLogStats %>
+                            @AppWebUtils.GetBlogStats()
                             <div>
                                 <a href="@FeedUrl"
                                    title="RSS feed for this Weblog">RSS Feed</a>
@@ -227,7 +227,9 @@
     <script src="~/scripts/jquery.min.js"></script>
     <script src="~/scripts/ww.jquery.min.js"></script>    
     <script src="~/scripts/weblog.js"></script>
-    <script>
+    
+    @RenderSection("scripts",false)
+<script>
         (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
                 (i[r].q = i[r].q || []).push(arguments)

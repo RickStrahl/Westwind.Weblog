@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -18,19 +19,23 @@ namespace Westwind.Weblog
 {
     public class Startup
     {
+        public static Startup Current;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Current = this;
         }
 
         public IConfiguration Configuration { get; }
+        public IMemoryCache Cache { get; private set; }
+        public IServiceProvider ServiceProvider { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
 
-            services.AddOptions();
-            
             var config = new WeblogConfiguration();
             Configuration.Bind("Weblog", config);
             services.AddSingleton(config);
@@ -51,12 +56,22 @@ namespace Westwind.Weblog
                 });
             });
 
+            // pre-load model async
+            Task.Run(() =>
+            {
+                var context = WeblogContext.GetWeblogContext(config.ConnectionString);
+                context.Posts.Any(p => p.Id == -1);
+            });
+
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMemoryCache cache, IServiceProvider serviceProvider)
         {
+            Cache = cache;
+            ServiceProvider = serviceProvider;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

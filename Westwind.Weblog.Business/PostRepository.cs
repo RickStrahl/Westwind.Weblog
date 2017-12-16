@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Westwind.Data.EfCore;
+using Westwind.Utilities;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
 
@@ -20,7 +23,7 @@ namespace Westwind.Weblog.Business
             WeblogConfiguration = config;            
         }
 
-
+        #region Post Retrieval
         public async Task<List<Post>> GetLastPosts(int postCount = 50)
         {            
             return await Context.Posts
@@ -41,21 +44,97 @@ namespace Westwind.Weblog.Business
                 .ToListAsync();
         }
 
+        public async Task<List<Comment>> GetRecentComments(int postCount = 30)
+        {
+            return await Context.Comments
+                .OrderByDescending(c => c.Entered)
+                .Take(postCount)
+                .Select(c => new Comment
+                {
+                    Id = c.Id,
+                    Title = c.Title,
+                    Body = c.Body,
+                    BodyMode = c.BodyMode,
+                    Author = c.Author,
+                    Url = c.Url,
+                    Email = c.Email,
+                    Entered = c.Entered,
+                    PostId = c.PostId
+                }).ToListAsync();
+        }
+
+
+        /// <summary>
+        /// Retrieves a post by its title slug
+        /// </summary>
+        /// <param name="slug">Post title created with GetSlug() and held in SafeTitle</param>
+        /// <returns></returns>
         public async Task<Post> GetPost(string slug)
         {            
-            return await Context.Posts
+            Entity = await Context.Posts
                 .Include("Comments")            
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.SafeTitle == slug);
+            return Entity;
         }
 
+        
+
+
+        /// <summary>
+        /// Retrieves a post by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Post> GetPost(int id)
         {
-            return await Context.Posts
+            Entity = await Context.Posts
                     .Include("Comments")                    
                     .AsNoTracking()
                     .FirstOrDefaultAsync(p => p.Id == id);
+            return Entity;
         }
+        #endregion 
+
+        #region Comments
+        /// <summary>
+        /// Explicitly lazy loads comments for a post.
+        /// </summary>
+        /// <param name="post"></param>
+        public async void LoadComments(Post post = null)
+        {
+            if (post == null)
+                post = Entity;
+
+            post.Comments = await Context.Comments
+                                .Where(c => c.PostId == post.Id)
+                                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Returns a string of x comments,1 comment or blank if there are no comments
+        /// </summary>
+        /// <param name="post">post instance</param>
+        /// <returns></returns>
+        public string ShowCommentCount(Post post = null)
+        {
+            if (post == null)
+                post = Entity;
+
+            if (post.CommentCount == 0)
+                return string.Empty;
+
+            string commentCountText;
+
+            if (post.CommentCount == 1)
+                commentCountText = "1 comment";
+            else
+                commentCountText = post.CommentCount + " comments";
+
+            return commentCountText;
+               
+        }
+        #endregion
 
 
         #region Url Processing
@@ -64,10 +143,11 @@ namespace Westwind.Weblog.Business
         /// Returns the full URL to this entry entity.
         /// </summary>
         /// <returns></returns>
-        public string GetPostUrl(Post post)
+        public string GetPostUrl(Post post = null)
         {
             if (post == null)
-                return null;
+                post = Entity;
+            if (post == null) return null;
 
             if (!string.IsNullOrEmpty(post.RedirectUrl))
                 return post.RedirectUrl;
@@ -88,36 +168,45 @@ namespace Westwind.Weblog.Business
             return url;
         }
 
-
-
         /// <summary>
-        /// Returns a string of x comments,1 comment or blank if there are no comments
+        /// Returns a URL safe string for the title
         /// </summary>
-        /// <param name="feedBackCount"></param>
-        /// <param name="entryPk"></param>
+        /// <param name="title"></param>
         /// <returns></returns>
-        public string ShowCommentCount(Post post)
+        public string GetSlug(string title = null)
         {
-            if (post.CommentCount == 0)
-                return "";
+            if (title == null)
+                title = Entity.Title;
 
-            string commentCountText;
+            title = WebUtility.HtmlDecode(title);
 
-            if (post.CommentCount == 1)
-                commentCountText = "1 comment";
-            else
-                commentCountText = post.CommentCount + " comments";
+            StringBuilder sb = new StringBuilder();
 
-            return commentCountText;
-            var postUrl = GetPostUrl(post) + "#Feedback";
-            return 
+            foreach (char ch in title)
+            {
+                if (ch == 32)
+                    sb.Append("-");
+                else if (char.IsLetterOrDigit(ch))
+                    sb.Append(ch);
+            }
 
-$@"<a class='hoverbutton' href='{WeblogConfiguration.ApplicationBasePath}posts/{post.Id}.aspx#Feedback'>
-    <img src='{WeblogConfiguration.ApplicationBasePath}images/comment.gif' />{commentCountText}
-</a>";
+            sb.Replace("---", "-");
+            sb.Replace("--", "-");
 
-            return commentCountText;         
+            return sb.ToString();
         }
         #endregion
+
+        /// <summary>
+        /// Returns post stats
+        /// </summary>
+        /// <returns>postCount, commentCount tuple</returns>
+        public (int postCount, int commentCount) GetPostStats()
+        {
+            int postCount = Context.Posts.Count(p => p.Active);
+            int commentCount = Context.Comments.Count();
+
+            return (postCount, commentCount);
+        }
     }
 }

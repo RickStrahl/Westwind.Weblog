@@ -31,13 +31,14 @@ namespace Westwind.Weblog.Business.Models
         public string Email { get; set; }
 
         public int BodyMode { get; set; }
-        
-        
-        
+
+        public string Url { get; set; }
+
+        public Post Post { get; set; }
 
         public Comment()
         {
-
+            
         }
     }
 }

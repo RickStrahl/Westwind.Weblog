@@ -53,7 +53,7 @@ h1 {
 h2
 {    
     color: Steelblue;
-    font-size: 1.5em;        
+    font-size: 1.45em;        
 }
 h3
 {
@@ -414,15 +414,13 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
 }
 .comment
 {
-    
+    font-size: 0.95em;
 }
 
 .comment-panel-left {
     width: 110px;
     float:left;                                                
-}
-.comment-panel-left small {
-    font-size: 0.7em;
+    font-size: 0.8em;
 }
 .comment-panel-right {            
     min-height: 150px;            
@@ -534,6 +532,18 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
     border-color: Red !important;
     border-width: 2px !important;  
 }
+.error-color {
+    color: firebrick;
+}
+.success-color {
+    color: green;
+}
+.warning-color {
+    color: orange;
+}
+.info-color {
+    color: steelblue;
+}
 .busy
 {
 	background-image: url(images/loading_small.gif);
@@ -556,8 +566,7 @@ pre {
     background: #444;
     color: #eee;
     
-    margin: 10px 0 10px 0 !important;
-    padding: 10px;
+    margin: 10px 0 10px 0 !important;    
     font-family: menlo,consolas,"courier new";
     font-size: 0.925em !important;
     border-radius: 3px;
@@ -767,7 +776,7 @@ pre > code, pre.csharpcode {
         padding-left: 40px;                
     }
     .post-content {
-        font-size: 1.1em;
+        font-size: 1.18em;
     }
 }
 
@@ -783,7 +792,7 @@ pre > code, pre.csharpcode {
          padding-left: 50px;                  
      }
      .post-content {
-         font-size: 1.17em;
+         font-size: 1.27em;
      }
 
     #page-wrapper {        

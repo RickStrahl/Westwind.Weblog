@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog", "Westwind.Weblog\Westwind.Weblog.csproj", "{600AD0CF-7807-4853-BF26-A40D42AB3A9B}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Data.EfCore", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog.Business", "Westwind.Weblog.Business\Westwind.Weblog.Business.csproj", "{D47EF90B-A8CD-4A84-BCE3-2ED0B8E40D44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Weblog.Business.Test", "Westwind.Weblog.Business.Test\Westwind.Weblog.Business.Test.csproj", "{8CD7BC02-D292-4D82-AC74-9F1F4B47B6F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog.Business.Test", "Westwind.Weblog.Business.Test\Westwind.Weblog.Business.Test.csproj", "{8CD7BC02-D292-4D82-AC74-9F1F4B47B6F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.AspNetCore", "..\Westwind.AspNetCore\Westwind.AspNetCore\Westwind.AspNetCore.csproj", "{BA084F78-9EAA-434B-B78A-64BB6DFC260B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{8CD7BC02-D292-4D82-AC74-9F1F4B47B6F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CD7BC02-D292-4D82-AC74-9F1F4B47B6F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CD7BC02-D292-4D82-AC74-9F1F4B47B6F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA084F78-9EAA-434B-B78A-64BB6DFC260B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA084F78-9EAA-434B-B78A-64BB6DFC260B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA084F78-9EAA-434B-B78A-64BB6DFC260B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA084F78-9EAA-434B-B78A-64BB6DFC260B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

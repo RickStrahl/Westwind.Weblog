@@ -7,6 +7,9 @@
 
     ViewData["Title"] = post.Title;
     string postUrl = repo.GetPostUrl(post);
+
+    // TODO: determine admin access
+    bool isAdmin = false;
 }
 
 @section headers
@@ -24,8 +27,6 @@
 
     <style>        
         .comment > a:first-child { text-decoration: none; }
-        .contenteditable { background: azure; padding: 10px; border: solid 1px orange; }
-
         .linkicon {
             width: 17px;
             height: 17px;
@@ -42,11 +43,10 @@
         }
         .postcontent > h3 {
             cursor: pointer;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.3s ease-in-out;
         }
         .postcontent > h3:hover {
-            opacity: 0.85;
-
+            opacity: 0.80;
         }
 
         .comment-dialog-header {
@@ -124,60 +124,56 @@
     </style>
 }
 
-    <article itemscope itemtype="http://schema.org/BlogPosting" itemprop="blogPost">
+<article itemscope itemtype="http://schema.org/BlogPosting" itemprop="blogPost">
 
-    <header>
-        <h2 itemprop="headline_name">
-            <a href='@repo.GetPostUrl(post)' style="text-decoration:none;">@post.Title</a>            
-        </h2>
-    </header>
+<header>
+    <h2 itemprop="headline_name">
+        <a href='@repo.GetPostUrl(post)' style="text-decoration:none;">@post.Title</a>            
+    </h2>
+</header>
     
-        <hr />
+<hr />
 
+<div class="byline">
+    <div class="leftbox">
+        <i class="fa fa-clock-o" ></i>
+        @(AppWebUtils.WebLogDateString(post.Entered,false))
+        @(string.IsNullOrEmpty(post.Location) ? "" : " - from " + post.Location)
+    </div>
+    <div class="leftbox" style="float: right;">
+        @if (post.CommentCount > 0)
+        {
+            <a href="@(repo.GetPostUrl(post))#Feedback">
+                <i class="fa fa-comments-o"></i>
+                @repo.ShowCommentCount(post)
+            </a>
+        }
+    </div>
 
-        <div class="byline">
-            <div class="leftbox">
-                <i class="fa fa-clock-o" ></i>
-                @(AppWebUtils.WebLogDateString(post.Entered,false))
-                @(string.IsNullOrEmpty(post.Location) ? "" : " - from " + post.Location)
-            </div>
-            <div class="leftbox" style="float: right;">
-                @if (post.CommentCount > 0)
-                {
-                    <a href="@(repo.GetPostUrl(post))#Feedback">
-                        <i class="fa fa-comments-o"></i>
-                        @repo.ShowCommentCount(post)
-                    </a>
-                }
-            </div>
-
-            <div class="leftbox" id="ShareIconContainer" style="float: right;">
-                <div style="display:inline-block;width: 80px; overflow:hidden;">
-                    @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
-                </div>
-                <div style="display:inline-block;width: 80px; overflow:hidden">
-                    @ShareButtons.ShareOnFacebook(postUrl)
-                </div>
-                <div style="display:inline-block;width: 80px; overflow:hidden;">
-                    @ShareButtons.GooglePlusPlusOneButton(postUrl)
-                </div>
-            </div>
+    <div class="leftbox" id="ShareIconContainer" style="float: right;">
+        <div style="display:inline-block;width: 80px; overflow:hidden;">
+            @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
         </div>
+        <div style="display:inline-block;width: 80px; overflow:hidden">
+            @ShareButtons.ShareOnFacebook(postUrl)
+        </div>
+        <div style="display:inline-block;width: 80px; overflow:hidden;">
+            @ShareButtons.GooglePlusPlusOneButton(postUrl)
+        </div>
+    </div>
+</div>
 
-        <div class="clearfix"></div>
+<div class="clearfix"></div>
 
-
-
-
-        <div id="ArticleBody" class="postcontent" itemprop="articleBody">
-            @*@if (!string.IsNullOrEmpty(App.SponsoredTopAd)) { 
+<div id="ArticleBody" class="postcontent" itemprop="articleBody">
+    @*@if (!string.IsNullOrEmpty(App.SponsoredTopAd)) { 
             <%= App.SponsoredTopAd %>
             }*@
 
-            @Html.Raw(post.Body)
+    @Html.Raw(post.Body)
 
 
-            @*<% if (RelatedPosts != null && RelatedPosts.Rows.Count > 0)
+    @*<% if (RelatedPosts != null && RelatedPosts.Rows.Count > 0)
             { %>
             <div style="margin: 30px 0">
                 <h3 style="margin-top: 30px">
@@ -193,237 +189,251 @@
                 </ul>
             </div>
             <% } %>*@
-        </div>
+</div>
 
 
 
-        @*<div class="advert">
+@*<div class="advert">
             <%= App.GoogleImageAd %>
         </div>*@
 
-        <style>
-            .donate-buttons {
-                display: flex; flex-direction: row; justify-content:space-between;
-            }
-            .social-button-container {
-                margin-left: 15px;
-                flex: 250 250 auto;
-                display: flex; flex-direction: row; justify-content:space-around; margin-top: 3px;
-            }
-            @@media(max-width: 600px) {
-                .donate-buttons { flex-direction: column; }
+<style>
+    .donate-buttons {
+        display: flex; flex-direction: row; justify-content:space-between;
+    }
+    .social-button-container {
+        margin-left: 45px;
+        flex: 200 200 auto;
+        display: flex; flex-direction: row; justify-content:space-around; margin-top: 3px;
+    }
+    @@media(max-width: 600px) {
+        .donate-buttons { flex-direction: column; }
+    }
 
-            }
+</style>
+<div class='borderbox'
+     style='min-height:30px;box-shadow: 2px 2px 3px #535353;
+background: linear-gradient(to bottom, rgb(255, 182, 49), #f5f5f5 60px, #f5f5f5, #ffffff );
+'>
 
-        </style>
-        <div class='borderbox'
-             style='min-height:30px;box-shadow: 2px 2px 3px #535353;'>
-
-        <div class="donate-buttons">
+    <div class="donate-buttons">
             
             
-            @if (!string.IsNullOrEmpty(config.PayPalEmail))
-            {
+        @if (!string.IsNullOrEmpty(config.PayPalEmail))
+        {
 
-                <div style="flex: none;">
-                    <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
-                         title="Find this content useful? Consider making a small donation."
-                        alt="Make Donation"
-                        style="text-decoration: none;" src="~/images/donation.png" />
-                </div>
-                <div style="font-size: 0.8em; width: 233px" class="hidable-xs">
-                    Find this content useful? <b>Consider making a small donation</b> to show your support.
-                </div>                
-            }
+            <div style="flex: none;">
+                <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
+                     title="Find this content useful? Consider making a small donation."
+                     alt="Make Donation"
+                     style="text-decoration: none;" src="~/images/donation.png" />
+            </div>
+            <div style="font-size: 0.8em; width: 233px" class="hidable-xs">
+                Find this content useful? <b>Consider making a small donation</b> to show your support.
+            </div>                
+        }
 
 
-            <div class="social-button-container">
-                <div style="margin-top: -2px">
-                    @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
-                </div>
-                <div>
-                    @ShareButtons.ShareOnFacebook(postUrl)
-                </div>
-                <div>
-                    @ShareButtons.GooglePlusPlusOneButton(postUrl)
-                </div>
+        <div class="social-button-container">
+            <div>
+                @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
+            </div>
+            <div>
+                @ShareButtons.ShareOnFacebook(postUrl)
+            </div>
+            <div>
+                @ShareButtons.GooglePlusPlusOneButton(postUrl)
             </div>
         </div>
+    </div>
 
 
-        <div style="margin-top: 20px">
-            <%= AppWebUtils.CategoryLinks(Entry) %>
-        </div>
+    <div style="margin-top: 20px;">
+        @AppWebUtils.CategoryLinks(repo)
+    </div>
 
-        </div>
+</div>
 
-        <br />
+<br />
 
-        <% if(Comment.DataSet.Tables["TComments"].Rows.Count > 0)
-        { %>
-        <h2>The Voices of Reason</h2>
-        <hr style="margin-bottom: 30px;" />
+@if (post.Comments.Count > 0) 
+{ 
+<h2>The Voices of Reason</h2>
+<hr style="margin-bottom: 30px;" />
 
-        <asp:Panel runat="server" ID="FeedbackPanel">
-            <a name="Feedback">&nbsp;</a>
+
+    <a name="Feedback">&nbsp;</a>
+    <div class="clearfix"></div>
+
+
+    @foreach(var comment in post.Comments)
+    {
+            <div id="@comment.Id" class="comment">
+
+                <div class="comment-panel-left">
+                    @AppWebUtils.GravatarLink(comment) 
+                                                
+                    <div class="margin-top">
+                        @if(string.IsNullOrEmpty(comment.Url))
+                        {
+                            <div>@comment.Author</div>
+                        }  
+                        else
+                        {
+                            <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url,"_WebLog",null))</div>
+                        }                            
+                        @AppWebUtils.WebLogDateString(comment.Entered, false)
+                    </div>
+                </div>
+
+                <div class="comment-panel-right">
+                    <h3 style="margin-top: 0; font-size: 1.21em;">
+                        <a name="@comment.Id" href="#@comment.Id">#</a>
+                        @comment.Title
+                    </h3>
+                    <div class="commentbody" style="padding-top: 15px;">
+                        @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body)) : Html.Raw(comment.Body))
+                    </div>
+                    
+                    @if (isAdmin)
+                    {
+                    
+                    <div style="margin-top: 10px;">
+                        <a href='javascript:{}' data-id="@post.Id"
+                           class="hoverbutton remove-comment">
+                            <i class="fa fa-close red-color"/>
+                            Remove Comment
+                        </a>
+                        <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" class="hoverbutton commentedit" />
+                    </div>
+                    }
+                </div>
+            </div>
             <div class="clearfix"></div>
+        }
 
+}
 
-            <asp:Repeater runat="server" ID="repFeedback" OnItemCommand="repFeedBack_ItemCommand" EnableViewState="false">
-                <ItemTemplate>
-                    <div id="<%# " cmt_" + Eval("Pk").ToString() %>
-                        " class="comment">
-                        <div class="comment-panel-left">
-                            <%# AppWebUtils.GravatarLink( Container.DataItem as DataRowView) %>
-                            <br />
-                            <small>
-                                <%# string.IsNullOrEmpty( Eval("Url") as string) ? Eval("Author") as string : HtmlUtils.Href( Eval("Author") as string,Eval("Url") as string,"_WebLog",null) %>
-                                <br />
-                                <%# AppWebUtils.WebLogDateString( (DateTime) Eval("Entered"),false ) %>
-                            </small>
-                        </div>
-                        <div class="comment-panel-right">
-                            <h3 style="margin-top: 0; font-size: 1.21em;">
-                                <a name="<%# Eval(" pk") %>" href="#<%# Eval("pk") %>">#</a>
-                                <%# Eval("Title")  %>
-                            </h3>
-                            <div class="commentbody" style="padding-top: 15px;">
-                                <%# string.IsNullOrEmpty( Eval("Body") as string ) ?  "" :  (Eval("Body") as string) %>
-                            </div>
+<ww:ErrorDisplay runat="server" ID="ErrorDisplay" ErrorImage="~/app_themes/"></ww:ErrorDisplay>
 
-                            <%
-                            if (IsAdmin)
-                            {
-                            %>
-                            <div style="margin-top: 10px;">
-                                <a href='javascript:{}' data-id="@post.Id"
-                                     class="hoverbutton remove-comment">
-                                    fa-  <img src="~/App_Themes/Standard/images/remove.gif" />
-                                    Remove Comment
-                                </a>
-                                <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" class="hoverbutton commentedit" />
-                            </div>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                </ItemTemplate>
-            </asp:Repeater>
-        </asp:Panel>
-        <% }%>
-
-        <ww:ErrorDisplay runat="server" ID="ErrorDisplay" ErrorImage="~/app_themes/"></ww:ErrorDisplay>
-
-        &nbsp;<asp:Button runat="server" ID="btnShowCommentTable" OnClick="btnShowCommentTable_Click"
-                          Text="Add a Comment" class="submitbutton" /><div id="ContentOverlay" style="background:steelblue"></div>
+<button class="btn btn-primary" style="font-weight: bold; padding: 10px 30px;">
+    <i class="fa fa-comments-o"></i>&nbsp;
+    Add a Comment
+</button>
+&nbsp;<asp:Button runat="server" ID="btnShowCommentTable" OnClick="btnShowCommentTable_Click"
+                  Text="Add a Comment" class="submitbutton" /><div id="ContentOverlay" style="background:steelblue"></div>
 
 
 
-        <asp:Panel runat="server" ID="CommentDialog" Visible="false"
-                   CssClass="author commentauthor comment-dialog boxshadow">
+<asp:Panel runat="server" ID="CommentDialog" Visible="false"
+           CssClass="author commentauthor comment-dialog boxshadow">
 
-            <div class="comment-dialog-header">What's on your Mind?</div>
+    <div class="comment-dialog-header">What's on your Mind?</div>
 
-            <div style='padding: 10px; margin-bottom: 0px;'>
-                <div id='CommentDialogContent'>
-                    <ww:ErrorDisplay ID="ErrorDisplayComment" runat="server" Width="450" />
+    <div style='padding: 10px; margin-bottom: 0px;'>
+        <div id='CommentDialogContent'>
+            <ww:ErrorDisplay ID="ErrorDisplayComment" runat="server" Width="450" />
 
-                    <asp:HiddenField runat="server" ID="txtTitle"></asp:HiddenField>
+            <asp:HiddenField runat="server" ID="txtTitle"></asp:HiddenField>
 
-                    <ww:wwTextBox ID="txtAuthor" runat="server" placeholder="What's your name?"></ww:wwTextBox>
-                    <ww:wwTextBox ID="txtUrl" runat="server" placeholder="Your web site (optional)"></ww:wwTextBox>
-                    <ww:wwTextBox ID="txtEmail" runat="server" type="email" placeholder="Your email address (optional)" style="margin-bottom: 0px;"></ww:wwTextBox>
-
-
-                    <div class="smalltext"><i>not shown and used only for <a href="http://site.gravatar.com/">Gravatar</a></i></div>
-                    <div class="edit-toolbar">
-
-                        <a id="btnBold" title="Make the selected text bold (ctrl-b)">
-                            <i class="fa fa-bold"></i>
-                        </a>
-
-                        <a id="btnItalic" title="Make the selected text italic (ctrl-i)">
-                            <i class="fa fa-italic"></i>
-                        </a>
+            <ww:wwTextBox ID="txtAuthor" runat="server" placeholder="What's your name?"></ww:wwTextBox>
+            <ww:wwTextBox ID="txtUrl" runat="server" placeholder="Your web site (optional)"></ww:wwTextBox>
+            <ww:wwTextBox ID="txtEmail" runat="server" type="email" placeholder="Your email address (optional)" style="margin-bottom: 0px;"></ww:wwTextBox>
 
 
-                        <a id="btnCode" title="Turn selected text into a code block. (alt-c)" style="margin-left: 8px;">
-                            <i class="fa fa-code"></i>
-                        </a>
+            <div class="smalltext"><i>not shown and used only for <a href="http://site.gravatar.com/">Gravatar</a></i></div>
+            <div class="edit-toolbar">
 
-                        <a id="btnHref" title="Turn selected text into a a link (ctrl-k)">
-                            <i class="fa fa-link"></i>
-                        </a>
+                <a id="btnBold" title="Make the selected text bold (ctrl-b)">
+                    <i class="fa fa-bold"></i>
+                </a>
 
-
-                        <div onclick="javascript: window.open('http://markdownmonster.west-wind.com/docs/_4ne1eu2cq.htm');"
-                             target="top"
-                             class="hidable-xs"
-                             style="cursor: pointer; float: right; font-size: 0.8em; margin:auto">
-                            <img src="~/images/markdown.png" />
-                            Markdown styling is supported.
-                        </div>
-                    </div>
+                <a id="btnItalic" title="Make the selected text italic (ctrl-i)">
+                    <i class="fa fa-italic"></i>
+                </a>
 
 
+                <a id="btnCode" title="Turn selected text into a code block. (alt-c)" style="margin-left: 8px;">
+                    <i class="fa fa-code"></i>
+                </a>
 
-                    <ww:wwTextBox ID="txtBody" runat="server"
-                                  Height="250px"
-                                  style="background-color: #333 !important"
-                                  TextMode="MultiLine"
-                                  CssClass="comment-textbox"></ww:wwTextBox>
-
-
-                    <div id="divCommentPreview" style="display:none">
-                    </div>
-
-                    <br />
-                    <table style="width:100%">
-                        <tr>
-                            <td>
-                                <ww:wwCheckBox ID="chkRememberMe" runat="server" Text="Remember me?" />
-                            </td>
-                            <td style="text-align:right;" valign="top">
-                                <small>
-                                    <span id="lblCommentCharCount"></span>
-                                </small>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <ww:Captcha runat="server" ID="Captcha" CssClass="gridalternate"
-                                Style="width: 330px; padding: 10px; margin: 5px; border-radius: 4px;" />
-
-                    <asp:Button ID="btnComment_02" runat="Server" AccessKey="S" class="submitbutton"
-                                OnClick="btnComment_Click" Text="Post Comment" style="margin-top: 10px;" />
+                <a id="btnHref" title="Turn selected text into a a link (ctrl-k)">
+                    <i class="fa fa-link"></i>
+                </a>
 
 
-                    <p style="margin: 10px 50px 10px 10px; font-size: 0.85em">
-                        <b>Comment Etiquette:</b><br />
-                        Please keep the comments on topic and please don't post <b>
-                            unrelated questions
-                            or large chunks of code
-                        </b> - if you post code, please mark up
-                        the code using <b>Markdown code fencing (``` before and after) or 4 spaces of indentation</b>,
-                        so your code is readable for all of us.
-                    </p>
-
-
+                <div onclick="javascript: window.open('http://markdownmonster.west-wind.com/docs/_4ne1eu2cq.htm');"
+                     target="top"
+                     class="hidable-xs"
+                     style="cursor: pointer; float: right; font-size: 0.8em; margin:auto">
+                    <img src="~/images/markdown.png" />
+                    Markdown styling is supported.
                 </div>
             </div>
-        </asp:Panel>
 
 
-       <link href="~/scripts/highlightjs/styles/vs2015.css" rel="stylesheet" />
-        <script src="~/scripts/highlightjs/highlight.pack.js"></script>
-        <script>
+
+            <ww:wwTextBox ID="txtBody" runat="server"
+                          Height="250px"
+                          style="background-color: #333 !important"
+                          TextMode="MultiLine"
+                          CssClass="comment-textbox"></ww:wwTextBox>
+
+
+            <div id="divCommentPreview" style="display:none">
+            </div>
+
+            <br />
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <ww:wwCheckBox ID="chkRememberMe" runat="server" Text="Remember me?" />
+                    </td>
+                    <td style="text-align:right;" valign="top">
+                        <small>
+                            <span id="lblCommentCharCount"></span>
+                        </small>
+                    </td>
+                </tr>
+            </table>
+
+            <ww:Captcha runat="server" ID="Captcha" CssClass="gridalternate"
+                        Style="width: 330px; padding: 10px; margin: 5px; border-radius: 4px;" />
+
+            <asp:Button ID="btnComment_02" runat="Server" AccessKey="S" class="submitbutton"
+                        OnClick="btnComment_Click" Text="Post Comment" style="margin-top: 10px;" />
+
+
+            <p style="margin: 10px 50px 10px 10px; font-size: 0.85em">
+                <b>Comment Etiquette:</b><br />
+                Please keep the comments on topic and please don't post <b>
+                    unrelated questions
+                    or large chunks of code
+                </b> - if you post code, please mark up
+                the code using <b>Markdown code fencing (``` before and after) or 4 spaces of indentation</b>,
+                so your code is readable for all of us.
+            </p>
+
+
+        </div>
+    </div>
+</asp:Panel>
+
+
+      
+<br />
+</article>
+
+@section scripts {
+    <link href="~/scripts/highlightjs/styles/vs2015.css" rel="stylesheet" />
+    <script src="~/scripts/highlightjs/highlight.pack.js"></script>
+    <script>
         $('pre code').each(function (i, block) {
             hljs.highlightBlock(block);
         });
-        </script>
-        <br />
-    </article>
-    <!--
+    </script>
+}
+<!--
     <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                  xmlns:dc="http://purl.org/dc/elements/1.1/"
                  xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">

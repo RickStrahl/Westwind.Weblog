@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Westwind.Utilities;
+using Westwind.Web.Mvc;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 
@@ -59,6 +60,19 @@ namespace Westwind.Weblog
             {
                 AdminViewModel.Message = $"{StringUtils.CountLines(sb.ToString())} images deleted.\r\n<pre>{sb}</pre>";
             }
+
+            return View("Index",AdminViewModel);
+        }
+
+        [Route("admin/updatecommentcounts")]
+        public IActionResult UpdateCommentCounts()
+        {
+            if (!AdminRepo.UpdatePostCommentCounts())
+            {
+                AdminViewModel.Message = "Comment updates failed: " + AdminRepo.ErrorMessage;
+            }
+            else
+                AdminViewModel.Message = "Comment counts updated.";
 
             return View("Index",AdminViewModel);
         }

@@ -33,20 +33,15 @@ namespace Westwind.Weblog.Business
             var connStr = Context.ConnectionString;
             var sql = new SqlDataAccess(connStr);
             int res = sql.ExecuteNonQuery("drop table Comments");
-            if (res < 0)
-            {
-                SetError(sql.ErrorMessage);
-                return false;
-            }
             res = sql.ExecuteNonQuery("drop table Posts");
             res = sql.ExecuteNonQuery("drop table Users");
             res = sql.ExecuteNonQuery("drop table Weblogs");
 
-            if (res < 0)
-            {
-                SetError(sql.ErrorMessage);
-                return false;
-            }
+            //if (res < 0)
+            //{
+            //    SetError(sql.ErrorMessage);
+            //    return false;
+            //}
 
             return WeblogDataImporter.EnsureWeblogData(Context,"server=.;database=weblog;integrated security=true");
         }
@@ -115,6 +110,24 @@ namespace Westwind.Weblog.Business
                 {
                 }
             }
+        }
+
+        public bool UpdatePostCommentCounts()
+        {
+            int updates = 0;
+
+            foreach (var post in Context.Posts)
+            {
+                var commentCount = Context.Comments.Count(c => c.PostId == post.Id);
+                if (commentCount != post.CommentCount)
+                {
+                    Context.Posts.Attach(post);
+                    post.CommentCount = commentCount;
+                    Context.SaveChanges();
+                }
+            }
+
+            return true;
         }
 
 

@@ -16,5 +16,7 @@ namespace Westwind.Weblog.Views.Account
         [Required]
         public bool RememberMe { get; set; }
 
+        public string RedirectUrl { get; set; }
+
     }
 }

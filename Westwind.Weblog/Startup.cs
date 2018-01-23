@@ -92,6 +92,9 @@ namespace Westwind.Weblog
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseAuthentication();
+
             app.UseDatabaseErrorPage();
             app.UseStatusCodePages();
             app.UseStaticFiles();

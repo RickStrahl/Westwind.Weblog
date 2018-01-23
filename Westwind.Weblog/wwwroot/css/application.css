@@ -36,15 +36,13 @@ hr {
     height: 1px;
 }
 
-
-
 h1,h2,h3,h4,h5 {    
-    font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-weight: bold;      
+    xfont-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: 600;      
 }
 
 h1 {
-    font-size: 1.7em;
+    font-size: 1.6em;
     padding-bottom: 10px;
     margin-bottom: 1.2em;
     color: steelblue;
@@ -53,20 +51,25 @@ h1 {
 h2
 {    
     color: Steelblue;
-    font-size: 1.45em;        
+    font-size: 1.4em;        
 }
 h3
 {
     color: steelblue;
-    font-size: 1.3em;
-    font-weight: 800;    
+    font-size: 1.25em;    
     margin-top: 15px;
 }
 h4
 {
     color: #2D2A2A;
-    font-size: 1.1em;        
+    font-size: 1.13em;        
     margin-top: 14px;
+}
+
+h5, h6 {
+    color: #333;
+    font-size: 1.05em;
+    margin-top: 12px;
 }
 a 
 { color: navy; }
@@ -119,20 +122,7 @@ legend
 	text-align: left;
 }    
 
-input[type=text], input[type=password],input[type=email], select, textarea
-{    	    	
-	background-color: #F5F7FA;    	
-	border: solid 1px lightsteelblue;
-	border-style:solid;
-	padding: 3px;	
-    border-radius: 2px;
-    
-}
-input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,select:focus, textarea:focus
-{
-	background-color: Ivory !important;	
-    box-shadow: 2px 2px 6px lightgray;
-}
+
 
 .clearfix,.clear
 {
@@ -191,15 +181,6 @@ input[type=text]:focus, input[type=password]:focus,input[type=email]:focus,selec
 .margin-bottom {
     margin-bottom: 1em;
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -762,7 +743,7 @@ pre > code, pre.csharpcode {
         margin: 10px -35px 10px -35px !important;        
     }
 }
-@media(min-width: 1100px) {
+@media(min-width: 1200px) {
     .pagemarquee {
         height: auto
     }
@@ -776,11 +757,11 @@ pre > code, pre.csharpcode {
         padding-left: 40px;                
     }
     .post-content {
-        font-size: 1.18em;
+        font-size: 1.15em;
     }
 }
 
- @media(min-width: 1400px) {
+ @media(min-width: 1500px) {
     #toplevel {
         max-width: 1500px;
         margin: 0 auto; 
@@ -792,7 +773,7 @@ pre > code, pre.csharpcode {
          padding-left: 50px;                  
      }
      .post-content {
-         font-size: 1.27em;
+         font-size: 1.25em;
      }
 
     #page-wrapper {        

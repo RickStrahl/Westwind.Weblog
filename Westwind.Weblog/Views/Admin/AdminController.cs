@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Westwind.Utilities;
@@ -11,6 +12,7 @@ using Westwind.Weblog.Business.Configuration;
 
 namespace Westwind.Weblog
 {
+    [Authorize]
     public class AdminController : Controller
     {
         WeblogConfiguration Configuration { get; }

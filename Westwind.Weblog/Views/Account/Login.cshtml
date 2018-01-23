@@ -1,11 +1,11 @@
 ﻿@using Westwind.Weblog.Views.Account
 @model Westwind.Weblog.Views.Account.LoginViewModel
 @{
-    ViewBag.Title = "Sign in - My Daily Dosha";
+    ViewBag.Title = "Sign in - West Wind Weblog";
     
 }
 
-<error-display error-display-model="@Model.ErrorDisplay"></error-display>
+<error-display  error-display-model="Model.ErrorDisplay"></error-display>
 
 
 <div class="containercontent"
@@ -54,6 +54,8 @@
         <div id="lnkForgotPassword" class="smalltext" style="padding: 5px; margin-top: 10px;">
             <a href="#">I forgot my password</a>
         </div>
+
+        @Html.HiddenFor(mod=> mod.RedirectUrl)
     }
 
     <hr />

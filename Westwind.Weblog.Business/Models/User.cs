@@ -24,5 +24,10 @@ namespace Westwind.Weblog.Business.Models
 
         [Required]
         public string Fullname { get; set; }
+
+
+        public bool IsAdmin { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Westwind.Weblog
 
         public List<Comment> Comments { get; set; }
 
-        public PostRepository PostRepo { get; set; }
+        public PostBusiness PostRepo { get; set; }
 
     }
 }

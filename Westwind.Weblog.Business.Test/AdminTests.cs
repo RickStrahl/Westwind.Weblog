@@ -16,7 +16,7 @@ namespace Westwind.Weblog.Business.Test
         public void DeleteOldImages()
         {
             var context = GetContext();
-            var repo = new AdminRepository(context, new Configuration.WeblogConfiguration());
+            var repo = new AdminBusiness(context, new Configuration.WeblogConfiguration());
 
             repo.DeleteOldImages(@"C:\projects2010\Westwind.Weblog\Westwind.Weblog\wwwroot\images");
         }
@@ -41,10 +41,10 @@ namespace Westwind.Weblog.Business.Test
             return ctx;
         }
 
-        AdminRepository GetAdminRepo()
+        AdminBusiness GetAdminRepo()
         {
             var context = GetContext();
-            return new AdminRepository(context, new Configuration.WeblogConfiguration());
+            return new AdminBusiness(context, new Configuration.WeblogConfiguration());
         }
     }
 }

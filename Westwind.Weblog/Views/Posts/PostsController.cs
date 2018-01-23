@@ -15,13 +15,13 @@ namespace Westwind.Weblog
 {
     public class PostsController : Controller
     {
-        PostRepository PostRepo { get; }
+        PostBusiness PostRepo { get; }
 
         WeblogConfiguration Config  { get; }
 
         IMemoryCache Cache { get; }
         
-        public PostsController(PostRepository postRepo, 
+        public PostsController(PostBusiness postRepo, 
                                WeblogConfiguration config,
                                IMemoryCache cache)
         {

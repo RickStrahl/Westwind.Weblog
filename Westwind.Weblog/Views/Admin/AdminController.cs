@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Westwind.Utilities;
-using Westwind.Web.Mvc;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 
@@ -17,12 +16,12 @@ namespace Westwind.Weblog
         WeblogConfiguration Configuration { get; }
         public IHostingEnvironment Host { get; }
 
-        AdminRepository AdminRepo { get; }
+        AdminBusiness AdminRepo { get; }
 
         AdminViewModel AdminViewModel { get;  }
         
         
-        public AdminController(AdminRepository repo, 
+        public AdminController(AdminBusiness repo, 
                                WeblogConfiguration configuration,
                                IHostingEnvironment Host)
         {

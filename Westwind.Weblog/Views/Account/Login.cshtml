@@ -1,0 +1,86 @@
+﻿@using Westwind.Weblog.Views.Account
+@model Westwind.Weblog.Views.Account.LoginViewModel
+@{
+    ViewBag.Title = "Sign in - My Daily Dosha";
+    
+}
+
+<error-display error-display-model="@Model.ErrorDisplay"></error-display>
+
+
+<div class="containercontent"
+     style="max-width: 550px; min-height: 423px; margin: 10px auto;">
+    <h2>Sign into your Account</h2>
+
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <div class="input-group ">
+                <div class="input-group-addon">
+                    <i class="fa fa-fw fa-envelope"></i>
+                </div>
+                @Html.TextBoxFor(mod => mod.Username, new { @class = "form-control", placeholder = "Your Email Address", type = "email" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group ">
+                <div class="input-group-addon">
+                    <i class="fa fa-fw fa-unlock-alt"></i>
+                </div>
+                @Html.PasswordFor(mod => mod.Password, new { @class = "form-control", placeholder = "Your Account Password" })
+            </div>
+        </div>
+        <div class="form-group" style="margin-left: 5px;">
+            @Html.CheckBoxFor(mod => mod.RememberMe, new { @class = "with-font" })
+            <label for="RememberMe">Remember me on this device</label>
+
+        </div>
+
+        <button type="submit" name="btnSubmit" id="btnSubmit"
+                class="btn btn-primary"
+                style="width: 120px"
+                value="SIGN IN">
+            <i class="fa fa-lock"></i> SIGN IN
+        </button>
+
+        <input type="submit" name="btnRecoverPassword" id="btnRecoverPassword"
+               class="btn btn-primary btn-default hidden"
+               style="width: 160px"
+               value="RECOVER PASSWORD" />
+
+        <div id="lnkForgotPassword" class="smalltext" style="padding: 5px; margin-top: 10px;">
+            <a href="#">I forgot my password</a>
+        </div>
+    }
+
+    <hr />
+
+
+</div>
+
+
+@section headers{
+    <style>
+        .containercontent .btn {
+            min-width: 150px
+        }
+    </style>
+}
+@section scripts
+    {
+    <script>
+        var page = {
+            showPasswordRecovery: function () {
+                console.log('showpassword');
+                $("#btnRecoverPassword").removeClass("hidden");
+                $("#btnSubmit, #lnkForgotPassword").addClass("hidden");
+                $("#Password,#RememberMe").parents(".form-group").addClass("hidden");
+            }
+        };
+        $("#lnkForgotPassword a").click(page.showPasswordRecovery);
+        $("#btnLogin").hide();
+    </script>
+}

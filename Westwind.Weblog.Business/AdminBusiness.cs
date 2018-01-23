@@ -15,13 +15,13 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business
 {
-    public class AdminRepository : EntityFrameworkRepository<WeblogContext,Post>
+    public class AdminBusiness : EntityFrameworkRepository<WeblogContext,Post>
     {
         WeblogContext Context { get; set; }        
         readonly WeblogConfiguration WeblogConfiguration;
         
 
-        public AdminRepository(WeblogContext context, 
+        public AdminBusiness(WeblogContext context, 
                               WeblogConfiguration config) : base(context)
         {
             WeblogConfiguration = config;

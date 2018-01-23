@@ -72,7 +72,7 @@ namespace Westwind.Weblog
         /// </summary>
         /// <param name="Entry"></param>
         /// <returns></returns>
-        public static HtmlString CategoryLinks(PostRepository postRepo)
+        public static HtmlString CategoryLinks(PostBusiness postRepo)
         {
             StringBuilder sb = new StringBuilder("");
             string Url = HttpUtility.UrlEncode(postRepo.GetPostUrl(postRepo.Entity));
@@ -124,7 +124,7 @@ namespace Westwind.Weblog
 
             var config = WeblogConfiguration.Current;
             var context = WeblogContext.GetWeblogContext(config.ConnectionString);            
-            var postRepo = new PostRepository(context,config);
+            var postRepo = new PostBusiness(context,config);
             var counts = postRepo.GetPostStats();
 
             StringBuilder sb = new StringBuilder();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
@@ -40,9 +41,10 @@ namespace Westwind.Weblog
             Configuration.Bind("Weblog", config);
             services.AddSingleton(config);
                         
-            services.AddScoped<PostRepository>();
-            services.AddScoped<AdminRepository>();
-
+            services.AddScoped<PostBusiness>();
+            services.AddScoped<AdminBusiness>();
+            services.AddScoped<UserBusiness>();
+            
             services.AddDbContext<WeblogContext>(builder =>
             {
                 var connStr = config.ConnectionString;
@@ -63,6 +65,15 @@ namespace Westwind.Weblog
                 context.Posts.Any(p => p.Id == -1);
             });
 
+            // set up and configure Authentication - make sure to call .UseAuthentication()
+            services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(o =>
+                {
+                    o.LoginPath = "/account/login";
+                    o.LogoutPath = "/account/logout";
+                });
+
             services.AddMvc();
         }
 
@@ -70,7 +81,7 @@ namespace Westwind.Weblog
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IMemoryCache cache, IServiceProvider serviceProvider)
         {
             Cache = cache;
-            ServiceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;            
 
             if (env.IsDevelopment())
             {

@@ -19,7 +19,7 @@
                 <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
             }
             <h2 class="margin-top">
-                <a href="@Model.PostRepo.GetPostUrl(post.SafeTitle, post.Entered)"
+                <a href="@Model.PostRepo.GetPostUrl(post.SafeTitle, post.Created)"
                         style="text-decoration: none;">@post.Title</a>
             </h2>
             <hr/>
@@ -35,7 +35,7 @@
             </div>
             <div class="byline">
                 <i class="fa fa-clock-o"></i>                
-                @AppWebUtils.WebLogDateString(post.Entered,false )
+                @AppWebUtils.WebLogDateString(post.Created,false )
                 @(string.IsNullOrEmpty(post.Location) ? "" : "- " + post.Location)
             </div>
 

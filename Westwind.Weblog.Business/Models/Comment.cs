@@ -20,7 +20,7 @@ namespace Westwind.Weblog.Business.Models
 
         public string Body { get; set; }
 
-        public DateTime Entered { get; set; }
+        public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }
 

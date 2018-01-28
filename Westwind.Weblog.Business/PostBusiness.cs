@@ -14,13 +14,13 @@ namespace Westwind.Weblog.Business
 {
     public class PostBusiness : EntityFrameworkBusinessObject<WeblogContext,Post>
     {
-        public readonly WeblogConfiguration WeblogConfiguration;
+        public readonly WeblogConfiguration Configuration;
         
 
         public PostBusiness(WeblogContext context,  
                               WeblogConfiguration config) : base(context)
         {
-            WeblogConfiguration = config;            
+            Configuration = config;            
         }
 
         #region Post Retrieval
@@ -28,7 +28,7 @@ namespace Westwind.Weblog.Business
         {            
             return await Context.Posts
                 .Include("Comments")
-                .OrderByDescending(p => p.Entered)
+                .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select( p=> new Post
                 {
@@ -39,15 +39,35 @@ namespace Westwind.Weblog.Business
                    SafeTitle = p.SafeTitle,
                    Location = p.Location,
                    CommentCount  = p.CommentCount,
-                   Entered = p.Entered
+                   Created = p.Created
                 })
                 .ToListAsync();
+        }
+
+        public List<Post> GetLastPostsSync(int postCount = 50)
+        {
+            return Context.Posts
+                .Include("Comments")
+                .OrderByDescending(p => p.Created)
+                .Take(postCount)
+                .Select(p => new Post
+                {
+                    Id = p.Id,
+                    IsFeatured = p.IsFeatured,
+                    Abstract = p.Abstract,
+                    Title = p.Title,
+                    SafeTitle = p.SafeTitle,
+                    Location = p.Location,
+                    CommentCount = p.CommentCount,
+                    Created = p.Created
+                })
+                .ToList();
         }
 
         public async Task<List<Comment>> GetRecentComments(int postCount = 30)
         {
             return await Context.Comments
-                .OrderByDescending(c => c.Entered)
+                .OrderByDescending(c => c.Created)
                 .Take(postCount)
                 .Select(c => new Comment
                 {
@@ -58,7 +78,7 @@ namespace Westwind.Weblog.Business
                     Author = c.Author,
                     Url = c.Url,
                     Email = c.Email,
-                    Entered = c.Entered,
+                    Created = c.Created,
                     PostId = c.PostId
                 }).ToListAsync();
         }
@@ -78,7 +98,17 @@ namespace Westwind.Weblog.Business
             return Entity;
         }
 
-        
+        /// <summary>
+        ///  Loads the last post that was made
+        /// </summary>
+        public Post LoadLastPost()
+        {
+            Entity = Context.Posts.AsNoTracking()
+                                  .OrderByDescending(p => p.Created)
+                                  .FirstOrDefault();
+            return Entity;
+        }
+
 
 
         /// <summary>
@@ -152,7 +182,7 @@ namespace Westwind.Weblog.Business
             if (!string.IsNullOrEmpty(post.RedirectUrl))
                 return post.RedirectUrl;
 
-            return GetPostUrl(post.SafeTitle, post.Entered);
+            return GetPostUrl(post.SafeTitle, post.Created);
         }
 
         /// <summary>
@@ -164,7 +194,7 @@ namespace Westwind.Weblog.Business
         public string GetPostUrl(string safeTitle, DateTime entered, bool force = false)
         {
             DateTime date = entered;
-            string url = $"{WeblogConfiguration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";                         
+            string url = $"{Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";                         
             return url;
         }
 
@@ -197,6 +227,49 @@ namespace Westwind.Weblog.Business
         }
         #endregion
 
+        #region Utility
+        /// <summary>
+        /// Returns a URL safe string for the title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public string GetSafeTitle(string title = null)
+        {
+            if (title == null)
+                title = Entity.Title;
+
+            if (string.IsNullOrEmpty(title))
+                return null;
+
+            title = WebUtility.HtmlDecode(title);
+
+            title = title                
+                .Replace("c#", "csharp")
+                .Replace("C#", "csharp")
+                .Replace(" .net", " dotnet")
+                .Replace(" .NET", " Dotnet");
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (char ch in title.ToCharArray())
+            {
+                if (ch == 32)
+                    sb.Append("-");
+                else if (char.IsLetterOrDigit(ch))
+                    sb.Append(ch);
+                // everything else is stripped
+            }
+
+            //Fix multiple dashes
+            sb.Replace("---", "-");
+            sb.Replace("--", "-");
+
+            return sb.ToString();
+        }
+
+        #endregion
+
+        #region Stats
         /// <summary>
         /// Returns post stats
         /// </summary>
@@ -208,5 +281,6 @@ namespace Westwind.Weblog.Business
 
             return (postCount, commentCount);
         }
+        #endregion
     }
 }

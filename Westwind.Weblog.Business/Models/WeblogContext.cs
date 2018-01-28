@@ -50,7 +50,7 @@ namespace Westwind.Weblog.Business.Models
             base.OnModelCreating(builder);
 
             builder.Entity<Post>()
-                .HasIndex(b => b.Entered);
+                .HasIndex(b => b.Created);
         }
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

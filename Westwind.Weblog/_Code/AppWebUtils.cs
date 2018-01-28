@@ -83,7 +83,7 @@ namespace Westwind.Weblog
                 sb.Append("<div>Posted in <b>");
                 foreach (string Category in Categories)
                 {
-                    sb.Append("<a href='" + postRepo.WeblogConfiguration.ApplicationBasePath +
+                    sb.Append("<a href='" + postRepo.Configuration.ApplicationBasePath +
                         "ShowPosts.aspx?Category=" + Category + "'>" + 
                         Category + "</a>&nbsp;&nbsp;");
                 }

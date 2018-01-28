@@ -54,13 +54,13 @@ namespace Westwind.Weblog.Business
             {
                 Id = p.Id,
                 Body = p.Body,
-                FeaturedImageUrl = p.FeaturedImageUrl
+                ImageUrl = p.ImageUrl
             });
 
             StringBuilder sbContent = new StringBuilder(500000);
             foreach (var post in posts)
             {
-                sbContent.Append(post.Body + "\r\n" + post.FeaturedImageUrl);
+                sbContent.Append(post.Body + "\r\n" + post.ImageUrl);
             }
 
             string postList = sbContent.ToString().ToLower();

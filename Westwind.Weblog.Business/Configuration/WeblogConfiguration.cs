@@ -42,6 +42,7 @@ namespace Westwind.Weblog.Business.Configuration
         public string PayPalEmail { get; set; }
 
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
+        public string WeblogAuthor { get; set; } = "Rick Strahl";
     }
 
     public class EmailConfiguration

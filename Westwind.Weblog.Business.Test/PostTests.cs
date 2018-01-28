@@ -18,7 +18,7 @@ namespace Westwind.Weblog.Business.Test
             var ctx = GetContext();
 
             var posts = ctx.Posts.Include("Comments")
-                                 .Where(p => p.Entered > DateTime.Now.AddYears(-2))
+                                 .Where(p => p.Created > DateTime.Now.AddYears(-2))
                                  .ToList();
 
             foreach (var post in posts)

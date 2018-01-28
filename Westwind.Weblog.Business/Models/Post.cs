@@ -22,7 +22,7 @@ namespace Westwind.Weblog.Business.Models
         [MaxLength(2048)]
         public string Abstract { get; set; }
 
-        public DateTime Entered { get; set; }
+        public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }
 
@@ -68,7 +68,7 @@ namespace Westwind.Weblog.Business.Models
         public string Markdown { get; set; }
 
         [MaxLength(256)]
-        public string FeaturedImageUrl { get; set; }
+        public string ImageUrl { get; set; }
         
 
         public List<Comment> Comments { get; set; }

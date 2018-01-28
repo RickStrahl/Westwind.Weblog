@@ -1,4 +1,5 @@
 ﻿
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Westwind.AspNetCore;
 using Westwind.Web;
@@ -8,7 +9,6 @@ namespace Westwind.Weblog
 {
     public class AppBaseController : BaseController
     {        
-
     }
 }
 

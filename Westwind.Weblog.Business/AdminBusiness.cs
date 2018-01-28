@@ -15,7 +15,7 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business
 {
-    public class AdminBusiness : EntityFrameworkRepository<WeblogContext,Post>
+    public class AdminBusiness : EntityFrameworkBusinessObject<WeblogContext,Post>
     {
         WeblogContext Context { get; set; }        
         readonly WeblogConfiguration WeblogConfiguration;

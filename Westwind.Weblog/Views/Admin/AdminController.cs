@@ -7,20 +7,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Westwind.Utilities;
+using Westwind.Web;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 
 namespace Westwind.Weblog
 {
     [Authorize]
-    public class AdminController : Controller
+    public class AdminController : AppBaseController
     {
         WeblogConfiguration Configuration { get; }
         public IHostingEnvironment Host { get; }
 
         AdminBusiness AdminRepo { get; }
-
-        AdminViewModel AdminViewModel { get;  }
+        
         
         
         public AdminController(AdminBusiness repo, 
@@ -30,56 +30,60 @@ namespace Westwind.Weblog
             Configuration = configuration;
             this.Host = Host;
             AdminRepo = repo;
-            AdminViewModel = new AdminViewModel();
+            
         }
 
         [HttpGet("Admin/Index")]        
         public IActionResult Index()
         {
-            return View(AdminViewModel);
+            var model = CreateViewModel<AdminViewModel>();
+            return View(model);
         }
 
         [HttpGet("admin/import")]
         public IActionResult Import()
         {
-            AdminViewModel.Message = !AdminRepo.ImportOldWebLog("server=.;database=Weblog;integrated security=true;") 
+            var model = CreateViewModel<AdminViewModel>();
+            model.Message = !AdminRepo.ImportOldWebLog("server=.;database=Weblog;integrated security=true;") 
                     ? AdminRepo.ErrorMessage 
                     : "Import completed.";
 
-            return View("Index",AdminViewModel);
+            return View("Index",model);
         }
 
         [Route("admin/deleteunusedimages")]
         public IActionResult DeleteUnusedImages()
         {
-            AdminViewModel.Message = "Unused Images updated.";
+            var model = CreateViewModel<AdminViewModel>();
+            model.Message = "Unused Images updated.";
 
             var sb = AdminRepo.DeleteOldImages(Path.Combine(Host.WebRootPath, "images"));
             if (sb == null)
-                AdminViewModel.Message = "Image deletion failed: " + AdminRepo.ErrorMessage;
+                model.Message = "Image deletion failed: " + AdminRepo.ErrorMessage;
             else
             {
-                AdminViewModel.Message = $"{StringUtils.CountLines(sb.ToString())} images deleted.\r\n<pre>{sb}</pre>";
+                model.Message = $"{StringUtils.CountLines(sb.ToString())} images deleted.\r\n<pre>{sb}</pre>";
             }
 
-            return View("Index",AdminViewModel);
+            return View("Index",model);
         }
 
         [Route("admin/updatecommentcounts")]
         public IActionResult UpdateCommentCounts()
         {
+            var model = CreateViewModel<AdminViewModel>();
             if (!AdminRepo.UpdatePostCommentCounts())
             {
-                AdminViewModel.Message = "Comment updates failed: " + AdminRepo.ErrorMessage;
+                model.Message = "Comment updates failed: " + AdminRepo.ErrorMessage;
             }
             else
-                AdminViewModel.Message = "Comment counts updated.";
+                model.Message = "Comment counts updated.";
 
-            return View("Index",AdminViewModel);
+            return View("Index",model);
         }
     }
 
-    public class AdminViewModel
+    public class AdminViewModel : AppBaseViewModel
     {
         public string Message { get; set; }
 

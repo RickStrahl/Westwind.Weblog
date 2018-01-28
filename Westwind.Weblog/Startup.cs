@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -66,14 +68,13 @@ namespace Westwind.Weblog
             });
 
             // set up and configure Authentication - make sure to call .UseAuthentication()
-            services
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            services                    
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)                
                 .AddCookie(o =>
                 {
                     o.LoginPath = "/account/login";
                     o.LogoutPath = "/account/logout";
                 });
-
             services.AddMvc();
         }
 

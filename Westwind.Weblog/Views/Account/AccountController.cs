@@ -13,6 +13,7 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Views.Account
 {
+    [Authorize]
     public class AccountController : AppBaseController
     {
         private readonly UserBusiness _userBus;
@@ -53,14 +54,12 @@ namespace Westwind.Weblog.Views.Account
             }            
 
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-            identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
-            identity.AddClaim(new Claim(ClaimTypes.PrimarySid, user.Id.ToString()));
-
-            UserState.Email = user.Username;
-            UserState.UserId = user.Id.ToString();
-            UserState.IsAdmin = user.IsAdmin;
+            identity.AddClaim(new Claim("Fullname", user.Fullname));
+            identity.AddClaim(new Claim("Username", user.Username));
+            identity.AddClaim(new Claim("UserId", user.Id.ToString()));
             
-            identity.AddClaim(new Claim("UserState", UserState.ToString()));
+            if (user.IsAdmin)
+                identity.AddClaim(new Claim(ClaimTypes.Role,"Admin"));
             
             // Set cookie and attach claims
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
@@ -77,13 +76,12 @@ namespace Westwind.Weblog.Views.Account
         [AllowAnonymous]
         [HttpGet]        
         public async Task<IActionResult> Logout()
-        {
-            UserState = new Web.UserState();
+        {              
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            return Redirect("~/");
+            return RedirectToAction("Login");
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("api/isAuthenticated")]
         public bool IsAuthenthenticated()

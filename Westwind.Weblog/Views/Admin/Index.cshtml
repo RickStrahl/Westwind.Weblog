@@ -3,6 +3,7 @@
 @inject WeblogConfiguration Config
 @{
     ViewData["Title"] = "Weblog Administration";
+    var user = User.GetAppUser();
 }
 <h1>Weblog Configuration</h1>
 @if (!string.IsNullOrEmpty(Model.Message))
@@ -11,14 +12,23 @@
         @Html.Raw(Model.Message)
     </div>
 }
-<div class="list-group">
-    <div class="list-group-item list-group-item-heading list-group-item-info">Admin Tasks</div>
-    <a class="list-group-item list-group-item-action"
-       onclick="if (!confirm('Are you sure you want to re-import Weblog data?')) return false;"
-       asp-action="Import">Import from Weblog</a>
-    <a class="list-group-item list-group-item-action "
-       asp-action="DeleteUnusedImages">Delete Unused Images</a>
-    <a class="list-group-item list-group-item-action "
-       asp-action="UpdateCommentCounts">Update Comment Counts</a>
-</div>
+    <div class="list-group">
+        <div class="list-group-item list-group-item-heading list-group-item-info">Admin Tasks</div>
+        <a class="list-group-item list-group-item-action"
+           onclick="if (!confirm('Are you sure you want to re-import Weblog data?')) return false;"
+           asp-action="Import">Import from Weblog</a>
+        <a class="list-group-item list-group-item-action "
+           asp-action="DeleteUnusedImages">Delete Unused Images</a>
+        <a class="list-group-item list-group-item-action "
+           asp-action="UpdateCommentCounts">Update Comment Counts</a>
+        
+        @if(user.IsAuthenticated()) { 
+        <a class="list-group-item list-group-item-action"
+           asp-action="Logout" asp-controller="Account">Log out</a>
+        } else {
+            <a class="list-group-item list-group-item-action"
+            asp-action="Login" asp-controller="Account">Log in</a>
+        }
+                                                               
+    </div>
 

@@ -13,7 +13,7 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog
 {
-    public class PostsController : Controller
+    public class PostsController : AppBaseController
     {
         PostBusiness PostRepo { get; }
 

@@ -1,4 +1,5 @@
-﻿@using Westwind.Weblog.Views.Account
+﻿@using Westwind.Web
+@using Westwind.Weblog.Views.Account
 @model Westwind.Weblog.Views.Account.LoginViewModel
 @{
     ViewBag.Title = "Sign in - West Wind Weblog";
@@ -45,6 +46,19 @@
                 value="SIGN IN">
             <i class="fa fa-lock"></i> SIGN IN
         </button>
+        
+        
+        
+        @if (User.Identity.IsAuthenticated)
+         {
+             <button onclick="window.location='@Url.Action("Logout")'"
+                     type="button"
+                     class="btn btn-primary"
+                     style="width: 120px"
+                     value="SIGN OUT">
+                 <i class="fa fa-unlock-alt"></i> SIGN OUT
+             </button>
+         }         
 
         <input type="submit" name="btnRecoverPassword" id="btnRecoverPassword"
                class="btn btn-primary btn-default hidden"

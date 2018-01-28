@@ -4,6 +4,7 @@ html,body
     color: #383838;    
     font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;        
     font-size: 15px;
+    line-height: 1.5em;
     -webkit-font-smoothing: antialiased;    
 }
 img
@@ -757,7 +758,7 @@ pre > code, pre.csharpcode {
         padding-left: 40px;                
     }
     .post-content {
-        font-size: 1.15em;
+        font-size: 1.10em;
     }
 }
 
@@ -773,7 +774,7 @@ pre > code, pre.csharpcode {
          padding-left: 50px;                  
      }
      .post-content {
-         font-size: 1.25em;
+         font-size: 1.20em;
      }
 
     #page-wrapper {        

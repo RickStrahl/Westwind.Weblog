@@ -9,12 +9,13 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business.Models
 {
-    public class UserBusiness : EntityFrameworkRepository<WeblogContext,User>
-    {
+    public class UserBusiness : EntityFrameworkBusinessObject<WeblogContext,User>
+    {        
 
-        public UserBusiness(WeblogContext context, WeblogConfiguration configuration) : base(context)
+        public UserBusiness(WeblogContext context, WeblogConfiguration config) : base(context)
         {
-            Context = context;            
+            Context = context;
+            Configuration = config;
         }
 
         /// <summary>

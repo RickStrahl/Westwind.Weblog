@@ -12,7 +12,7 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business
 {
-    public class PostBusiness : EntityFrameworkRepository<WeblogContext,Post>
+    public class PostBusiness : EntityFrameworkBusinessObject<WeblogContext,Post>
     {
         public readonly WeblogConfiguration WeblogConfiguration;
         

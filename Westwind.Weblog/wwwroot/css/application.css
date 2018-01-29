@@ -389,10 +389,8 @@ legend
 }
 .borderbox {
     padding: 10px 15px;
-    border-radius: 5px;
-    box-shadow: 4px 4px 7px #535353;
-    background: url(images/lightorangegradient.png) repeat-x top;
-    margin: 30px 0 10px;
+    border-radius: 4px;    
+    margin: 140px 0 10px;
 }
 .comment
 {

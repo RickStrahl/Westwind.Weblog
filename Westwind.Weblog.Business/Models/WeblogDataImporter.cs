@@ -85,7 +85,7 @@ namespace Westwind.Weblog.Business.Models
 
                 // save on every 20th record to avoid 
                 // change tracking to overload
-                if (count % 20 == 0)
+                if (count % 10 == 0)
                     context.SaveChanges();
 
                 count++;
@@ -106,6 +106,7 @@ namespace Westwind.Weblog.Business.Models
                 if (postPk < 1)
                     continue;
 
+                // skip if post doesn't exist
                 if (!context.Posts.Any(p => p.Id == postPk))
                     continue;
 
@@ -115,12 +116,14 @@ namespace Westwind.Weblog.Business.Models
 
                 comment.Id = pk;
                 comment.PostId = postPk;
+                comment.Created = (DateTime)row["Entered"];
+                comment.BodyMode = (int) row["BodyMode"];
 
                 context.Comments.Add(comment);
 
                 // save on every 20th record to avoid 
                 // change tracking to overload
-                if (count % 20 == 0)
+                if (count % 10 == 0)
                     context.SaveChanges();
 
                 count++;

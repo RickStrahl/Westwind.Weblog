@@ -28,6 +28,11 @@ namespace Westwind.Weblog.Business.Test
             repo.UpdatePostCommentCounts();
         }
 
+        [Test]
+        public void CreateDatabaseTest()
+        {
+            GetContext();
+        }
 
         WeblogContext GetContext()
         {

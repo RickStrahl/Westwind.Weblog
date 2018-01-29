@@ -10,6 +10,9 @@
 
     var appUser = User.GetAppUser();
     bool isAdmin = appUser.IsAdmin;
+
+    var Request = Context.Request;
+    var pageUrl = config.WeblogHomeUrl + Request.Path.Value;
 }
 
 @section headers
@@ -24,7 +27,7 @@
     <meta property="og:description" content="@post.Abstract"/>
     <meta property="og:type" content="article" />
     <meta property="article:author" content="https://facebook.com/rickstrahl" />
-    <meta property="og:url" content="@(config.WeblogHomeUrl + Context.Request.Path.Value)"/>
+    <meta property="og:url" content="@pageUrl"/>
 
     @if (!string.IsNullOrEmpty(post.ImageUrl))
     {
@@ -128,6 +131,42 @@
             color: white !important;
             text-decoration: none;
         }
+       
+.share-box {
+    flex: none;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+.share-buttons {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+.share-box a {
+    flex: auto;
+    display: inline;
+    list-style: none;
+    padding-right: 12px;
+    font-size: 45px;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #258cdf;
+    text-decoration: none;
+}
+
+.share-box .share-label {
+    padding-top: 23px;
+    padding-right: 11px;
+}
     </style>
 }
 
@@ -142,9 +181,32 @@
 <hr />
 
 <div class="byline">
+    <div class="share-box" style="float:right; ">
+        <span class="share-label hidable-xs">Share on:</span>
+                            
+        <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet on Twitter">
+            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
+                <i class="fa fa-twitter-square fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>                
+            </span>
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share on Facebook">
+            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
+                <i class="fa fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>                
+            </span>
+        </a>
+        <a href="http://www.reddit.com/submit?url=@pageUrl&amp;title=@Model.Post.Title" target="_blank" title="Submit to Reddit">
+            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
+                <i class="fa fa-reddit-square fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>                
+            </span>
+        </a>                     
+    </div>
+
     <div class="leftbox">
-        <i class="fa fa-clock-o" ></i>
-        @(AppWebUtils.WebLogDateString(post.Created,false))
+        <i class="fa fa-clock-o"></i>
+        @(AppWebUtils.WebLogDateString(post.Created, false))
         @(string.IsNullOrEmpty(post.Location) ? "" : " - from " + post.Location)
     </div>
     <div class="leftbox" style="float: right;">
@@ -157,7 +219,8 @@
         }
     </div>
 
-    <div class="leftbox" id="ShareIconContainer" style="float: right;">
+
+    @*<div class="leftbox" id="ShareIconContainer" style="float: right;">
         <div style="display:inline-block;width: 80px; overflow:hidden;">
             @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
         </div>
@@ -167,7 +230,7 @@
         <div style="display:inline-block;width: 80px; overflow:hidden;">
             @ShareButtons.GooglePlusPlusOneButton(postUrl)
         </div>
-    </div>
+    </div>*@
 </div>
 
 <div class="clearfix"></div>
@@ -219,43 +282,69 @@
 
 </style>
 <div class='borderbox'
-     style='min-height:30px;box-shadow: 2px 2px 3px #535353;
-background: linear-gradient(to bottom, rgb(255, 182, 49), #f5f5f5 60px, #f5f5f5, #ffffff );
-'>
+     style='margin-top: 20px; min-height:30px;background: linear-gradient(to bottom, rgb(255, 182, 49), #f5f5f5 60px, #f5f5f5, #ffffff );'>
 
     <div class="donate-buttons">
-            
-            
+        
+        <div class="share-box" style="float:left;margin-top: -7px; ">
+            <span class="share-label hidable-xs">Share on:</span>
+
+            <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet Post on Twitter">
+                <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
+                    <i class="fa fa-twitter-square fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>
+                </span>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share Post on Facebook">
+                <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
+                    <i class="fa fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>
+                </span>
+            </a>
+            <a href="http://www.reddit.com/submit?url=@pageUrl&amp;title=@Model.Post.Title" target="_blank" title="Submit Post to Reddit">
+                <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
+                    <i class="fa fa-reddit-square fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>
+                </span>
+            </a>
+        </div>
+
+
         @if (!string.IsNullOrEmpty(config.PayPalEmail))
         {
 
-            <div style="flex: none;">
-                <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
-                     title="Find this content useful? Consider making a small donation."
-                     alt="Make Donation"
-                     style="text-decoration: none;" src="~/images/donation.png" />
-            </div>
-            <div style="font-size: 0.8em; width: 233px" class="hidable-xs">
-                Find this content useful? <b>Consider making a small donation</b> to show your support.
-            </div>                
-        }
-
-
-        <div class="social-button-container">
-            <div>
-                @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
-            </div>
-            <div>
-                @ShareButtons.ShareOnFacebook(postUrl)
-            </div>
-            <div>
-                @ShareButtons.GooglePlusPlusOneButton(postUrl)
-            </div>
+        @*<div style="flex: none;">
+            <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg', 'PayPal');"
+                 title="Find this content useful? Consider making a small donation."
+                 alt="Make Donation"
+                 style="text-decoration: none;" src="~/images/donation.png" />
         </div>
+        <div style="font-size: 0.8em; width: 233px" class="hidable-xs">
+            Find this content useful? <b>Consider making a small donation</b> to show your support.
+        </div>*@
+
+            <div class="donate-buttons">
+
+                @*<%--  <a class="coinbase-button" style="flex: none"
+                     href="https://www.coinbase.com/checkouts/397caa2a194b7538beba7250bec24915">                
+                <img src="https://www.coinbase.com/assets/buttons/donation_small-c2401ae30dd0ad6018deadfc4bb506bf56b5b7062738ee449bee97c4e80ec70c.png" />                
+            </a>--%>*@
+
+                <div style="flex: none;">
+                    <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
+                         title="Find this content useful? Consider making a small donation."
+                         alt="Make Donation"                                              
+                         src="~/images/donation.png" />
+                </div>
+                <div style="font-size: 0.75em; width: 255px;margin-left: 10px" class="hidable-xs">
+                    Is this content useful to you? <b>Consider making a small donation</b> to show your support.               
+                </div>
+            </div>        
+        }
+        
     </div>
-
-
-    <div style="margin-top: 20px;">
+    
+    <div style="margin-top: 10px;">
         @AppWebUtils.CategoryLinks(repo)
     </div>
 
@@ -273,54 +362,55 @@ background: linear-gradient(to bottom, rgb(255, 182, 49), #f5f5f5 60px, #f5f5f5,
     <div class="clearfix"></div>
 
 
-    @foreach(var comment in post.Comments)
+    foreach (var comment in post.Comments)
     {
-            <div id="@comment.Id" class="comment">
+         <div id="@comment.Id" class="comment">
 
-                <div class="comment-panel-left">
-                    @AppWebUtils.GravatarLink(comment) 
-                                                
-                    <div class="margin-top">
-                        @if(string.IsNullOrEmpty(comment.Url))
-                        {
-                            <div>@comment.Author</div>
-                        }
-                        else                
-                        {
-                            <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url,"_WebLog",null))</div>
-                        }                            
-                        @AppWebUtils.WebLogDateString(comment.Created, false)
-                    </div>
-                </div>
+             <div class="comment-panel-left">
+                 @AppWebUtils.GravatarLink(comment)
 
-                <div class="comment-panel-right">
-                    <h3 style="margin-top: 0; font-size: 1.21em;">
-                        <a name="@comment.Id" href="#@comment.Id">#</a>
-                        @comment.Title
-                    </h3>
-                    <div class="commentbody" style="padding-top: 15px;">
-                        @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body)) : Html.Raw(comment.Body))
-                    </div>
-                    
-                    @if (isAdmin)
-                    {
-                    
-                    <div style="margin-top: 10px;">
-                        <a href='javascript:{}' data-id="@post.Id"
-                           class="hoverbutton remove-comment">
-                            <i class="fa fa-close red-color"/>
-                            Remove Comment
-                        </a>
-                        <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" class="hoverbutton commentedit" />
-                    </div>
-                    }
-                </div>
-            </div>
-            <div class="clearfix"></div>
-        }
+                 <div class="margin-top">
+                     @if (string.IsNullOrEmpty(comment.Url))
+                     {
+                         <div>@comment.Author</div>
+                     }
+                     else
+                     {
+                         <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url, "_WebLog", null))</div>
+                     }
+                     @AppWebUtils.WebLogDateString(comment.Created, false)
+                 </div>
+             </div>
 
-}
+             <div class="comment-panel-right">
+                 <h3 style="margin-top: 0; font-size: 1.21em;">
+                     <a name="@comment.Id" href="#@comment.Id">#</a>
+                     @comment.Title
+                 </h3>
+                 <div class="commentbody" style="padding-top: 15px;">
+                     @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body)) : Html.Raw(comment.Body))
+                 </div>
 
+                 @if (isAdmin)
+                 {
+
+                     <div style="margin-top: 10px;">
+                         <a href='javascript:{}' data-id="@post.Id"
+                            class="hoverbutton remove-comment">
+                             <i class="fa fa-close red-color"></i>
+                             Remove Comment
+                         </a>
+                         <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" 
+                                    class="hoverbutton commentedit"/>
+                     </div>
+                 }
+             </div>
+         </div>
+         <div class="clearfix"></div>
+     }
+        
+ }
+    
 <ww:ErrorDisplay runat="server" ID="ErrorDisplay" ErrorImage="~/app_themes/"></ww:ErrorDisplay>
 
 <button class="btn btn-primary" style="font-weight: bold; padding: 10px 30px;">

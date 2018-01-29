@@ -1,4 +1,4 @@
-﻿namespace Westwind.Weblog.PostService.Model
+﻿namespace Westwind.WeblogPostService.Model
 {
     public class MediaObject
     {

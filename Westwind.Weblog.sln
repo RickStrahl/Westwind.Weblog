@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog.Business", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog.Business.Test", "Westwind.Weblog.Business.Test\Westwind.Weblog.Business.Test.csproj", "{8CD7BC02-D292-4D82-AC74-9F1F4B47B6F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog.PostService", "Westwind.Weblog.PostService\Westwind.Weblog.PostService.csproj", "{1DC862D8-CEDA-4982-AAA5-1F5CE9575E81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.WeblogServices.Server", "Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj", "{1DC862D8-CEDA-4982-AAA5-1F5CE9575E81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.Weblog.PostServiceClient", "Westwind.Weblog.PostServiceClient\Westwind.Weblog.PostServiceClient.csproj", "{D2128489-6A71-47BF-A65C-54C04EBBD37F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Westwind.WeblogServices.Client", "Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj", "{D2128489-6A71-47BF-A65C-54C04EBBD37F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostService", "PostService", "{31F47669-5F38-4565-9C68-9FD9B9B13B43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Weblog.PostServiceTests", "Westwind.WeblogServices.Tests\Westwind.WeblogServices.Tests.csproj", "{580CA92E-ADF3-4E51-A7BE-43272F4E4957}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +49,18 @@ Global
 		{D2128489-6A71-47BF-A65C-54C04EBBD37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2128489-6A71-47BF-A65C-54C04EBBD37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2128489-6A71-47BF-A65C-54C04EBBD37F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{580CA92E-ADF3-4E51-A7BE-43272F4E4957}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{580CA92E-ADF3-4E51-A7BE-43272F4E4957}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{580CA92E-ADF3-4E51-A7BE-43272F4E4957}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{580CA92E-ADF3-4E51-A7BE-43272F4E4957}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1DC862D8-CEDA-4982-AAA5-1F5CE9575E81} = {31F47669-5F38-4565-9C68-9FD9B9B13B43}
+		{D2128489-6A71-47BF-A65C-54C04EBBD37F} = {31F47669-5F38-4565-9C68-9FD9B9B13B43}
+		{580CA92E-ADF3-4E51-A7BE-43272F4E4957} = {31F47669-5F38-4565-9C68-9FD9B9B13B43}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FEA85168-B34F-461C-8E6E-B567A571D450}

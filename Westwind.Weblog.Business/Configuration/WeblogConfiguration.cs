@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Westwind.Utilities.Configuration;
 
 namespace Westwind.Weblog.Business.Configuration
 {
@@ -42,7 +41,11 @@ namespace Westwind.Weblog.Business.Configuration
         public string PayPalEmail { get; set; }
 
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
+
         public string WeblogAuthor { get; set; } = "Rick Strahl";
+
+        public string WeblogHomeUrl { get; set; } = "https://weblog.west-wind.com";
+        public string WeblogImageUrl { get; set; } = "http://www.west-wind.com/images/WebLogBannerLogo.jpg";
     }
 
     public class EmailConfiguration

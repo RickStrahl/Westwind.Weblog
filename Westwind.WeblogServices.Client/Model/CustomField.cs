@@ -1,7 +1,7 @@
 ﻿
 using System.Diagnostics;
 
-namespace Westwind.Weblog.PostService.Model
+namespace Westwind.WeblogPostService.Model
 {
     /// <summary>
     /// Custom field info attached to a blog item.

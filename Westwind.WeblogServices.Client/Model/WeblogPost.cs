@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Westwind.Weblog.PostService.Model
+namespace Westwind.WeblogPostService.Model
 {
     public class WeblogPost
     {
@@ -115,7 +115,7 @@ namespace Westwind.Weblog.PostService.Model
         /// <summary>
         /// Optional a smaller thumbnail URL associated with this post.
         /// </summary>
-        public string ThumbnailUrl { get; set; }
+        public string ImageUrl { get; set; }
 
 
         /// <summary>

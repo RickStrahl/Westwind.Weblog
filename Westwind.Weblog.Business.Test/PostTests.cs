@@ -53,7 +53,7 @@ namespace Westwind.Weblog.Business.Test
             var ctx = GetContext();
             var postRepo = new PostBusiness(ctx, config);
 
-            var posts = await postRepo.GetLastPosts(config.PostPageSize);
+            var posts = await postRepo.GetLastPostsAsync(config.PostPageSize);
 
             Assert.IsNotNull(posts);
             Assert.IsTrue(posts.Count > 0 && posts.Count <= config.PostPageSize);
@@ -72,7 +72,7 @@ namespace Westwind.Weblog.Business.Test
             var ctx = GetContext();
             var postRepo = new PostBusiness(ctx, config);
 
-            var comments = await postRepo.GetRecentComments(config.PostPageSize);
+            var comments = await postRepo.GetRecentCommentsAsync(config.PostPageSize);
 
             Assert.IsNotNull(comments);
             Assert.IsTrue(comments.Count > 0 && comments.Count <= config.PostPageSize);

@@ -20,7 +20,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
     <ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
-    <ProjectReference Include="..\Westwind.Weblog.PostService\Westwind.Weblog.PostService.csproj" />
+    <ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />
+    <ProjectReference Include="..\Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>

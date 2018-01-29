@@ -50,6 +50,12 @@ Websurge-Request-Name: New Post
 
 ------------------------------------------------------------------
 
+GET http://localhost:5004/rss HTTP/1.1
+Accept-Encoding: gzip,deflate
+Authorization: Bearer peucqep08vafjjcz
+
+------------------------------------------------------------------
+
 
 ----- Start WebSurge Options -----
 

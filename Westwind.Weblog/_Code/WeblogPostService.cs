@@ -1,35 +1,35 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Westwind.Utilities;
-using Westwind.Utilities.Logging;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Models;
-using Westwind.Weblog.PostService;
-using Westwind.Weblog.PostService.Model;
-using WeblogPost = Westwind.Weblog.PostService.Model.WeblogPost;
+using Westwind.WeblogPostService.Model;
+using Westwind.WeblogServices.Server;
+using Westwind.WeblogServices.Server.Rss;
 
 namespace Westwind.AspNetCore.Controllers
 {
     /// <summary>
-    /// 
+    /// Handles upload and download of posts, media objects and categories.
     /// </summary>    
     [Route("/api/posts")]
-    public class PostUploadService : WeblogPostServiceBase
+    public class WeblogPostService : WeblogPostServiceBase
     {
         private readonly PostBusiness PostBusiness;
         UserBusiness UserBusiness { get;  }
         IHostingEnvironment Host { get; }
 
-        public PostUploadService(UserBusiness userBus, 
+        public WeblogPostService(UserBusiness userBus, 
             PostBusiness postBusiness, 
             IHostingEnvironment host)
         {
@@ -71,11 +71,20 @@ namespace Westwind.AspNetCore.Controllers
                 postId = 0;
 
             Post lastPost = null;
-            if (postId == 0)
-                lastPost = PostBusiness.LoadLastPost();
+            Post newPost = null;
+            if (postId > 0)
+            {
+                
+                newPost = PostBusiness.Load(postId);
+            }
 
-            var newPost = PostBusiness.Create();
-            newPost.Id = postId;
+            if (newPost == null)
+            {
+                newPost = PostBusiness.Create();
+                lastPost = PostBusiness.LoadLastPost();
+                newPost.Location = lastPost.Location;
+            }
+
             newPost.Title = post.Title;
             newPost.Body = post.Body;
             newPost.Abstract = post.Abstract;
@@ -85,7 +94,7 @@ namespace Westwind.AspNetCore.Controllers
             newPost.ImageUrl = post.PostImageUrl;
 
             
-            if (!string.IsNullOrEmpty(newPost.SafeTitle))
+            if (string.IsNullOrEmpty(newPost.SafeTitle))
                 newPost.SafeTitle = PostBusiness.GetSafeTitle(newPost.Title);
 
             if (string.IsNullOrEmpty(post.Location) && lastPost != null)
@@ -96,11 +105,12 @@ namespace Westwind.AspNetCore.Controllers
 
 
 
-                newPost.Keywords = post.Keywords;
+            newPost.Keywords = post.Keywords;
+
             if (post.Categories.Count > 0)
                 newPost.Categories = string.Join(',', post.Categories);
-
-            if (post.DateCreated.Year > 2000)
+            
+            if (newPost.Created.Year < 2000)
                 newPost.Created = post.DateCreated;
 
             if (post.CustomFields.Count > 0)
@@ -144,6 +154,17 @@ namespace Westwind.AspNetCore.Controllers
 
             if (media.Data != null)
             {
+
+                // we only allow images
+                using (MemoryStream ms = new MemoryStream(media.Data))
+                {
+                    using (Bitmap bitmap = new Bitmap(ms))
+                    {
+                        if (bitmap == null || bitmap.Width < 1)
+                            throw new UnauthorizedAccessException("Only image uploads are allowed.");
+                    }
+                }
+
                 ImagePhysicalPath = Path.Combine(ImagePhysicalPath, media.Name);
                 string PathOnly = Path.GetDirectoryName(ImagePhysicalPath);
                 if (!Directory.Exists(PathOnly))
@@ -201,7 +222,7 @@ namespace Westwind.AspNetCore.Controllers
         [Route("list")]
         public override IList<WeblogMinimalPost> GetPosts([FromBody] PostListFilter listFilter)
         {            
-            var posts = PostBusiness.GetLastPostsSync(listFilter.NumberOfPosts);
+            var posts = PostBusiness.GetLastPosts(listFilter.NumberOfPosts);
 
             var postList = new List<WeblogMinimalPost>();
             foreach (var post in posts)
@@ -214,12 +235,84 @@ namespace Westwind.AspNetCore.Controllers
                     Created = post.Created,
                     Url = post.Url,
                     ImageUrl = post.ImageUrl,
-                    CommentCount = post.CommentCount,
+                    CommentCount = post.CommentCount,                    
                 });
             }
             
             return postList;
         }
+
+        [HttpGet]
+        [Route("/rss")]
+        public async Task<ActionResult> RssFeed(bool force)
+        {
+            var config = PostBusiness.Configuration;
+
+            var rssFeed = new RssFeed()
+            {
+                Title = config.ApplicationName,
+                Link = config.WeblogHomeUrl,
+                Copyright = "(c) West Wind Technologies 2006-" + DateTime.Now.Year,
+                Description = "Wind, waves, code and everything in between",
+                 Generator = "Rick Strahl's West Wind Weblog"    ,
+                PubDate = DateTime.UtcNow,
+                ImageUrl = config.WeblogImageUrl                                                
+            };
+            
+
+            var posts = await PostBusiness.GetLastPostsAsync(10, includeBody: true);
+            var lastPost = posts.FirstOrDefault();
+            if (lastPost != null)
+                rssFeed.LastUpdate = lastPost.Created.ToUniversalTime();
+
+            int count = 0;
+            foreach (var post in posts)
+            {
+                count++;
+
+                var rssItem = new RssItem()
+                {
+                    Title = post.Title,
+                    CommentCount = post.CommentCount,
+                    Link = PostBusiness.GetPostUrl(post,fullyQualified: true),                    
+                    Permalink = post.Url,
+                    PublishDate = post.Created,
+                    Guid = post.Id.ToString()
+                };
+                rssItem.Author.Name = post.Author ?? config.WeblogAuthor;
+                rssItem.CommentsUrl = rssItem.Link + "#Comments";
+                
+
+                if (!string.IsNullOrEmpty(post.Categories))                
+                    rssItem.Categories = post.Categories
+                                    .Split('.', StringSplitOptions.RemoveEmptyEntries)
+                                    .ToList();
+                
+                
+                //string body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.SponsorSquareAd, 1, true);
+                
+                string body = post.Body;
+                if (!string.IsNullOrEmpty(body))
+                    body = body
+                        .Replace("##AD##", "")
+                        .Replace("##PAGEBREAK##", "");
+
+                if (count > 3)
+                    body = post.Abstract ?? StringUtils.TextAbstract(body, 250);
+
+                rssItem.Body = body;
+
+                
+                rssFeed.Items.Add(rssItem);
+
+                
+
+                
+            }
+            
+            return Content(rssFeed.SerializeToString(), new MediaTypeHeaderValue("text/xml"));
+        }
+
         
     }
 

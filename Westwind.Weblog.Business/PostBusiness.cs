@@ -24,7 +24,8 @@ namespace Westwind.Weblog.Business
         }
 
         #region Post Retrieval
-        public async Task<List<Post>> GetLastPosts(int postCount = 50)
+
+        public async Task<List<Post>> GetLastPostsAsync(int postCount = 50, bool includeBody=false )
         {            
             return await Context.Posts
                 .Include("Comments")
@@ -39,12 +40,13 @@ namespace Westwind.Weblog.Business
                    SafeTitle = p.SafeTitle,
                    Location = p.Location,
                    CommentCount  = p.CommentCount,
-                   Created = p.Created
+                   Created = p.Created,
+                   Body = includeBody ? p.Body : null
                 })
                 .ToListAsync();
         }
 
-        public List<Post> GetLastPostsSync(int postCount = 50)
+        public List<Post> GetLastPosts(int postCount = 50, bool includeBody = false)
         {
             return Context.Posts
                 .Include("Comments")
@@ -59,12 +61,13 @@ namespace Westwind.Weblog.Business
                     SafeTitle = p.SafeTitle,
                     Location = p.Location,
                     CommentCount = p.CommentCount,
-                    Created = p.Created
+                    Created = p.Created,
+                    Body = includeBody ? p.Body : null
                 })
                 .ToList();
         }
-
-        public async Task<List<Comment>> GetRecentComments(int postCount = 30)
+        
+        public async Task<List<Comment>> GetRecentCommentsAsync(int postCount = 30)
         {
             return await Context.Comments
                 .OrderByDescending(c => c.Created)
@@ -173,7 +176,7 @@ namespace Westwind.Weblog.Business
         /// Returns the full URL to this entry entity.
         /// </summary>
         /// <returns></returns>
-        public string GetPostUrl(Post post = null)
+        public string GetPostUrl(Post post = null, bool fullyQualified = false)
         {
             if (post == null)
                 post = Entity;
@@ -182,22 +185,26 @@ namespace Westwind.Weblog.Business
             if (!string.IsNullOrEmpty(post.RedirectUrl))
                 return post.RedirectUrl;
 
-            return GetPostUrl(post.SafeTitle, post.Created);
+            return GetPostUrl(post.SafeTitle, post.Created, fullyQualified);
         }
 
         /// <summary>
         /// Returns a POST URL from a safe Title and entered date
         /// </summary>
         /// <param name="entered"></param>
-        /// <param name="safeTitle"></param>
+        /// <param name="fullyQualified">If true returns a full http(s) url</param>
         /// <returns></returns>
-        public string GetPostUrl(string safeTitle, DateTime entered, bool force = false)
+        public string GetPostUrl(string safeTitle, DateTime entered, bool fullyQualified = false)
         {
             DateTime date = entered;
             string url = $"{Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";                         
-            return url;
-        }
 
+            if (!fullyQualified)
+                return url;
+
+            return Configuration.WeblogHomeUrl + url;
+        }
+        
         /// <summary>
         /// Returns a URL safe string for the title
         /// </summary>

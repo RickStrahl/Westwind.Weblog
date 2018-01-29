@@ -34,7 +34,7 @@ namespace Westwind.Weblog
         [Route("posts")]
         public async Task<IActionResult> Index()
         {
-            var posts = await PostRepo.GetLastPosts(Config.HomePagePostCount);
+            var posts = await PostRepo.GetLastPostsAsync(Config.HomePagePostCount);
             return View(new PostViewModel { Posts = posts, PostRepo = PostRepo });
         }
 
@@ -55,7 +55,7 @@ namespace Westwind.Weblog
         [Route("comments")]
         public async Task<IActionResult> RecentComments()
         {
-            var comments = await PostRepo.GetRecentComments(Config.HomePagePostCount);
+            var comments = await PostRepo.GetRecentCommentsAsync(Config.HomePagePostCount);
             return View(new PostViewModel { Comments = comments, PostRepo = PostRepo});
         }
     

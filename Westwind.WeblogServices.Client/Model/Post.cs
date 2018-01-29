@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 
-namespace Westwind.Weblog.PostService.Model
+namespace Westwind.WeblogPostService.Model
 {
     public enum PostStatuses
     {

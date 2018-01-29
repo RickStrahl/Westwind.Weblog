@@ -54,7 +54,7 @@ namespace Westwind.Weblog.PostServiceTests
             var post = new WeblogPost()
             {
                 PostId = "1683236",
-                Title = "UPDATED!!!! A new Test Post",
+                Title = "UPDATED! A new Test Post",
                 Body = "This is a long post with pointless points.",
                 Abstract = "This is an abstracted abstract that's just as pointless - and longer.",
                 Author = "Rick Strahl",
@@ -64,7 +64,7 @@ namespace Westwind.Weblog.PostServiceTests
                 ImageUrl = "http://localhost:5004/images/RickHero1.jpg", 
                 Keywords = "long,post,pointless"
             };
-            post.Categories.AddRange(new[] {"Life", ".NET"});
+            post.Categories = "Life., .NET, ASP.NET";
 
             var client = new WeblogPostServiceClient()
             {
@@ -77,10 +77,6 @@ namespace Westwind.Weblog.PostServiceTests
 
             Assert.IsNotNull(postId);
             Assert.IsNotEmpty(postId);
-
-
-            
-
         }
     }
 }

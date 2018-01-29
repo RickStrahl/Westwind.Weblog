@@ -3,14 +3,18 @@ using System.Collections.Generic;
 
 namespace Westwind.WeblogPostService.Model
 {
+
+    /// <summary>
+    /// An individual Weblog post that is posted or 
+    /// retrieved from the target site
+    /// </summary>
     public class WeblogPost
     {
         public WeblogPost()
         {
             DateCreated = DateTime.Now;
             
-            CustomFields = new Dictionary<string, string>();
-            Categories = new List<string>();            
+            CustomFields = new Dictionary<string, string>();            
             PostStatus = PostStatuses.Published;            
         }
 
@@ -84,9 +88,9 @@ namespace Westwind.WeblogPostService.Model
 
 
         /// <summary>
-        /// Post categories for this post
+        /// Post categories for this post as a comma delimited list
         /// </summary>
-        public List<string> Categories { get; set; }
+        public string Categories { get; set; }
 
         
         /// <summary>
@@ -106,17 +110,16 @@ namespace Westwind.WeblogPostService.Model
         /// </summary>
         public PostStatuses PostStatus { get; set; }
 
-
+        
         /// <summary>
-        /// Optional image URL to an image that is associated with this post.        
+        /// Image associated with this post
         /// </summary>
-        public string PostImageUrl { get; set; }
+        public string ImageUrl { get; set; }
 
         /// <summary>
         /// Optional a smaller thumbnail URL associated with this post.
         /// </summary>
-        public string ImageUrl { get; set; }
-
+        public string ThumbnailUrl { get; set; }
 
         /// <summary>
         /// Attach an Author to the post
@@ -127,9 +130,7 @@ namespace Westwind.WeblogPostService.Model
         /// Attach a location to the p
         /// </summary>
         public string Location { get; set; }
-        
-
-
+                
         /// <summary>
         /// Returns the Title of the topic
         /// </summary>

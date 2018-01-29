@@ -14,5 +14,9 @@ namespace Westwind.Weblog
 
         public PostBusiness PostRepo { get; set; }
 
+        public int PageToDisplay { get; set; } = 1;
+
+        public int TotalPages { get; set; } = 1;
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿@using System.Security.Claims
+@inject WeblogConfiguration Configuration
 @{
     string FeedUrl = "http://feeds.feedburner.com/rickstrahl";
+
 }
 <!DOCTYPE HTML>
 <html>
@@ -20,9 +22,10 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Rick Strahl" />
     <meta name="twitter:description" content="Life, Code, Surf and everything in between" />
-    <meta name="twitter:image" content="images/rick.jpg" />
+    <meta name="twitter:image" content="@(Configuration.WeblogHomeUrl)/config.images/rick.jpg" />
     <meta name="twitter:creator" content="@@rickstrahl" />
-    <meta name="twitter:domain" content="west-wind.com" />
+    <meta name="twitter:domain" content="weblog.west-wind.com" />
+
 
     <style type="text/css">
         .blogimgtag {

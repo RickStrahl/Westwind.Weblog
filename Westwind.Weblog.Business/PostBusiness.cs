@@ -185,17 +185,25 @@ namespace Westwind.Weblog.Business
             if (!string.IsNullOrEmpty(post.RedirectUrl))
                 return post.RedirectUrl;
 
+            if (string.IsNullOrEmpty(post.SafeTitle))
+                post.SafeTitle = GetSafeTitle(post.Title);
+            
             return GetPostUrl(post.SafeTitle, post.Created, fullyQualified);
         }
 
         /// <summary>
         /// Returns a POST URL from a safe Title and entered date
         /// </summary>
-        /// <param name="entered"></param>
+        /// <param name="safeTitle">
+        /// An encoded safe title that replaces spaces with -
+        /// and all other punction by stripping
+        /// Use GetSlug() to create a safetitle
+        /// </param>
+        /// <param name="entered">Created date of the post</param>
         /// <param name="fullyQualified">If true returns a full http(s) url</param>
         /// <returns></returns>
         public string GetPostUrl(string safeTitle, DateTime entered, bool fullyQualified = false)
-        {
+        { 
             DateTime date = entered;
             string url = $"{Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";                         
 
@@ -205,36 +213,6 @@ namespace Westwind.Weblog.Business
             return Configuration.WeblogHomeUrl + url;
         }
         
-        /// <summary>
-        /// Returns a URL safe string for the title
-        /// </summary>
-        /// <param name="title"></param>
-        /// <returns></returns>
-        public string GetSlug(string title = null)
-        {
-            if (title == null)
-                title = Entity.Title;
-
-            title = WebUtility.HtmlDecode(title);
-
-            StringBuilder sb = new StringBuilder();
-
-            foreach (char ch in title)
-            {
-                if (ch == 32)
-                    sb.Append("-");
-                else if (char.IsLetterOrDigit(ch))
-                    sb.Append(ch);
-            }
-
-            sb.Replace("---", "-");
-            sb.Replace("--", "-");
-
-            return sb.ToString();
-        }
-        #endregion
-
-        #region Utility
         /// <summary>
         /// Returns a URL safe string for the title
         /// </summary>

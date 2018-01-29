@@ -1,9 +1,9 @@
 ﻿@model Westwind.Weblog.PostViewModel
 @{
-    ViewData["Title"] = Model.PostRepo.WeblogConfiguration.ApplicationName;
+    var config = Model.PostRepo.Configuration;
+    ViewData["Title"] = config.ApplicationName;
     var posts = Model.Posts;
     var repo = Model.PostRepo;
-    var config = Model.PostRepo.WeblogConfiguration;
 }
 
 

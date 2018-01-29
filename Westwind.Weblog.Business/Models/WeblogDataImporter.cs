@@ -77,6 +77,10 @@ namespace Westwind.Weblog.Business.Models
 
                 post.Id = pk;
 
+                post.Created = (DateTime) row["Entered"];
+                post.CommentCount = (int) row["Feedback"];
+                post.ImageUrl = row["FeaturedImageUrl"] as string;
+                
                 context.Posts.Add(post);
 
                 // save on every 20th record to avoid 

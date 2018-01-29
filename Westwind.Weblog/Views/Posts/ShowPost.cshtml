@@ -3,7 +3,7 @@
 @{
     var post = Model.Post;
     var repo = Model.PostRepo;
-    var config = Model.PostRepo.WeblogConfiguration;
+    var config = Model.PostRepo.Configuration;
 
     ViewData["Title"] = post.Title;
     string postUrl = repo.GetPostUrl(post);
@@ -14,13 +14,21 @@
 
 @section headers
 {
+    @if (!string.IsNullOrEmpty(post.ImageUrl))
+    {
+        <meta name = "twitter:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>        
+    }
+
+
     <meta property="og:title" content="@post.Title %>"/>
     <meta property="og:description" content="@post.Abstract"/>
-    <meta property="og:url" content="@Context.Request.Path.Value"/>
+    <meta property="og:type" content="article" />
+    <meta property="article:author" content="https://facebook.com/rickstrahl" />
+    <meta property="og:url" content="@(config.WeblogHomeUrl + Context.Request.Path.Value)"/>
 
     @if (!string.IsNullOrEmpty(post.ImageUrl))
     {
-        <meta property="og:image" content="@post.ImageUrl"/>
+        <meta property="og:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>
         <meta property="og:image:secure_url" content="@post.ImageUrl.Replace("http:", "https:")"/>
     }
 
@@ -277,8 +285,11 @@ background: linear-gradient(to bottom, rgb(255, 182, 49), #f5f5f5 60px, #f5f5f5,
                         @if(string.IsNullOrEmpty(comment.Url))
                         {
                             <div>@comment.Author</div>
-                        }  
+                        }
                         else
+                        {
+                            
+                        }
                         {
                             <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url,"_WebLog",null))</div>
                         }                            

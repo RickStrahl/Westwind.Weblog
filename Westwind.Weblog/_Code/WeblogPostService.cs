@@ -91,7 +91,7 @@ namespace Westwind.AspNetCore.Controllers
             newPost.Markdown = post.RawPostText;
             newPost.Author = post.Author;            
             newPost.Active = post.PostStatus == PostStatuses.Published;
-            newPost.ImageUrl = post.PostImageUrl;
+            newPost.ImageUrl = post.ImageUrl;
 
             
             if (string.IsNullOrEmpty(newPost.SafeTitle))
@@ -102,13 +102,9 @@ namespace Westwind.AspNetCore.Controllers
 
             if (string.IsNullOrEmpty(newPost.Author))
                 newPost.Author = UserBusiness.Configuration.WeblogAuthor;
-
-
-
+            
             newPost.Keywords = post.Keywords;
-
-            if (post.Categories.Count > 0)
-                newPost.Categories = string.Join(',', post.Categories);
+            newPost.Categories = post.Categories;
             
             if (newPost.Created.Year < 2000)
                 newPost.Created = post.DateCreated;
@@ -208,12 +204,12 @@ namespace Westwind.AspNetCore.Controllers
                 Body = post.Body,
                 RawPostText = post.Markdown,
                 DateCreated = post.Created,
-                Url = post.Url,
-                PermaLink = post.Url               
+                Url = PostBusiness.GetPostUrl(post),                
             };
+            blogPost.PermaLink = blogPost.Url;
 
             if (!string.IsNullOrEmpty(post.Categories))
-                blogPost.Categories = post.Categories.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+                blogPost.Categories = post.Categories;
 
             return blogPost;
         }
@@ -233,7 +229,7 @@ namespace Westwind.AspNetCore.Controllers
                     Title = post.Title,
                     Abstract = post.Abstract,
                     Created = post.Created,
-                    Url = post.Url,
+                    Url = PostBusiness.GetPostUrl(post),
                     ImageUrl = post.ImageUrl,
                     CommentCount = post.CommentCount,                    
                 });
@@ -275,7 +271,7 @@ namespace Westwind.AspNetCore.Controllers
                     Title = post.Title,
                     CommentCount = post.CommentCount,
                     Link = PostBusiness.GetPostUrl(post,fullyQualified: true),                    
-                    Permalink = post.Url,
+                    Permalink = PostBusiness.GetPostUrl(post),
                     PublishDate = post.Created,
                     Guid = post.Id.ToString()
                 };

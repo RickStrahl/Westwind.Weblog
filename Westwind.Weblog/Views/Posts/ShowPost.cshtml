@@ -8,8 +8,8 @@
     ViewData["Title"] = post.Title;
     string postUrl = repo.GetPostUrl(post);
 
-    // TODO: determine admin access
-    bool isAdmin = false;
+    var appUser = User.GetAppUser();
+    bool isAdmin = appUser.IsAdmin;
 }
 
 @section headers
@@ -31,7 +31,6 @@
         <meta property="og:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>
         <meta property="og:image:secure_url" content="@post.ImageUrl.Replace("http:", "https:")"/>
     }
-
 
     <style>        
         .comment > a:first-child { text-decoration: none; }
@@ -286,10 +285,7 @@ background: linear-gradient(to bottom, rgb(255, 182, 49), #f5f5f5 60px, #f5f5f5,
                         {
                             <div>@comment.Author</div>
                         }
-                        else
-                        {
-                            
-                        }
+                        else                
                         {
                             <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url,"_WebLog",null))</div>
                         }                            

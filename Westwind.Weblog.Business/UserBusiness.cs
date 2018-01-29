@@ -68,16 +68,22 @@ namespace Westwind.Weblog.Business.Models
                 {
                     SetError("Invalid username or password.");
                     return null;
-                }                               
+                }
 
                 // assumes only no dupe email addresses
                 var user = GetUserByEmail(username);
                 if (user == null)
+                {
+                    SetError("Invalid username or password.");
                     return null;
+                }                
 
                 string passwordHash = HashPassword(password, user.Id.ToString());
-                if (user.Password != passwordHash)
+                if (user.Password != passwordHash && user.Password != password)
+                {
+                    SetError("Invalid username or password.");
                     return null;
+                }            
 
                 return user;
             }

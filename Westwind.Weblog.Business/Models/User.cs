@@ -17,8 +17,15 @@ namespace Westwind.Weblog.Business.Models
         public string Password
         {
             get { return _password; }
-            set => _password = UserBusiness.HashPassword(value, Id.ToString());
+            set
+            {
+                if (Id > 0)
+                    _password = UserBusiness.HashPassword(value, Id.ToString());
+                else
+                    _password = value;
+            }
         }
+
         [XmlIgnore]
         private string _password;
 

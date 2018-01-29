@@ -131,6 +131,18 @@ namespace Westwind.Weblog.Business.Models
 
             context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments OFF");
 
+            var user = new User()
+            {
+                Fullname = "Rick Strahl",      
+                Password = "testing",
+                Username = "rstrahl@west-wind.com",
+                IsAdmin = true
+            };
+            context.Users.Add(user);
+            context.SaveChanges();
+
+            user.Password = "testing"; // add again to force encryption with ID
+            context.SaveChanges();
 
             return count;
         }

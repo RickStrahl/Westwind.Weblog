@@ -1,9 +1,9 @@
 ﻿@model Westwind.Weblog.PostViewModel
 @{
-    ViewData["Title"] = Model.PostRepo.WeblogConfiguration.ApplicationName;
+    ViewData["Title"] = Model.PostRepo.Configuration.ApplicationName;
     var comments = Model.Comments;
     var repo = Model.PostRepo;
-    var config = Model.PostRepo.WeblogConfiguration;
+    var config = Model.PostRepo.Configuration;
     bool isAdmin = false;
 }
 

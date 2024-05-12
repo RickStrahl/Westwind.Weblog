@@ -14,7 +14,7 @@ using Westwind.Weblog.Business.Configuration;
 namespace Westwind.Weblog
 {
     [Authorize]
-    public class AdminController : AppBaseController
+    public class AdminController : WeblogBaseController
     {
         WeblogConfiguration Configuration { get; }
         public IHostingEnvironment Host { get; }
@@ -33,7 +33,7 @@ namespace Westwind.Weblog
             
         }
 
-        [HttpGet("Admin/Index")]        
+        [HttpGet("admin/index")]        
         public IActionResult Index()
         {
             var model = CreateViewModel<AdminViewModel>();
@@ -83,7 +83,7 @@ namespace Westwind.Weblog
         }
     }
 
-    public class AdminViewModel : AppBaseViewModel
+    public class AdminViewModel : WeblogBaseViewModel
     {
         public string Message { get; set; }
 

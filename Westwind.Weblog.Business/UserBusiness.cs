@@ -21,7 +21,7 @@ namespace Westwind.Weblog.Business.Models
         /// <summary>
         /// Entity Framework context instance
         /// </summary>
-        public WeblogContext Context;
+        public  new WeblogContext Context;
 
         /// <summary>
         /// Weblog application configuration instance
@@ -205,7 +205,6 @@ namespace Westwind.Weblog.Business.Models
         public static string HashPassword(string password, string uniqueSalt,
             string appSalt = "#254-31%*36@")
         {
-
             // don't allow empty password
             if (string.IsNullOrEmpty(password))
                 return string.Empty;
@@ -229,7 +228,9 @@ namespace Westwind.Weblog.Business.Models
 
         #region Validations
 
-        public bool Validate(User user, bool isNewUser = false)
+    
+
+        public new bool Validate(User user, bool isNewUser = false)
         {
             ValidationErrors.Clear();
 

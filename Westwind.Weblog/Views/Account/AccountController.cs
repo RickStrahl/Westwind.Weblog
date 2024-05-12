@@ -14,7 +14,7 @@ using Westwind.Weblog.Business.Models;
 namespace Westwind.Weblog.Views.Account
 {
     [Authorize]
-    public class AccountController : AppBaseController
+    public class AccountController : WeblogBaseController
     {
         private readonly UserBusiness _userBus;
 

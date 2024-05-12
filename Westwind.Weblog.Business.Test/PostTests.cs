@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Westwind.Weblog.Business.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using NUnit.Framework.Legacy;
 
 namespace Westwind.Weblog.Business.Test
 {
@@ -37,7 +38,7 @@ namespace Westwind.Weblog.Business.Test
             var postRepo = new PostBusiness(ctx, new Configuration.WeblogConfiguration());
             var post = await postRepo.GetPost(slug);
 
-            Assert.IsNotNull(post);
+            ClassicAssert.IsNotNull(post);
 
             Console.WriteLine($"{post.Title} - {post.Markdown}");
         }
@@ -55,8 +56,8 @@ namespace Westwind.Weblog.Business.Test
 
             var posts = await postRepo.GetLastPostsAsync(config.PostPageSize);
 
-            Assert.IsNotNull(posts);
-            Assert.IsTrue(posts.Count > 0 && posts.Count <= config.PostPageSize);
+            ClassicAssert.IsNotNull(posts);
+            ClassicAssert.IsTrue(posts.Count > 0 && posts.Count <= config.PostPageSize);
             foreach(var post in posts)
                 Console.WriteLine(post.Title);
         }
@@ -74,8 +75,8 @@ namespace Westwind.Weblog.Business.Test
 
             var comments = await postRepo.GetRecentCommentsAsync(config.PostPageSize);
 
-            Assert.IsNotNull(comments);
-            Assert.IsTrue(comments.Count > 0 && comments.Count <= config.PostPageSize);
+            ClassicAssert.IsNotNull(comments);
+            ClassicAssert.IsTrue(comments.Count > 0 && comments.Count <= config.PostPageSize);
             foreach (var comment in comments)
                 Console.WriteLine(comment.Title);
         }

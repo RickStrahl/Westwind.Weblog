@@ -4,13 +4,14 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
 using Westwind.WeblogPostService.Model;
 
 namespace Westwind.WeblogServices.Server
 {
-    [UnhandledApiExceptionFilter]
-    public abstract class WeblogPostServiceBase : Controller
+
+    public abstract class WeblogPostServiceBase : BaseApiController
     {
         /// <summary>
         /// Optional internal value that holds the Authorization token

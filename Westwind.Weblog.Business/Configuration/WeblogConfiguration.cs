@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Westwind.Utilities.Configuration;
 
 namespace Westwind.Weblog.Business.Configuration
 {
-    public class WeblogConfiguration
+    public class WeblogConfiguration : Westwind.Utilities.Configuration.AppConfiguration
     {
         public static WeblogConfiguration Current { get; set; }
 
@@ -40,12 +41,24 @@ namespace Westwind.Weblog.Business.Configuration
 
         public string PayPalEmail { get; set; }
 
-        public EmailConfiguration Email { get; set; } = new EmailConfiguration();
-
         public string WeblogAuthor { get; set; } = "Rick Strahl";
 
         public string WeblogHomeUrl { get; set; } = "https://weblog.west-wind.com";
         public string WeblogImageUrl { get; set; } = "http://www.west-wind.com/images/WebLogBannerLogo.jpg";
+
+        public EmailConfiguration Email { get; set; } = new EmailConfiguration();
+
+        public SystemConfiguration System { get; set; } = new SystemConfiguration();
+
+
+        protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
+        {
+            var provider = new JsonFileConfigurationProvider<WeblogConfiguration>()
+            {
+                JsonConfigurationFile = "_weblog-configuration.json"
+            };
+            return provider;
+        }
     }
 
     public class EmailConfiguration
@@ -55,8 +68,29 @@ namespace Westwind.Weblog.Business.Configuration
 
         public string MailServerPassword { get; set; }
 
+        public bool MailServerUseSsl { get; set; }
+
+        public bool SendAdminEmails { get; set; }
+
         public string SenderName { get; set; }
         public string SenderEmail { get; set; }
         public string AdminSenderEmail { get; set; }
+        
     }
+
+    public class SystemConfiguration
+    { 
+        public bool LiveReloadEnabled { get; set; } 
+
+        public bool ShowConsoleDbCommands { get; set; }
+        public ErrorDisplayModes ErrorDisplayMode { get; set; }
+    }
+
+    public enum ErrorDisplayModes
+    {
+        Application,
+        ApplicationPlusDetail,
+        Developer
+    }
+
 }

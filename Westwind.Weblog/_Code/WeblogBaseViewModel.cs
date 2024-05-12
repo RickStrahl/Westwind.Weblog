@@ -8,7 +8,7 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog
 {
-    public class AppBaseViewModel : BaseViewModel
+    public class WeblogBaseViewModel : BaseViewModel
     {        
     }
 }

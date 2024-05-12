@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Westwind.AspNetCore;
+using Westwind.AspNetCore.Security;
 using Westwind.Utilities;
 using Westwind.Weblog;
 

@@ -10,7 +10,7 @@ namespace Westwind.Weblog.Business.Test
     [TestFixture]
     public class AdminTests
     {
-        public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;";
+        public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;encrypt=false";
 
         [Test]
         public void DeleteOldImages()
@@ -42,7 +42,7 @@ namespace Westwind.Weblog.Business.Test
 
             var ctx = new WeblogContext(options);
 
-            WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=Weblog;integrated security=true;");
+            WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=Weblog;integrated security=true;encrypt=false");
             return ctx;
         }
 

@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Westwind.Weblog.Business.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using NUnit.Framework.Legacy;
 using Westwind.Weblog.Business.Configuration;
 
 namespace Westwind.Weblog.Business.Test
@@ -20,12 +21,12 @@ namespace Westwind.Weblog.Business.Test
             var userBus = new UserBusiness(ctx, WeblogConfiguration.Current);
 
             var user = userBus.GetUserByEmail("rstrahl@west-wind.com");
-            Assert.IsNotNull(user);
+            ClassicAssert.IsNotNull(user);
 
             user.Password = "testing";
 
             var updatedUser = userBus.SaveUser(user);
-            Assert.IsNotNull(updatedUser, userBus.ErrorMessage);
+            ClassicAssert.IsNotNull(updatedUser, userBus.ErrorMessage);
 
             Console.WriteLine(updatedUser.Password);
         }
@@ -38,7 +39,7 @@ namespace Westwind.Weblog.Business.Test
             var userBus = new UserBusiness(ctx, WeblogConfiguration.Current);
 
             bool result = userBus.AuthenticateUser("rstrahl@west-wind.com", "testing");
-            Assert.IsTrue(result,userBus.ErrorMessage);            
+            ClassicAssert.IsTrue(result,userBus.ErrorMessage);            
         }
 
 
@@ -49,16 +50,16 @@ namespace Westwind.Weblog.Business.Test
             var userBus = new UserBusiness(ctx, WeblogConfiguration.Current);
 
             bool result = userBus.AuthenticateUser("rstrahl@west-wind.com", "Bogus");
-            Assert.IsFalse(result, userBus.ErrorMessage);
+            ClassicAssert.IsFalse(result, userBus.ErrorMessage);
 
             result = userBus.AuthenticateUser("rstrahl@west-wind.com", "");
-            Assert.IsFalse(result, userBus.ErrorMessage);
+            ClassicAssert.IsFalse(result, userBus.ErrorMessage);
 
             result = userBus.AuthenticateUser("rstrahl@west-wind.com", null);
-            Assert.IsFalse(result, userBus.ErrorMessage);
+            ClassicAssert.IsFalse(result, userBus.ErrorMessage);
 
             result = userBus.AuthenticateUser(null,"testing");
-            Assert.IsFalse(result, userBus.ErrorMessage);
+            ClassicAssert.IsFalse(result, userBus.ErrorMessage);
         }
 
         [Test]
@@ -69,8 +70,8 @@ namespace Westwind.Weblog.Business.Test
 
             string email = "rstrahl@west-wind.com";
             User result = userBus.AuthenticateAndRetrieveUser(email, "testing");
-            Assert.IsNotNull(result, userBus.ErrorMessage);
-            Assert.AreEqual(result.Username, email);
+            ClassicAssert.IsNotNull(result, userBus.ErrorMessage);
+            ClassicAssert.AreEqual(result.Username, email);
         }
 
         WeblogContext GetContext()

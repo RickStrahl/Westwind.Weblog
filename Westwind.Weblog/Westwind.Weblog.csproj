@@ -1,30 +1,25 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>826df5fe-bc20-4b17-9e36-39ccd496c1aa</UserSecretsId>
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />    
-    <PackageReference Include="Westwind.AspNetCore" Version="3.0.13" />
-    <PackageReference Include="Westwind.Utilities" Version="3.0.10" />
-    
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.4" />
+	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+	  <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
-  </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Westwind.AspNetCore\Westwind.AspNetCore\Westwind.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
     <ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
     <ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />
     <ProjectReference Include="..\Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
-  </ItemGroup>
+
 </Project>

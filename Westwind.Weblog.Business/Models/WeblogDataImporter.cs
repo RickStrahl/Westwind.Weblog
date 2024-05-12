@@ -65,7 +65,7 @@ namespace Westwind.Weblog.Business.Models
 
             var count = 0;
 
-            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Posts ON");
+            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Posts ON");
 
             foreach (DataRow row in data.Rows)
             {
@@ -92,12 +92,12 @@ namespace Westwind.Weblog.Business.Models
             }
             context.SaveChanges();
 
-            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Posts OFF");
+            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Posts OFF");
             
             data = sql.ExecuteTable("weblogcomments", "select * from blog_entries where EntryType=3");
 
             count = 0;
-            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments ON");
+            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Comments ON");
 
             foreach (DataRow row in data.Rows)
             {
@@ -132,7 +132,7 @@ namespace Westwind.Weblog.Business.Models
             // save remainder
             context.SaveChanges();
 
-            context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Comments OFF");
+            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Comments OFF");
 
             var user = new User()
             {

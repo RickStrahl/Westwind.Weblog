@@ -1,0 +1,24 @@
+﻿{
+  "ApplicationName": "Rick Strahl's Weblog (Custom)",
+  "ConnectionString": "server=.;database=WebLogCore;integrated security=true;encrypt=false",
+  "ApplicationBasePath": "/",
+  "PostPageSize": 7600,
+  "HomePagePostCount": 25,
+  "PayPalEmail": "",
+  "WeblogAuthor": "Rick Strahl",
+  "WeblogHomeUrl": "https://weblog.west-wind.com",
+  "WeblogImageUrl": "http://www.west-wind.com/images/WebLogBannerLogo.jpg",
+  "Email": {
+    "MailServer": "mail.site.com",
+    "MailServerUsername": "name@site.com",
+    "MailServerPassword": "",
+    "MailServerUseSsl": false,
+    "SenderName": "West Wind Weblog",
+    "SenderEmail": "admin@site.com",
+    "AdminSenderEmail": "admin Administration"
+  },
+  "System": {
+    "LiveReloadEnabled": true,
+    "ShowConsoleDbCommands": false
+  }
+}

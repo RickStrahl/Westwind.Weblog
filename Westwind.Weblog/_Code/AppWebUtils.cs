@@ -122,7 +122,7 @@ namespace Westwind.Weblog
             if (blogStats != null)
                 return new HtmlString(blogStats);
 
-            var config = WeblogConfiguration.Current;
+            var config = wlApp.Configuration;
             var context = WeblogContext.GetWeblogContext(config.ConnectionString);            
             var postRepo = new PostBusiness(context,config);
             var counts = postRepo.GetPostStats();
@@ -130,9 +130,9 @@ namespace Westwind.Weblog
             StringBuilder sb = new StringBuilder();
             int CommentCount = counts.commentCount;
             int PostCount = counts.postCount;
-            
-            sb.Append($"<div><a href='{config.ApplicationBasePath}posts' >Posts - {PostCount:n0}</a></div>\r\n");
-            sb.Append($"<div><a href='{config.ApplicationBasePath}comments' >Comments - {CommentCount:n0}</a></div>\r\n");
+
+            sb.Append($"<div><a href='{config.ApplicationBasePath}posts' ><i class='far fa-fw fa-file-alt'></i> Posts - {PostCount:n0}</a></div>\r\n");
+            sb.Append($"<div><a href='{config.ApplicationBasePath}comments' ><i class='fas fa-fw fa-comments'></i> Comments - {CommentCount:n0}</a></div>\r\n");
             string stats = sb.ToString();
 
             cache.Set("BlogStats", stats, new TimeSpan(0, 15, 0));

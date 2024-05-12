@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Westwind.Data.EfCore;
 using Westwind.Utilities;
@@ -17,7 +16,7 @@ namespace Westwind.Weblog.Business
 {
     public class AdminBusiness : EntityFrameworkBusinessObject<WeblogContext,Post>
     {
-        WeblogContext Context { get; set; }        
+        new WeblogContext Context { get; set; }        
         readonly WeblogConfiguration WeblogConfiguration;
         
 
@@ -114,16 +113,18 @@ namespace Westwind.Weblog.Business
 
         public bool UpdatePostCommentCounts()
         {
-            int updates = 0;
 
             foreach (var post in Context.Posts)
             {
                 var commentCount = Context.Comments.Count(c => c.PostId == post.Id);
+
                 if (commentCount != post.CommentCount)
                 {
-                    Context.Posts.Attach(post);
-                    post.CommentCount = commentCount;
-                    Context.SaveChanges();
+                    Context.Database.ExecuteSqlRaw($"update Posts set CommentCount = {commentCount} where Id = {post.Id}");
+
+                    //Context.Posts.Attach(post);
+                    //post.CommentCount = commentCount;
+                    //Context.SaveChanges();
                 }
             }
 

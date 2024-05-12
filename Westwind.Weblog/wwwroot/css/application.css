@@ -450,7 +450,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 
 .post-sidebar {
     flex: none;
-    width: 210px;
+    width: 220px;
     background: transparent;
     padding: 1.5em 0 1.2em 0.8em;
     z-index: 1;

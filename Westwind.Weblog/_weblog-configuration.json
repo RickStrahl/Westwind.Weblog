@@ -13,12 +13,14 @@
     "MailServerUsername": "name@site.com",
     "MailServerPassword": "",
     "MailServerUseSsl": false,
+    "SendAdminEmails": false,
     "SenderName": "West Wind Weblog",
     "SenderEmail": "admin@site.com",
     "AdminSenderEmail": "admin Administration"
   },
   "System": {
     "LiveReloadEnabled": true,
-    "ShowConsoleDbCommands": false
+    "ShowConsoleDbCommands": false,
+    "ErrorDisplayMode": "Application"
   }
 }

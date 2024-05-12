@@ -117,7 +117,7 @@ namespace Westwind.Weblog
         /// <returns></returns>
         public static HtmlString GetBlogStats()
         {
-            var cache = Startup.Current.Cache;
+            var cache = wlApp.Cache;
             string blogStats = cache.Get<string>("BlogStats");          
             if (blogStats != null)
                 return new HtmlString(blogStats);

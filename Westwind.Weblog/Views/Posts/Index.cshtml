@@ -6,7 +6,6 @@
     var repo = Model.PostRepo;
 }
 
-
 <div style="margin-top:12px">
     @{
         int counter = 0;
@@ -23,7 +22,7 @@
                         style="text-decoration: none;">@post.Title</a>
             </h2>
             <hr/>
-            <div class="right">
+            <div class="float-end">
                 
                 @if (post.CommentCount > 0)
                 {
@@ -40,6 +39,14 @@
             </div>
 
 
+            @if (counter < 15 && !string.IsNullOrEmpty((string)post.ImageUrl))
+            {
+                <div class="featured-image-wrapper">
+                    <img class="featured-image" src="@post.ImageUrl" loading="lazy" />
+                </div>
+            }
+
+
             <div class="postcontent" style="margin-bottom: 20px">
                 @post.Abstract.TrimEnd()  
                 
@@ -50,3 +57,42 @@
         }
     }
 </div>
+
+
+@section Headers {
+    <link rel="canonical" href="<%= App.Configuration.WebLogHomeUrl.TrimEnd('/') %>" />
+
+    <meta id="metaKeyWords" name="Keywords" content="DotNet,.Net,C#,ASP.NET,JavScript,Angular,jQuery,Rick Strahl,HTML,CSS,West Wind Technologies,WebLog,Blog" runat="server" />
+    <meta id="metaDescription" name="Description" content="Rick Strahl's Weblog - Wind, Waves, Code and everything in between..." runat="server" />
+
+
+    
+    <meta property="og:title" content="Rick Strahl's Weblog" />
+    <meta property="og:description" content="Wind, Waves, Code and everything in between..." />    
+    <meta property="og:type" content="article" />
+    <meta property="article:author" content="https://facebook.com/rickstrahl" />
+    <meta property="og:url" content="https://weblog.west-wind.com" />
+    <meta property="og:image" content="https://weblog.west-wind.com/images/HeroImages/RickHero13.jpg"/>
+
+    <meta name="twitter:card" content="summary" />
+
+    
+    <style>
+        .featured-image {
+            margin-top: 0.5em;
+            max-width: 600px;
+        }
+        .featured-image-wrapper {
+            max-height: 300px; 
+            overflow: hidden;
+        }
+       @@media(max-width: 600px) {
+        .featured-image {
+            max-width: 100%;
+        }
+        .featured-image-wrapper {
+            max-height: 240px; 
+        }
+        }
+        </style>
+}

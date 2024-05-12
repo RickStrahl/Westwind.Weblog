@@ -17,162 +17,32 @@
 
 @section headers
 {
-    @if (!string.IsNullOrEmpty(post.ImageUrl))
-    {
-        <meta name = "twitter:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>        
-    }
+    <meta id="metaKeyWords" name="Keywords" content="@post.Keywords" />
+    <meta id="metaDescription" name="Description" content="@post.Abstract" />
 
-
-    <meta property="og:title" content="@post.Title %>"/>
+    <meta property="og:title" content="@post.Title" />
     <meta property="og:description" content="@post.Abstract"/>
     <meta property="og:type" content="article" />
-    <meta property="article:author" content="https://facebook.com/rickstrahl" />
+    <meta property="article:author" content="https://x.com/rickstrahl" />
     <meta property="og:url" content="@pageUrl"/>
 
+    <meta name="twitter:site" content="https://weblog.west-wind.com">
+    <meta name="twitter:creator" content="@@rickstrahl">
+
     @if (!string.IsNullOrEmpty(post.ImageUrl))
-    {
+    {        
+        <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>
-        <meta property="og:image:secure_url" content="@post.ImageUrl.Replace("http:", "https:")"/>
     }
-
-    <style>        
-        .comment > a:first-child { text-decoration: none; }
-        .linkicon {
-            width: 17px;
-            height: 17px;
-            margin-left: -22px;
-            margin-top: 4px;
-            float: left;
-            vertical-align: text-bottom;
-            opacity: 0.8;
-            background-image: url(~/images/link.png);
-            transition: opacity 0.5s ease-in-out;
-        }
-        .link-hidden {
-            opacity: 0.1;
-        }
-        .postcontent > h3 {
-            cursor: pointer;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .postcontent > h3:hover {
-            opacity: 0.80;
-        }
-
-        .comment-dialog-header {
-            color: #535353;
-            text-align: center;
-            font-size: 14pt;
-            font-weight: bold;
-            padding: 5px;
-            margin-bottom: 10px;
-        }
-        .comment-dialog {
-            width: 95%;
-            text-align: left;
-            margin: 0 auto;
-            padding: 7px 5px;
-        }
-        .comment-dialog input[type=text],
-        .comment-dialog input[type=email],
-        .comment-dialog textarea
-        {
-            width: 95%;
-            font-family: 'Trebuchet MS', 'Trebuchet', sans-serif;
-            font-size: 1.05em;
-            font-weight: bold;
-            margin-bottom: 8px;
-            padding: 5px 10px;
-        }
-        .comment-dialog textarea {
-            font-size: 1em;
-        }
-        .comment-directions {
-            width: 95%;
-            color: #535353;
-            background: cornsilk;
-            text-align: center;
-            font-size: 0.8em;
-            padding: 10px 10px;
-            margin-top: 13px;
-        }
-
-        @@media (max-width: 639px) {
-            .linkicon {
-                display: none;
-            }
-        }
-
-
-        .comment-textbox, .comment-textbox:focus {
-            background-color: #444 !important;
-            color: #e9e9e9;
-            font-family: Consolas, monospace !important;
-            font-size: 1.1em !important;
-            font-weight: 500 !important;
-        }
-        .edit-toolbar {
-            margin-top: 15px;
-            background: #656565;
-            color: white;
-            padding: 5px 10px;
-            width: 95%;
-            height: 29px;
-        }
-        .edit-toolbar > * {
-            color: white;
-            padding: 6px 11px;
-            margin-left: 1px;
-            float: left;
-            display: block;
-        }
-        .edit-toolbar > a:focus, .edit-toolbar > a:hover {
-            background-color: #888 !important;
-            color: white !important;
-            text-decoration: none;
-        }
-       
-.share-box {
-    flex: none;
-    line-height: 0;
-    margin: 0;
-    padding: 0;
-    margin-left: 15px;
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-content: center;
-}
-
-.share-buttons {
-    display: inline;
-    padding: 0;
-    margin: 0;
-}
-
-.share-box a {
-    flex: auto;
-    display: inline;
-    list-style: none;
-    padding-right: 12px;
-    font-size: 45px;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: #258cdf;
-    text-decoration: none;
-}
-
-.share-box .share-label {
-    padding-top: 23px;
-    padding-right: 11px;
-}
-    </style>
+     
+    <style href="/css/post.css"rel="stylesheet" type="text/css"></style>             
 }
 
 <article itemscope itemtype="http://schema.org/BlogPosting" itemprop="blogPost">
 
+
 <header>
+
     <h2 itemprop="headline_name">
         <a href='@repo.GetPostUrl(post)' style="text-decoration:none;">@post.Title</a>            
     </h2>

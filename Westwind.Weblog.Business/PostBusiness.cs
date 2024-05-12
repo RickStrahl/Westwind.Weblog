@@ -41,7 +41,8 @@ namespace Westwind.Weblog.Business
                    Location = p.Location,
                    CommentCount  = p.CommentCount,
                    Created = p.Created,
-                   Body = includeBody ? p.Body : null
+                   Body = includeBody ? p.Body : null,
+                   ImageUrl = p.ImageUrl
                 })
                 .ToListAsync();
         }

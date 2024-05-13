@@ -58,13 +58,12 @@ namespace Westwind.Weblog.Views.Account
             identity.AddClaim(new Claim("Username", user.Username));
             identity.AddClaim(new Claim("UserId", user.Id.ToString()));
             
-            if (user.IsAdmin)
+            if (user.IsAdmin)                
                 identity.AddClaim(new Claim(ClaimTypes.Role,"Admin"));
             
             // Set cookie and attach claims
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity));
-
 
             if (!string.IsNullOrEmpty(model.RedirectUrl))            
                 return Redirect(model.RedirectUrl);

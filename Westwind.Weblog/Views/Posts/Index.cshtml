@@ -6,7 +6,7 @@
     var repo = Model.PostRepo;
 }
 
-<div style="margin-top:12px">
+<div style="margin: 0 1em 1em 1em; ">
     @{
         int counter = 0;
         foreach (var post in posts)
@@ -17,11 +17,13 @@
             {
                 <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
             }
-            <h2 class="margin-top">
+            <h2 class="margin-top">                
                 <a href="@Model.PostRepo.GetPostUrl(post.SafeTitle, post.Created)"
                         style="text-decoration: none;">@post.Title</a>
             </h2>
             <hr/>
+            
+
             <div class="float-end">
                 
                 @if (post.CommentCount > 0)
@@ -32,8 +34,10 @@
                     </a>
                 }
             </div>
+
+
             <div class="byline">
-                <i class="fa fa-clock-o"></i>                
+                <i class="far fa-clock-rotate-left text-info"></i>
                 @AppWebUtils.WebLogDateString(post.Created,false )
                 @(string.IsNullOrEmpty(post.Location) ? "" : "- " + post.Location)
             </div>

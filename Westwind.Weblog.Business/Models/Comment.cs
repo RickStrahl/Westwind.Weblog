@@ -20,9 +20,9 @@ namespace Westwind.Weblog.Business.Models
 
         public string Body { get; set; }
 
-        public DateTime Created { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
 
-        public DateTime Updated { get; set; }
+        public DateTime Updated { get; set; } = DateTime.UtcNow;
 
         [MaxLength(128)]
         public string Author { get; set; }
@@ -35,6 +35,8 @@ namespace Westwind.Weblog.Business.Models
         public string Url { get; set; }
 
         public Post Post { get; set; }
+        
+        public bool IsActive { get; set; }
 
         public Comment()
         {

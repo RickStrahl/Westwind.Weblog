@@ -25,7 +25,7 @@ namespace Westwind.Weblog.Business
 
         #region Post Retrieval
 
-        public async Task<List<Post>> GetLastPostsAsync(int postCount = 50, bool includeBody=false )
+        public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody=false )
         {            
             return await Context.Posts
                 .Include("Comments")
@@ -42,12 +42,12 @@ namespace Westwind.Weblog.Business
                    CommentCount  = p.CommentCount,
                    Created = p.Created,
                    Body = includeBody ? p.Body : null,
-                   ImageUrl = p.ImageUrl
+                   ImageUrl = p.ImageUrl                   
                 })
                 .ToListAsync();
         }
 
-        public List<Post> GetLastPosts(int postCount = 50, bool includeBody = false)
+        public List<Post> GetLastPosts(int postCount = 75, bool includeBody = false)
         {
             return Context.Posts
                 .Include("Comments")
@@ -63,16 +63,17 @@ namespace Westwind.Weblog.Business
                     Location = p.Location,
                     CommentCount = p.CommentCount,
                     Created = p.Created,
-                    Body = includeBody ? p.Body : null
+                    Body = includeBody ? p.Body : null,
+                    ImageUrl = p.ImageUrl
                 })
                 .ToList();
         }
         
-        public async Task<List<Comment>> GetRecentCommentsAsync(int postCount = 30)
+        public async Task<List<Comment>> GetRecentCommentsAsync(int commentCount = 50)
         {
             return await Context.Comments
                 .OrderByDescending(c => c.Created)
-                .Take(postCount)
+                .Take(commentCount)
                 .Select(c => new Comment
                 {
                     Id = c.Id,
@@ -83,7 +84,8 @@ namespace Westwind.Weblog.Business
                     Url = c.Url,
                     Email = c.Email,
                     Created = c.Created,
-                    PostId = c.PostId
+                    PostId = c.PostId,
+                    IsActive = c.IsActive
                 }).ToListAsync();
         }
 
@@ -141,7 +143,7 @@ namespace Westwind.Weblog.Business
                 post = Entity;
 
             post.Comments = await Context.Comments
-                                .Where(c => c.PostId == post.Id)
+                                .Where(c => c.PostId == post.Id )
                                 .ToListAsync();
         }
 

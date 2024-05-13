@@ -1,9 +1,10 @@
 ﻿{
   "ApplicationName": "Rick Strahl's Weblog (Custom)",
+  "ApplicationByLineHtml": "Wind, waves, code and everything in between...<br />\r\n.NET • C# • Markdown • WPF • All things Web",
   "ConnectionString": "server=.;database=WebLogCore;integrated security=true;encrypt=false",
   "ApplicationBasePath": "/",
   "PostPageSize": 7600,
-  "HomePagePostCount": 25,
+  "HomePagePostCount": 40,
   "PayPalEmail": "",
   "WeblogAuthor": "Rick Strahl",
   "WeblogHomeUrl": "https://weblog.west-wind.com",

@@ -1,0 +1,121 @@
+﻿@using Westwind.AspNetCore.Components
+@model PostViewModel
+@{
+    var post = Model.Post;
+    var comment = Model.ActiveComment;
+
+    var config = wlApp.Configuration;    
+    
+    var appUser = User.GetAppUser();
+    bool isAdmin = appUser.IsAdmin;
+
+    var Request = Context.Request;
+    var pageUrl = config.WeblogHomeUrl + Request.Path.Value;
+}
+<div id="Comment" class="comment-dialog">
+
+    <div class="comment-dialog-header">What's on your Mind?</div>
+
+    <div style='padding: 10px; margin-bottom: 0px;'>
+        <div id='CommentDialogContent'>
+
+            
+            <form action="" method="post">
+
+                <h3 class="mt-2 mb-3">
+                    <i class="fad fa-comments"></i>
+                    Re: @post.Title
+                </h3>
+
+                <input  type="text" placeholder="What's your name?" class="form-control" asp-for="ActiveComment.CommentAuthor" />
+                <input  type="text" placeholder="Your web site (optional)" class="form-control" asp-for="ActiveComment.CommentWebSite"/>
+                <input  type="email" asp-for="ActiveComment.CommentEmail"
+                       class="form-control"
+                       placeholder="Your email address (optional)" style="margin-bottom: 0px;" />
+
+
+                <div class="smalltext"><i>not shown and used only for <a href="http://site.gravatar.com/">Gravatar</a></i></div>
+
+                <div class="edit-toolbar">
+
+                    <a id="btnBold" title="Make the selected text bold (ctrl-b)">
+                        <i class="fa fa-bold"></i>
+                    </a>
+
+                    <a id="btnItalic" title="Make the selected text italic (ctrl-i)">
+                        <i class="fa fa-italic"></i>
+                    </a>
+
+
+                    <a id="btnCode" title="Turn selected text into a code block. (alt-c)" style="margin-left: 8px;">
+                        <i class="fa fa-code"></i>
+                    </a>
+
+                    <a id="btnHref" title="Turn selected text into a link (ctrl-k)">
+                        <i class="fa fa-link"></i>
+                    </a>
+
+
+                    <div onclick="javascript: window.open('http://markdownmonster.west-wind.com/docs/_4ne1eu2cq.htm');"
+                         target="top"
+                         class="hidable-xs"
+                         style="cursor: pointer; float: right; font-size: 0.8em; margin:auto">
+                        <img src="~/images/markdown.png" />
+                        Markdown styling is supported.
+                    </div>
+                </div>
+
+
+
+                <textarea id="txtBody" class="comment-textbox" asp-for="ActiveComment.CommentText"
+                          style="background-color:#333; height: 15em  !important">
+                </textarea>
+
+                <div id="divCommentPreview" style="display:none">
+                </div>
+
+                <br />
+
+                <table style="width:100%">
+                    <tr>
+                        <td>
+                            <ww:wwCheckBox ID="chkRememberMe" runat="server" Text="Remember me?" />
+                        </td>
+                        <td style="text-align:right;" valign="top">
+                            <small>
+                                <span id="lblCommentCharCount"></span>
+                            </small>
+                        </td>
+                    </tr>
+                </table>
+
+                @* <ww:Captcha runat="server" ID="Captcha" CssClass="gridalternate"
+                            Style="width: 330px; padding: 10px; margin: 5px; border-radius: 4px;" /> *@
+
+                <button id="btnSaveComment" type="submit" AccessKey="S" class="submitbutton"
+                        OnClick="btnComment_Click"
+                        style="margin-top: 10px;">
+                    Post Comment
+                </button>
+
+
+                <p style="margin: 10px 50px 10px 10px; font-size: 0.85em">
+                    <b>Comment Etiquette:</b><br />
+                    Please keep the comments on topic and please don't post <b>
+                        unrelated questions
+                        or large chunks of code
+                    </b> - if you post code, please mark up
+                    the code using <b>Markdown code fencing (``` before and after) or 4 spaces of indentation</b>,
+                    so your code is readable for all of us.
+                </p>
+
+            </form>
+
+
+        
+
+        </div>
+    </div>
+
+    <input type="" />
+</div>

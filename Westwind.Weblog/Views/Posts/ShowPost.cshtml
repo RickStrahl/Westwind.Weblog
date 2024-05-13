@@ -1,11 +1,11 @@
-﻿@model PostViewModel
+﻿@using Westwind.AspNetCore.Components
+@model PostViewModel
 
 @{
     var post = Model.Post;
     var repo = Model.PostRepo;
-    var config = Model.PostRepo.Configuration;
+    var config = wlApp.Configuration;
 
-    ViewData["Title"] = post.Title;
     string postUrl = repo.GetPostUrl(post);
 
     var appUser = User.GetAppUser();
@@ -35,7 +35,7 @@
         <meta property="og:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>
     }
      
-    <style href="/css/post.css"rel="stylesheet" type="text/css"></style>             
+    <link href="~/css/post.css" rel="stylesheet" />
 }
 
 <article itemscope itemtype="http://schema.org/BlogPosting" itemprop="blogPost">
@@ -51,31 +51,32 @@
 <hr />
 
 <div class="byline">
-    <div class="share-box" style="float:right; ">
+
+     <div class="share-box" style="float:right; ">
         <span class="share-label hidable-xs">Share on:</span>
                             
         <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet on Twitter">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                <i class="fa fa-twitter-square fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>                
+                <i class="fab fa-square-twitter fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>                
             </span>
         </a>
         <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share on Facebook">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
-                <i class="fa fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>                
+                <i class="fab fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>                
             </span>
         </a>
         <a href="http://www.reddit.com/submit?url=@pageUrl&amp;title=@Model.Post.Title" target="_blank" title="Submit to Reddit">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
-                <i class="fa fa-reddit-square fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>                
+                <i class="fab fa-square-reddit fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>                
             </span>
         </a>                     
     </div>
 
     <div class="leftbox">
-        <i class="fa fa-clock-o"></i>
+        <i class="far fa-clock-rotate-left text-info"></i>
         @(AppWebUtils.WebLogDateString(post.Created, false))
         @(string.IsNullOrEmpty(post.Location) ? "" : " - from " + post.Location)
     </div>
@@ -104,6 +105,8 @@
 </div>
 
 <div class="clearfix"></div>
+
+<error-display error-display-model="Model.ErrorDisplay" />
 
 <div id="ArticleBody" class="postcontent" itemprop="articleBody">
     @*@if (!string.IsNullOrEmpty(App.SponsoredTopAd)) { 
@@ -162,19 +165,19 @@
             <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet Post on Twitter">
                 <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                     <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                    <i class="fa fa-twitter-square fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>
+                    <i class="fab fa-square-twitter fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>
                 </span>
             </a>
             <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share Post on Facebook">
                 <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
-                    <i class="fa fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>
+                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.87em "></i>
+                    <i class="fab fa-square-facebook fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>
                 </span>
             </a>
             <a href="http://www.reddit.com/submit?url=@pageUrl&amp;title=@Model.Post.Title" target="_blank" title="Submit Post to Reddit">
                 <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
-                    <i class="fa fa-reddit-square fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>
+                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
+                    <i class="fab fa-square-reddit fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>
                 </span>
             </a>
         </div>
@@ -228,42 +231,51 @@
 <hr style="margin-bottom: 30px;" />
 
 
-    <a name="Feedback">&nbsp;</a>
-    <div class="clearfix"></div>
+    <div id="Comments" class="clearfix"></div>
 
 
     foreach (var comment in post.Comments)
     {
-         <div id="@comment.Id" class="comment">
+         if(!comment.IsActive && !isAdmin)
+         {
+                continue;
+         }   
+
+         
+         <div id="@comment.Id" class="comment @(comment.IsActive ? "" : "inactive")">
 
              <div class="comment-panel-left">
                  @AppWebUtils.GravatarLink(comment)
 
-                 <div class="margin-top">
+                 <div>
                      @if (string.IsNullOrEmpty(comment.Url))
                      {
-                         <div>@comment.Author</div>
+                         <div style="font-size: 0.85em">@comment.Author</div>
                      }
                      else
                      {
-                         <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url, "_WebLog", null))</div>
+                         <div style="font-size: 0.85em">
+                             <a href="@comment.Url" target="_WebLog">@comment.Author</a>
+                         </div>
                      }
-                     @AppWebUtils.WebLogDateString(comment.Created, false)
+                     <small style="font-style: italic; font-size: 0.7em">
+                        <i class="far fa-clock"></i>
+                         @AppWebUtils.WebLogDateString(comment.Created, false)
+                     </small>
                  </div>
              </div>
 
              <div class="comment-panel-right">
-                 <h3 style="margin-top: 0; font-size: 1.21em;">
+                 <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">
                      <a name="@comment.Id" href="#@comment.Id">#</a>
                      @comment.Title
                  </h3>
-                 <div class="commentbody" style="padding-top: 15px;">
-                     @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body)) : Html.Raw(comment.Body))
+                 <div class="commentbody" style="padding-top: 0.7em;">                     
+                     @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body?.Trim())) : Html.Raw(comment.Body?.Trim()))
                  </div>
 
                  @if (isAdmin)
                  {
-
                      <div style="margin-top: 10px;">
                          <a href='javascript:{}' data-id="@post.Id"
                             class="hoverbutton remove-comment">
@@ -281,114 +293,34 @@
         
  }
     
-<ww:ErrorDisplay runat="server" ID="ErrorDisplay" ErrorImage="~/app_themes/"></ww:ErrorDisplay>
 
-<button class="btn btn-primary" style="font-weight: bold; padding: 10px 30px;">
-    <i class="fa fa-comments-o"></i>&nbsp;
-    Add a Comment
-</button>
-&nbsp;<asp:Button runat="server" ID="btnShowCommentTable" OnClick="btnShowCommentTable_Click"
-                  Text="Add a Comment" class="submitbutton" /><div id="ContentOverlay" style="background:steelblue"></div>
+@if(Model.ActiveComment.IsCommentDialogVisible) {
+    <partial name="Comment_Partial" model="Model" />
+}
+else {    
+    <form action="@(Request.Path)#Comment" method="post">
+        <input type="hidden" name="force" value="1" />
+        <button class="btn btn-primary" 
+                type="submit"
+                style="font-weight: bold; padding: 10px 30px;">
+            <i class="fa fa-comments-o"></i>&nbsp;
+            Add a Comment
+        </button>
 
+    </form>
+}
 
+@{
+    var commentErrorModel = new ErrorDisplayModel()
+    {
+        Message = null,
+        Icon = Model.ActiveComment.CommentErrorIcon
+    };
+}
+<error-display error-display-model="commentErrorModel"></error-display>
 
-<asp:Panel runat="server" ID="CommentDialog" Visible="false"
-           CssClass="author commentauthor comment-dialog boxshadow">
-
-    <div class="comment-dialog-header">What's on your Mind?</div>
-
-    <div style='padding: 10px; margin-bottom: 0px;'>
-        <div id='CommentDialogContent'>
-            <ww:ErrorDisplay ID="ErrorDisplayComment" runat="server" Width="450" />
-
-            <asp:HiddenField runat="server" ID="txtTitle"></asp:HiddenField>
-
-            <ww:wwTextBox ID="txtAuthor" runat="server" placeholder="What's your name?"></ww:wwTextBox>
-            <ww:wwTextBox ID="txtUrl" runat="server" placeholder="Your web site (optional)"></ww:wwTextBox>
-            <ww:wwTextBox ID="txtEmail" runat="server" type="email" placeholder="Your email address (optional)" style="margin-bottom: 0px;"></ww:wwTextBox>
-
-
-            <div class="smalltext"><i>not shown and used only for <a href="http://site.gravatar.com/">Gravatar</a></i></div>
-            <div class="edit-toolbar">
-
-                <a id="btnBold" title="Make the selected text bold (ctrl-b)">
-                    <i class="fa fa-bold"></i>
-                </a>
-
-                <a id="btnItalic" title="Make the selected text italic (ctrl-i)">
-                    <i class="fa fa-italic"></i>
-                </a>
-
-
-                <a id="btnCode" title="Turn selected text into a code block. (alt-c)" style="margin-left: 8px;">
-                    <i class="fa fa-code"></i>
-                </a>
-
-                <a id="btnHref" title="Turn selected text into a a link (ctrl-k)">
-                    <i class="fa fa-link"></i>
-                </a>
-
-
-                <div onclick="javascript: window.open('http://markdownmonster.west-wind.com/docs/_4ne1eu2cq.htm');"
-                     target="top"
-                     class="hidable-xs"
-                     style="cursor: pointer; float: right; font-size: 0.8em; margin:auto">
-                    <img src="~/images/markdown.png" />
-                    Markdown styling is supported.
-                </div>
-            </div>
-
-
-
-            <ww:wwTextBox ID="txtBody" runat="server"
-                          Height="250px"
-                          style="background-color: #333 !important"
-                          TextMode="MultiLine"
-                          CssClass="comment-textbox"></ww:wwTextBox>
-
-
-            <div id="divCommentPreview" style="display:none">
-            </div>
-
-            <br />
-            <table style="width:100%">
-                <tr>
-                    <td>
-                        <ww:wwCheckBox ID="chkRememberMe" runat="server" Text="Remember me?" />
-                    </td>
-                    <td style="text-align:right;" valign="top">
-                        <small>
-                            <span id="lblCommentCharCount"></span>
-                        </small>
-                    </td>
-                </tr>
-            </table>
-
-            <ww:Captcha runat="server" ID="Captcha" CssClass="gridalternate"
-                        Style="width: 330px; padding: 10px; margin: 5px; border-radius: 4px;" />
-
-            <asp:Button ID="btnComment_02" runat="Server" AccessKey="S" class="submitbutton"
-                        OnClick="btnComment_Click" Text="Post Comment" style="margin-top: 10px;" />
-
-
-            <p style="margin: 10px 50px 10px 10px; font-size: 0.85em">
-                <b>Comment Etiquette:</b><br />
-                Please keep the comments on topic and please don't post <b>
-                    unrelated questions
-                    or large chunks of code
-                </b> - if you post code, please mark up
-                the code using <b>Markdown code fencing (``` before and after) or 4 spaces of indentation</b>,
-                so your code is readable for all of us.
-            </p>
-
-
-        </div>
-    </div>
-</asp:Panel>
-
-
-      
 <br />
+
 </article>
 
 @section scripts {

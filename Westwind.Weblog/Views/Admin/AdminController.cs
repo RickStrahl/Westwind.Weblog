@@ -13,7 +13,7 @@ using Westwind.Weblog.Business.Configuration;
 
 namespace Westwind.Weblog
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AdminController : WeblogBaseController
     {
         WeblogConfiguration Configuration { get; }

@@ -1,8 +1,9 @@
 ﻿@using System.Security.Claims
 @inject WeblogConfiguration Configuration
 @{
-    string FeedUrl = "http://feeds.feedburner.com/rickstrahl";
-
+    string FeedUrl = "http://feeds.feedburner.com/rickstrahl";    
+    var appUser = User.GetAppUser();
+    bool isAdmin = appUser.IsAdmin;
 }
 <!DOCTYPE HTML>
 <html>
@@ -11,7 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
        
     <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link id="TempCssLink" href="/css/application.css" rel="stylesheet" type="text/css" visible="false" />
+    <link href="/css/application.css" rel="stylesheet" type="text/css"  />
     <link href="/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
     <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="http://feeds.feedburner.com/RickStrahl" />
 
@@ -26,9 +27,9 @@
         }
 
         .product-icon {
-            max-width: 1.1em;
+            max-width: 1.17em;
             display: inline;
-            vert-align: bottom
+            vertical-align: middle;            
         }
     </style>
     
@@ -51,10 +52,8 @@
 
                     <header class="blog-name-container" 
                             onclick="window.location='@Url.Content("~/")';">
-                        <h2 style="margin: 0 !important">Rick Strahl's Weblog &nbsp;</h2>
-                        <b>Wind, waves, code and everything in between...<br />
-                            .NET &bull; C# &bull; Markdown &bull; WPF &bull; All Things Web
-                        </b>
+                        <h2 style="margin: 0 !important">@wlApp.Configuration.ApplicationName</h2>
+                        <b>@Html.Raw(wlApp.Configuration.ApplicationByLineHtml)</b>
                     </header>
                 </div>
 
@@ -67,7 +66,7 @@
                                 <i class="fab fa-square-twitter fa-stack-1x" style=" color: rgb(53, 155, 240); "></i>                
                             </span>
                         </a>                                
-                        <a href="@FeedUrl" title="RSS feed for Rick Strahl's Web Log">
+                        <a href="@FeedUrl" title="RSS feed for @wlApp.Configuration.ApplicationName">
                         <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                         <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
                         <i class="fad fa-square-rss"
@@ -140,6 +139,16 @@
                                     RSS Feed
                                 </a>
                             </div>
+
+                            @if(isAdmin) {
+                                <div>
+                                    <a href="/admin"
+                                       title="Weblog Administration">
+                                        <i class="fas fa-fw fa-gears"  class="product-icon"></i>
+                                        Administration
+                                    </a>
+                                </div>
+                            }
 
                         </nav>
 

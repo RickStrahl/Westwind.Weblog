@@ -4,46 +4,50 @@
     var comments = Model.Comments;
     var repo = Model.PostRepo;
     var config = Model.PostRepo.Configuration;
-    bool isAdmin = false;
+    bool isAdmin = Model.IdentityUser.Identity.IsAuthenticated;
 }
-
-
-
     
     <h2>Recent Comments</h2>
-    
+        
     <hr />
     
     <div style="margin-top: 32px;">
         @{
             foreach (var comment in comments)
             {
-                <div id="@comment.Id" class="comment">
+                if (!comment.IsActive && !isAdmin)
+                     continue;
+
+                <div id="@comment.Id" class="comment @(comment.IsActive ? string.Empty : "inactive")">
 
                     <div class="comment-panel-left">
-                        @AppWebUtils.GravatarLink(comment) 
-                                                
-                        <div class="margin-top">
-                            @if(string.IsNullOrEmpty(comment.Url))
+                        @AppWebUtils.GravatarLink(comment)
+
+                        <div>
+                            @if (string.IsNullOrEmpty(comment.Url))
                             {
-                                <div>@comment.Author</div>
-                            }  
+                                <div style="font-size: 0.85em">@comment.Author</div>
+                            }
                             else
                             {
-                                <div>@Html.Raw(HtmlUtils.Href(comment.Author, comment.Url,"_WebLog",null))</div>
-                            }                            
-                            @AppWebUtils.WebLogDateString(comment.Created, false)
+                                <div style="font-size: 0.85em">
+                                    <a href="@comment.Url" target="_WebLog">@comment.Author</a>
+                                </div>
+                            }
+                            <small style="font-style: italic; font-size: 0.7em">
+                                <i class="far fa-clock"></i>
+                                @AppWebUtils.WebLogDateString(comment.Created, false)
+                            </small>
                         </div>
                     </div>
 
                     <div class="comment-panel-right">
-                        <h3 style="margin-top: 0; font-size: 1.21em;">
-                            <a id="@comment.Id" href="#@comment.Id">#</a>
-                            <a href="~/posts/@comment.PostId">@comment.Title</a>
+                        <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">
+                            <a name="@comment.Id" href="#@comment.Id">#</a>
+                            @comment.Title
                         </h3>
-                   
-                        <div class="comment-body" style="padding-top: 15px;">
-                            @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body)) : Html.Raw(comment.Body))
+                        <div class="commentbody" style="padding-top: 0.7em;">                     
+                            @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body?.Trim())) : Html.Raw(comment.Body?.Trim()))
                         </div>
 
                         @if (isAdmin)
@@ -51,10 +55,11 @@
                             <div style="margin-top: 10px;">
                                 <a href='javascript:{}' data-id="@comment.Id"
                                    class="hoverbutton remove-comment">
-                                    <i class="fa fa-close red-color"/>
+                                    <i class="fa fa-close red-color"></i>
                                     Remove Comment
                                 </a>
-                                <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" class="hoverbutton commentedit"/>
+                                <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" 
+                                           class="hoverbutton commentedit"/>
                             </div>
                         }
                     </div>

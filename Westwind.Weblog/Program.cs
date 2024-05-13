@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Castle.Core.Configuration;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Westwind.AspNetCore.LiveReload;
 using Westwind.Weblog.Business.Configuration;
@@ -22,23 +18,8 @@ using System.Net.Http;
 using Microsoft.Extensions.Hosting;
 using Westwind.AspNetCore.Extensions;
 using System.Runtime.InteropServices;
-
-//namespace Westwind.Weblog
-//{
-//    public class Program
-//    {
-//        public static void Main(string[] args)
-//        {
-//            BuildWebHost(args).Run();
-//        }
-
-//        public static IWebHost BuildWebHost(string[] args) =>
-//            WebHost.CreateDefaultBuilder(args)
-//                .UseStartup<Startup>()
-//                .Build();
-//    }
-//}
-
+using Westwind.AspNetCore;
+using Westwind.AspNetCore.Errors;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -111,16 +92,18 @@ services.AddDbContext<WeblogContext>(builder =>
     });
 });
 
-
-
-// set up and configure Authentication - make sure to call .UseAuthentication()
 services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(o =>
     {
         o.LoginPath = "/account/login";
         o.LogoutPath = "/account/logout";
+        o.SlidingExpiration = true;
+        o.ExpireTimeSpan = new TimeSpan(30, 0, 0, 0);
+        o.Cookie.Name = "ww_wl";
     });
+// disable user state authentication - just use plain cookie Auth
+UserStateWebSettings.Current.IsUserStateEnabled = false;
 
 services.AddControllersWithViews()
     .AddRazorRuntimeCompilation();
@@ -131,9 +114,6 @@ services.AddControllersWithViews()
 // ***  BUILD ***
 var app = builder.Build();
 
-
-
-
 wlApp.IsDevelopment = env.IsDevelopment();
 wlApp.ServiceProvider = app.Services;
 
@@ -142,52 +122,56 @@ Task.Run(() =>
 {
     // can't inject configuration here :-( So we use explict
     string connectionString = wlApp.Configuration.ConnectionString; // Configuration["Data:SqlServerConnectionString"];
-
     var context = WeblogContext.GetWeblogContext(connectionString);
     context.Posts.Any(p => p.Id == -1);
 });
 
 wlApp.Cache = app.Services.GetService<IMemoryCache>();
 
+
+if (wlApp.Configuration.System.LiveReloadEnabled)
+    app.UseLiveReload();
+
 if (env.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
+    app.UseDeveloperExceptionPage();    
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
 }
 
-app.UseStatusCodePages(new StatusCodePagesOptions
-{
-    HandleAsync = (ctx) =>
-    {
-        if (ctx.HttpContext.Response.StatusCode == 404)
-        {
-            ctx.HttpContext.Response.Redirect("/home/missingpage?url=" + ctx.HttpContext.Request.GetUrl());
-            return Task.FromResult(0);
-            //// throw an exception so it shows as an error page
-            ////  404 has special handling in `/home/error`
-            ////throw new HttpRequestException("Page not  found: " + ctx.HttpContext.Request.Path, null, statusCode: System.Net.HttpStatusCode.NotFound);
-            //var ctxAccessor = ctx.HttpContext.RequestServices.GetService<IHttpContextAccessor>();
-            //var factory = ctx.HttpContext.RequestServices.GetService<BusinessFactory>();
-            //var logger = ctx.HttpContext.RequestServices.GetService<ILogger<HomeController>>();
+
+//app.UseStatusCodePages(new StatusCodePagesOptions
+//{
+//    HandleAsync = (ctx) =>
+//    {
+//        if (ctx.HttpContext.Response.StatusCode == 404)
+//        {
+//            ctx.HttpContext.Response.Redirect("/home/missingpage?url=" + ctx.HttpContext.Request.GetUrl());
+//            return Task.FromResult(0);
+//            //// throw an exception so it shows as an error page
+//            ////  404 has special handling in `/home/error`
+//            ////throw new HttpRequestException("Page not  found: " + ctx.HttpContext.Request.Path, null, statusCode: System.Net.HttpStatusCode.NotFound);
+//            //var ctxAccessor = ctx.HttpContext.RequestServices.GetService<IHttpContextAccessor>();
+//            //var factory = ctx.HttpContext.RequestServices.GetService<BusinessFactory>();
+//            //var logger = ctx.HttpContext.RequestServices.GetService<ILogger<HomeController>>();
 
 
-            //var controller = new HomeController(logger,factory, ctxAccessor );
-            //var result = controller.Error(new HttpRequestException(
-            //    "Page not  found: " + ctx.HttpContext.Request.Path,
-            //    null,
-            //    statusCode: System.Net.HttpStatusCode.NotFound));
-        }
-        else if (ctx.HttpContext.Response.StatusCode == 401)
-        {
-            throw new HttpRequestException("Unauthorized: " + ctx.HttpContext.Request.Path, null, statusCode: System.Net.HttpStatusCode.Unauthorized);
-        }
+//            //var controller = new HomeController(logger,factory, ctxAccessor );
+//            //var result = controller.Error(new HttpRequestException(
+//            //    "Page not  found: " + ctx.HttpContext.Request.Path,
+//            //    null,
+//            //    statusCode: System.Net.HttpStatusCode.NotFound));
+//        }
+//        else if (ctx.HttpContext.Response.StatusCode == 401)
+//        {
+//            throw new HttpRequestException("Unauthorized: " + ctx.HttpContext.Request.Path, null, statusCode: System.Net.HttpStatusCode.Unauthorized);
+//        }
 
-        return Task.FromResult(0);
-    }
-});
+//        return Task.FromResult(0);
+//    }
+//});
 
 app.UseAuthentication();
 
@@ -197,7 +181,7 @@ app.UseAuthorization();
 
 app.UseStatusCodePages();
 
-app.UseLiveReload();
+
 app.UseStaticFiles();
 
 app.UseEndpoints(endpoints =>

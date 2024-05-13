@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Weblog Administration";
     var user = User.GetAppUser();
+    var isAdmin = user.IsAdmin;
 }
 <h1>Weblog Configuration</h1>
 @if (!string.IsNullOrEmpty(Model.Message))
@@ -22,7 +23,7 @@
         <a class="list-group-item list-group-item-action "
            asp-action="UpdateCommentCounts">Update Comment Counts</a>
         
-        @if(user.IsAuthenticated()) { 
+        @if(isAdmin) { 
         <a class="list-group-item list-group-item-action"
            asp-action="Logout" asp-controller="Account">Log out</a>
         } else {

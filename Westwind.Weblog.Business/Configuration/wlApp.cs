@@ -35,6 +35,7 @@ namespace Westwind.Weblog.Business.Configuration
         {
             wlApp.Configuration = new WeblogConfiguration();
             wlApp.Configuration.Initialize();
+            
             WeblogConfiguration.Current = wlApp.Configuration;
         }
     }

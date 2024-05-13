@@ -1,11 +1,6 @@
-﻿/*  core color summary:
-/*  core color summary:
-	block background: #003399
-    block alternate: #0066cc
-    light alternate: #b5c7d6
-    grey: #eeeeee
-    warning colors: cornsilk, maroon
-*/
+﻿
+
+
 /* BROWSER RESET (based on Eric Meyer's Reset) */
 html, body, div, span, object, iframe, table, caption, tbody, tfoot, thead, tr, th, td,
 del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
@@ -355,7 +350,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 }
 
 .text-info {
-    color: lightsteelblue
+    color: rgb(48, 136, 209) !important
 }
 
 .text-error {
@@ -491,7 +486,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 .author-image {
     position: absolute;
     left: 15px;
-    bottom: -65px;
+    bottom: -45px;
     border-radius: 10px;
     border: 5px white solid;
     width: 178px;
@@ -504,15 +499,14 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     position: absolute;
     background: #393939;
     opacity: 0.80;
-    padding: 5px 10px;
+    padding: 0.1em 0.1em 0.2em 0.7em;
     color: cornsilk;
     position: absolute;
     cursor: pointer;
-    left: 165px;
-    bottom: 10px;
+    left: 170px;
+    bottom: 7px;
     width: auto;
-    z-index: 1001;
-    width: 375px;
+    z-index: 1001;    
     border-radius: 4px;
     box-shadow: 4px 4px 6px #535353;
     transition: top 0.7s ease-in-out;
@@ -520,7 +514,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 
     .blog-name-container h2 {
         color: white;
-        font-size: 2.4em;
+        font-size: 2.35em !important;
         padding: 0;
         font-weight: bold;
     }
@@ -662,15 +656,19 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 }
 
 .comment {
+    margin-bottom: 1.5em;
+    
 }
 
     .comment.inactive {
         opacity: 0.55;
-        background: #e0e8f2;
+        background: pink;
+        padding: 0.1em
     }
 
 .comment-panel-left {
-    width: 110px;
+    width: 120px;
+    line-height: 1.4;
     float: left;
 }
 
@@ -679,12 +677,11 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     }
 
 .comment-panel-right {
-    min-height: 150px;
+    min-height: 8.5em;
     margin: 0;
     margin-left: 130px;
-    padding: 0 15px 10px 10px;
-    margin-bottom: 40px;
-    border-left: 1px solid lightgrey;
+    padding: 0 1em 0 0.9em;    
+    border-left: 1px solid lightgrey;   
 }
 
 .post-list-byline {
@@ -1366,9 +1363,6 @@ pre > code, pre.code, pre.csharpcode {
         display: none;
     }
 
-    h2 {
-        font-size: 1.3em;
-    }
 
     SocialLinks {
         top: 78px;
@@ -1385,21 +1379,22 @@ pre > code, pre.code, pre.csharpcode {
     pre {
         margin: 10px 0 !important;
     }
+
 }
 
 
 @media(max-width: 767px) {
     .author-image {
-        left: 5px;
-        bottom: 10px;
-        width: 80px;
+        left: 0.5em;
+        bottom: 0;
+        width: 100px;
     }
 
 
     .blog-name-container {
-        left: 75px;
-        bottom: 20px;
-        font-size: 0.63em;
+        left: 7.5em;
+        bottom: 8px;
+        font-size: 0.73em;
         width: auto;
         padding: 4px 6px;
     }
@@ -1438,7 +1433,7 @@ pre > code, pre.code, pre.csharpcode {
     }
 }
 
-@media(min-width: 768px) {
+@media(min-width: 767px) {
     .pagemarquee {
         height: auto
     }

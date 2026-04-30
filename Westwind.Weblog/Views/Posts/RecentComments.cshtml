@@ -1,9 +1,11 @@
-﻿@model Westwind.Weblog.PostViewModel
+@using Westwind.AspNetCore.Markdown
+@model Westwind.Weblog.PostViewModel
 @{
     ViewData["Title"] = Model.PostRepo.Configuration.ApplicationName;
     var comments = Model.Comments;
     var repo = Model.PostRepo;
     var config = Model.PostRepo.Configuration;
+
     bool isAdmin = Model.IdentityUser.Identity.IsAuthenticated;
 }
     
@@ -17,7 +19,7 @@
             {
                 if (!comment.IsActive && !isAdmin)
                      continue;
-
+                     
                 <div id="@comment.Id" class="comment @(comment.IsActive ? string.Empty : "inactive")">
 
                     <div class="comment-panel-left">
@@ -43,8 +45,9 @@
 
                     <div class="comment-panel-right">
                         <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">
-                            <a name="@comment.Id" href="#@comment.Id">#</a>
-                            @comment.Title
+                            @if(comment.Post != null) {
+                                <a name="@comment.Id" href="@(comment.Post.GetPostUrl())#@comment.Id">@comment.Post.Title</a>
+                            }
                         </h3>
                         <div class="commentbody" style="padding-top: 0.7em;">                     
                             @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body?.Trim())) : Html.Raw(comment.Body?.Trim()))
@@ -55,11 +58,17 @@
                             <div style="margin-top: 10px;">
                                 <a href='javascript:{}' data-id="@comment.Id"
                                    class="hoverbutton remove-comment">
-                                    <i class="fa fa-close red-color"></i>
+                                    <i class="fa fa-circle-xmark text-error"></i>
                                     Remove Comment
                                 </a>
-                                <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" 
-                                           class="hoverbutton commentedit"/>
+                                @if (!comment.IsActive)
+                                {
+                                    <a href='javascript:{}' data-id="@comment.Id"
+                                       class="hoverbutton activate-comment">
+                                        <i class="fa fa-circle-check text-success"></i>
+                                        Activate Comment
+                                    </a>
+                                }
                             </div>
                         }
                     </div>

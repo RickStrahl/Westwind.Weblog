@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Westwind.Weblog.Business.Configuration;
 
 //using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +10,9 @@ namespace Westwind.Weblog.Business.Models
 {
     public class Post
     {        
-        public int Id { get; set; }
+        public string Id { get; set; } = wlApp.NewId();
         
-        [MaxLength(128)]
+        [MaxLength(150)]
         public string Title { get; set; }
 
         public string Body { get; set; }
@@ -60,16 +58,43 @@ namespace Westwind.Weblog.Business.Models
        
         public string Markdown { get; set; }
 
+        /// <summary>
+        /// The permanent Url assigned when the post is created.
+        /// </summary>
         [MaxLength(256)]
-        public string ImageUrl { get; set; }
+        public string PermanentUrl { get; set; }
+
+        [MaxLength(320)]
+        public string FeaturedImageUrl { get; set; }
         
 
-        public List<Comment> Comments { get; set; }
+        public virtual List<Comment> Comments { get; set; }
+
+        [MaxLength(256)]
+        public string GithubUrl { get; set; }
+
+        public bool IsArticle { get; set;  }
 
 
         public Post()
         {
             Comments = new List<Comment>();
+        }
+
+        public override string ToString()
+        {
+            return "Post: " + Title;
+        }
+
+        public string GetPostUrl(bool fullyQualified = false)
+        {
+            DateTime date = Created;
+            string url = $"{wlApp.Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{SafeTitle}";
+
+            if (!fullyQualified)
+                return url;
+
+            return wlApp.Configuration.WeblogHomeUrl + url;            
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.VisualBasic;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Caching.Memory;
+using Westwind.Utilities;
 
 namespace Westwind.Weblog.Business.Configuration
 {
@@ -20,8 +21,6 @@ namespace Westwind.Weblog.Business.Configuration
 
         public static IServiceProvider ServiceProvider { get; set; }
 
-
-
         public static string WebRootFolder { get; set; }
 
         public static string StartupFolder { get; set; }
@@ -37,6 +36,15 @@ namespace Westwind.Weblog.Business.Configuration
             wlApp.Configuration.Initialize();
             
             WeblogConfiguration.Current = wlApp.Configuration;
+        }
+
+        /// <summary>
+        /// Generates a new Unique ID for posts and blogs etc.
+        /// </summary>
+        /// <returns></returns>
+        public static string NewId()
+        {
+            return DataUtils.GenerateUniqueId(12);
         }
     }
 

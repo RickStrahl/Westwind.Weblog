@@ -53,13 +53,13 @@ namespace Westwind.Weblog.Business
             {
                 Id = p.Id,
                 Body = p.Body,
-                ImageUrl = p.ImageUrl
+                FeaturedImageUrl = p.FeaturedImageUrl
             });
 
             StringBuilder sbContent = new StringBuilder(500000);
             foreach (var post in posts)
             {
-                sbContent.Append(post.Body + "\r\n" + post.ImageUrl);
+                sbContent.Append(post.Body + "\r\n" + post.FeaturedImageUrl);
             }
 
             string postList = sbContent.ToString().ToLower();
@@ -120,8 +120,9 @@ namespace Westwind.Weblog.Business
 
                 if (commentCount != post.CommentCount)
                 {
-                    Context.Database.ExecuteSqlRaw($"update Posts set CommentCount = {commentCount} where Id = {post.Id}");
-
+                    var sql = $"update Posts set CommentCount = @1 where Id =@0";
+                    var result = Db.ExecuteNonQuery(sql, post.Id, commentCount);
+                    
                     //Context.Posts.Attach(post);
                     //post.CommentCount = commentCount;
                     //Context.SaveChanges();

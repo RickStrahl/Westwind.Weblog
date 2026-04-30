@@ -23,20 +23,15 @@ namespace Westwind.Weblog.Business.Models
             }
             set { _connectionString = value; }
         }
-        private string _connectionString;
+        private string _connectionString = "server=.;database=WeblogCore;integrated security=true;encrypt=false";
 
 
+        public WeblogContext() : base(CreateDbContextOptions())
+        {
+
+        }
         public WeblogContext(DbContextOptions options) : base(options)
         {
-        }
-
-        public static WeblogContext GetWeblogContext(string connectionString)
-        {
-            var options = new DbContextOptionsBuilder<WeblogContext>()
-                    .UseSqlServer(connectionString)
-                    .Options;
-
-            return new WeblogContext(options);                                                    
         }
 
 
@@ -60,7 +55,7 @@ namespace Westwind.Weblog.Business.Models
                     {
                         opt.EnableRetryOnFailure()
                             .CommandTimeout(15)
-                            .MigrationsAssembly("Westwind.WebStore.Business");
+                            .MigrationsAssembly("Westwind.Weblog.Business");
                     });
             if (wlApp.Configuration.System.ShowConsoleDbCommands)
                 builder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted })
@@ -70,6 +65,24 @@ namespace Westwind.Weblog.Business.Models
                 builder.UseLoggerFactory(loggerFactory);
 
             return builder.Options;
+        }
+
+        /// <summary>
+        /// Allows creating a new WebStore Context outside of DI for a few
+        /// edge case scenarios (like app startup) where DI may not be
+        /// available.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static WeblogContext CreateContext(string connectionString = null)
+        {
+            var builder = new DbContextOptionsBuilder<WeblogContext>();
+            builder.UseSqlServer(connectionString ?? wlApp.Configuration.ConnectionString);
+            if (wlApp.Configuration.System.ShowConsoleDbCommands)
+                builder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted })
+                    .EnableSensitiveDataLogging();
+            var context = new WeblogContext(builder.Options);
+            return context;
         }
 
 

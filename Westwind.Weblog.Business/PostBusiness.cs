@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -18,7 +18,7 @@ namespace Westwind.Weblog.Business
         
 
         public PostBusiness(WeblogContext context,  
-                              WeblogConfiguration config) : base(context)
+                            WeblogConfiguration config) : base(context)
         {
             Configuration = config;            
         }
@@ -42,7 +42,7 @@ namespace Westwind.Weblog.Business
                    CommentCount  = p.CommentCount,
                    Created = p.Created,
                    Body = includeBody ? p.Body : null,
-                   ImageUrl = p.ImageUrl                   
+                   FeaturedImageUrl = p.FeaturedImageUrl                   
                 })
                 .ToListAsync();
         }
@@ -64,7 +64,7 @@ namespace Westwind.Weblog.Business
                     CommentCount = p.CommentCount,
                     Created = p.Created,
                     Body = includeBody ? p.Body : null,
-                    ImageUrl = p.ImageUrl
+                    FeaturedImageUrl = p.FeaturedImageUrl
                 })
                 .ToList();
         }
@@ -73,19 +73,23 @@ namespace Westwind.Weblog.Business
         {
             return await Context.Comments
                 .OrderByDescending(c => c.Created)
+                .Join(Context.Posts, c => c.PostId, 
+                                     p => p.Id, 
+                                     (c, p) => new { Comment = c, Post = p })                             
                 .Take(commentCount)
-                .Select(c => new Comment
+                .Select( c => new  Comment
                 {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Body = c.Body,
-                    BodyMode = c.BodyMode,
-                    Author = c.Author,
-                    Url = c.Url,
-                    Email = c.Email,
-                    Created = c.Created,
-                    PostId = c.PostId,
-                    IsActive = c.IsActive
+                    Id = c.Comment.Id,
+                    Title = c.Comment.Title,
+                    Body = c.Comment.Body,
+                    BodyMode = c.Comment.BodyMode,
+                    Author = c.Comment.Author,
+                    Url = c.Comment.Url,
+                    Email = c.Comment.Email,
+                    Created = c.Comment.Created,
+                    PostId = c.Comment.PostId,                    
+                    IsActive = c.Comment.IsActive,
+                    Post = c.Post,
                 }).ToListAsync();
         }
 
@@ -117,19 +121,6 @@ namespace Westwind.Weblog.Business
 
 
 
-        /// <summary>
-        /// Retrieves a post by Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<Post> GetPost(int id)
-        {
-            Entity = await Context.Posts
-                    .Include("Comments")                    
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(p => p.Id == id);
-            return Entity;
-        }
         #endregion 
 
         #region Comments
@@ -215,7 +206,8 @@ namespace Westwind.Weblog.Business
 
             return Configuration.WeblogHomeUrl + url;
         }
-        
+
+
         /// <summary>
         /// Returns a URL safe string for the title
         /// </summary>

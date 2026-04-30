@@ -11,7 +11,7 @@ namespace Westwind.Weblog.Business.Test
     [TestFixture]
     public class PostTests
     {
-        public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;";
+        public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;encrypt=false";
 
         [Test]
         public void GetDbContextRecentPostsWithCommentsTest()

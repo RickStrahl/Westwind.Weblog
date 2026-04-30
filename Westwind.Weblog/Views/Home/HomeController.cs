@@ -1,34 +1,117 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Azure;
 using Markdig;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Extensions;
 using Westwind.Utilities;
+using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Models;
+using Westwind.WeblogServices.Server;
+using Westwind.WeblogServices.Server.Rss;
 using ILogger = Castle.Core.Logging.ILogger;
 
 namespace Westwind.Weblog.Views.Home
 {
     public class HomeController : WeblogBaseController
     {
-        public HttpContextAccessor ContextAccessor { get; }
+        // public HttpContextAccessor ContextAccessor { get; }
         public ILogger<HomeController> Logger { get; }
 
-        public HomeController(HttpContextAccessor contextAccessor, ILogger<HomeController> logger)
-        {
-            ContextAccessor = contextAccessor;
+        //PostBusiness PostBusiness { get; set; }
+
+        public HomeController( ILogger<HomeController> logger)
+        {            
             Logger = logger;
         }
+
+        
+
+
+        [HttpGet]
+        [Route("/rss")]
+        public async Task<ActionResult> RssFeed(bool force, [FromServices] PostBusiness postBusiness)
+        {
+            var config = postBusiness.Configuration;
+
+            var rssFeed = new RssFeed()
+            {
+                Title = config.ApplicationName,
+                Link = config.WeblogHomeUrl,
+                Copyright = "(c) West Wind Technologies 2006-" + DateTime.Now.Year,
+                Description = "Wind, waves, code and everything in between",
+                Generator = "Rick Strahl's West Wind Weblog",
+                PubDate = DateTime.UtcNow,
+                ImageUrl = config.WeblogImageUrl
+            };
+
+
+            var posts = await postBusiness.GetLastPostsAsync(10, includeBody: true);
+            var lastPost = posts.FirstOrDefault();
+            if (lastPost != null)
+                rssFeed.LastUpdate = lastPost.Created.ToUniversalTime();
+
+            int count = 0;
+            foreach (var post in posts)
+            {
+                count++;
+
+                var rssItem = new RssItem()
+                {
+                    Title = post.Title,
+                    CommentCount = post.CommentCount,
+                    Link = postBusiness.GetPostUrl(post, fullyQualified: true),
+                    Permalink = postBusiness.GetPostUrl(post),
+                    PublishDate = post.Created,
+                    Guid = post.Id.ToString()
+                };
+                rssItem.Author.Name = post.Author ?? config.WeblogAuthor;
+                rssItem.CommentsUrl = rssItem.Link + "#Comments";
+
+
+                if (!string.IsNullOrEmpty(post.Categories))
+                    rssItem.Categories = post.Categories
+                                    .Split('.', StringSplitOptions.RemoveEmptyEntries)
+                                    .ToList();
+
+
+                //string body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.SponsorSquareAd, 1, true);
+
+                string body = post.Body;
+                if (!string.IsNullOrEmpty(body))
+                    body = body
+                        .Replace("##AD##", "")
+                        .Replace("##PAGEBREAK##", "");
+
+                if (count > 3)
+                    body = post.Abstract ?? StringUtils.TextAbstract(body, 250);
+
+                rssItem.Body = body;
+
+
+                rssFeed.Items.Add(rssItem);
+
+
+
+
+            }
+
+            return Content(rssFeed.SerializeToString(), "text/xml"); // new MediaTypeHeaderValue("text/xml"));
+        }
+
+
+
+
 
         public IActionResult MissingPage(string path, string url = null)
         {
@@ -64,7 +147,9 @@ namespace Westwind.Weblog.Views.Home
                 StatusCode = (int)HttpStatusCode.InternalServerError
             };
 
-            var context = ContextAccessor.HttpContext;
+            var context =this.HttpContext; // ContextAccessor.HttpContext;
+
+            
 
             var header = StringUtils.GetLines(mainException.Message).FirstOrDefault();
 

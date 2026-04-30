@@ -1,4 +1,4 @@
-﻿@model Westwind.Weblog.PostViewModel
+@model Westwind.Weblog.PostViewModel
 @{
     var config = Model.PostRepo.Configuration;
     ViewData["Title"] = config.ApplicationName;
@@ -18,7 +18,7 @@
                 <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
             }
             <h2 class="margin-top">                
-                <a href="@Model.PostRepo.GetPostUrl(post.SafeTitle, post.Created)"
+                <a href="@post.GetPostUrl()"
                         style="text-decoration: none;">@post.Title</a>
             </h2>
             <hr/>
@@ -28,7 +28,7 @@
                 
                 @if (post.CommentCount > 0)
                 {
-                    <a href="@(repo.GetPostUrl(post))#Feedback">
+                    <a href="@(repo.GetPostUrl(post))#Comments">
                         <i class="fa fa-comments-o"></i>
                         @repo.ShowCommentCount(post)
                     </a>
@@ -43,10 +43,10 @@
             </div>
 
 
-            @if (counter < 15 && !string.IsNullOrEmpty((string)post.ImageUrl))
+            @if (counter < 15 && !string.IsNullOrEmpty((string)post.FeaturedImageUrl))
             {
                 <div class="featured-image-wrapper">
-                    <img class="featured-image" src="@post.ImageUrl" loading="lazy" />
+                    <img class="featured-image" src="@post.FeaturedImageUrl" loading="lazy" />
                 </div>
             }
 

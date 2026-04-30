@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -36,7 +35,10 @@ namespace Westwind.AspNetCore.Controllers
             PostBusiness = postBusiness;
             UserBusiness = userBus;
             Host = host;
+
+            
         }
+
 
         public static ConcurrentDictionary<string, string> UserTokens = new ConcurrentDictionary<string, string>();
 
@@ -64,7 +66,7 @@ namespace Westwind.AspNetCore.Controllers
 
         [HttpPost]
         [Route("")]
-        public override string UploadPost([FromBody] WeblogPost post)
+        public override string UploadPost([FromBody] Westwind.WeblogPostService.Model.WeblogPost post)
         {
             int.TryParse(post.PostId, out int postId);
             if (postId < 1)
@@ -91,7 +93,7 @@ namespace Westwind.AspNetCore.Controllers
             newPost.Markdown = post.RawPostText;
             newPost.Author = post.Author;            
             newPost.Active = post.PostStatus == PostStatuses.Published;
-            newPost.ImageUrl = post.ImageUrl;
+            newPost.FeaturedImageUrl = post.ImageUrl;
 
             
             if (string.IsNullOrEmpty(newPost.SafeTitle))
@@ -154,6 +156,10 @@ namespace Westwind.AspNetCore.Controllers
                 // we only allow images
                 using (MemoryStream ms = new MemoryStream(media.Data))
                 {
+                    var buffer = new byte[20];
+                    var size= ms.Read(buffer , 0, 20);
+
+
                     using (Bitmap bitmap = new Bitmap(ms))
                     {
                         if (bitmap == null || bitmap.Width < 1)
@@ -187,7 +193,7 @@ namespace Westwind.AspNetCore.Controllers
         }
 
         [Route("{postId}/{blogId?}")]
-        public override WeblogPost GetPost(string postId, string blogId)
+        public override Westwind.WeblogPostService.Model.WeblogPost GetPost(string postId, string blogId)
         {
             if (!int.TryParse(postId, out int id) || id < 1)
                 throw new InvalidOperationException("Invalid PostId. Please make sure you provide an Id of an existing post.");
@@ -196,7 +202,7 @@ namespace Westwind.AspNetCore.Controllers
             if (post == null)
                 throw new ArgumentException("Unable to retrieve Post: " + UserBusiness.ErrorMessage);
 
-            var blogPost = new WeblogPost()
+            var blogPost = new Westwind.WeblogPostService.Model.WeblogPost()
             {
                 BlogId = "1", // only one blog so we hardcode this
                 PostId = post.Id.ToString(),
@@ -230,7 +236,7 @@ namespace Westwind.AspNetCore.Controllers
                     Abstract = post.Abstract,
                     Created = post.Created,
                     Url = PostBusiness.GetPostUrl(post),
-                    ImageUrl = post.ImageUrl,
+                    ImageUrl = post.FeaturedImageUrl,
                     CommentCount = post.CommentCount,                    
                 });
             }
@@ -238,76 +244,77 @@ namespace Westwind.AspNetCore.Controllers
             return postList;
         }
 
-        [HttpGet]
-        [Route("/rss")]
-        public async Task<ActionResult> RssFeed(bool force)
-        {
-            var config = PostBusiness.Configuration;
+        //[AllowAnonymous]
+        //[HttpGet]
+        //[Route("/rss")]
+        //public async Task<ActionResult> RssFeed(bool force)
+        //{
+        //    var config = PostBusiness.Configuration;
 
-            var rssFeed = new RssFeed()
-            {
-                Title = config.ApplicationName,
-                Link = config.WeblogHomeUrl,
-                Copyright = "(c) West Wind Technologies 2006-" + DateTime.Now.Year,
-                Description = "Wind, waves, code and everything in between",
-                 Generator = "Rick Strahl's West Wind Weblog"    ,
-                PubDate = DateTime.UtcNow,
-                ImageUrl = config.WeblogImageUrl                                                
-            };
+        //    var rssFeed = new RssFeed()
+        //    {
+        //        Title = config.ApplicationName,
+        //        Link = config.WeblogHomeUrl,
+        //        Copyright = "(c) West Wind Technologies 2006-" + DateTime.Now.Year,
+        //        Description = "Wind, waves, code and everything in between",
+        //         Generator = "Rick Strahl's West Wind Weblog"    ,
+        //        PubDate = DateTime.UtcNow,
+        //        ImageUrl = config.WeblogImageUrl                                                
+        //    };
             
 
-            var posts = await PostBusiness.GetLastPostsAsync(10, includeBody: true);
-            var lastPost = posts.FirstOrDefault();
-            if (lastPost != null)
-                rssFeed.LastUpdate = lastPost.Created.ToUniversalTime();
+        //    var posts = await PostBusiness.GetLastPostsAsync(10, includeBody: true);
+        //    var lastPost = posts.FirstOrDefault();
+        //    if (lastPost != null)
+        //        rssFeed.LastUpdate = lastPost.Created.ToUniversalTime();
 
-            int count = 0;
-            foreach (var post in posts)
-            {
-                count++;
+        //    int count = 0;
+        //    foreach (var post in posts)
+        //    {
+        //        count++;
 
-                var rssItem = new RssItem()
-                {
-                    Title = post.Title,
-                    CommentCount = post.CommentCount,
-                    Link = PostBusiness.GetPostUrl(post,fullyQualified: true),                    
-                    Permalink = PostBusiness.GetPostUrl(post),
-                    PublishDate = post.Created,
-                    Guid = post.Id.ToString()
-                };
-                rssItem.Author.Name = post.Author ?? config.WeblogAuthor;
-                rssItem.CommentsUrl = rssItem.Link + "#Comments";
+        //        var rssItem = new RssItem()
+        //        {
+        //            Title = post.Title,
+        //            CommentCount = post.CommentCount,
+        //            Link = PostBusiness.GetPostUrl(post,fullyQualified: true),                    
+        //            Permalink = PostBusiness.GetPostUrl(post),
+        //            PublishDate = post.Created,
+        //            Guid = post.Id.ToString()
+        //        };
+        //        rssItem.Author.Name = post.Author ?? config.WeblogAuthor;
+        //        rssItem.CommentsUrl = rssItem.Link + "#Comments";
                 
 
-                if (!string.IsNullOrEmpty(post.Categories))                
-                    rssItem.Categories = post.Categories
-                                    .Split('.', StringSplitOptions.RemoveEmptyEntries)
-                                    .ToList();
+        //        if (!string.IsNullOrEmpty(post.Categories))                
+        //            rssItem.Categories = post.Categories
+        //                            .Split('.', StringSplitOptions.RemoveEmptyEntries)
+        //                            .ToList();
                 
                 
-                //string body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.SponsorSquareAd, 1, true);
+        //        //string body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.SponsorSquareAd, 1, true);
                 
-                string body = post.Body;
-                if (!string.IsNullOrEmpty(body))
-                    body = body
-                        .Replace("##AD##", "")
-                        .Replace("##PAGEBREAK##", "");
+        //        string body = post.Body;
+        //        if (!string.IsNullOrEmpty(body))
+        //            body = body
+        //                .Replace("##AD##", "")
+        //                .Replace("##PAGEBREAK##", "");
 
-                if (count > 3)
-                    body = post.Abstract ?? StringUtils.TextAbstract(body, 250);
+        //        if (count > 3)
+        //            body = post.Abstract ?? StringUtils.TextAbstract(body, 250);
 
-                rssItem.Body = body;
-
-                
-                rssFeed.Items.Add(rssItem);
+        //        rssItem.Body = body;
 
                 
+        //        rssFeed.Items.Add(rssItem);
 
                 
-            }
+
+                
+        //    }
             
-            return Content(rssFeed.SerializeToString(), new MediaTypeHeaderValue("text/xml"));
-        }
+        //    return Content(rssFeed.SerializeToString(), new MediaTypeHeaderValue("text/xml"));
+        //}
 
         
     }

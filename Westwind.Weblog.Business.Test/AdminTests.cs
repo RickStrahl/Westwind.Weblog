@@ -18,9 +18,9 @@ namespace Westwind.Weblog.Business.Test
             var context = GetContext();
             var repo = new AdminBusiness(context, new Configuration.WeblogConfiguration());
 
-            repo.DeleteOldImages(@"C:\projects2010\Westwind.Weblog\Westwind.Weblog\wwwroot\images");
+            repo.DeleteOldImages(@"d:\projects\Westwind.Weblog\Westwind.Weblog\wwwroot\images");
         }
-
+        
         [Test]
         public void UpdatePostCounts()
         {
@@ -33,6 +33,15 @@ namespace Westwind.Weblog.Business.Test
         {
             GetContext();
         }
+
+        [Test]
+        public void DeletePostsAndCommentsTest()
+        {
+            //var context = GetContext();
+            //int result = context.Database.ExecuteSql($"delete from Comments;delete from Posts");                        
+        }
+
+
 
         WeblogContext GetContext()
         {

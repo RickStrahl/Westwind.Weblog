@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Westwind.Weblog.Business.Configuration;
 
 //using Microsoft.EntityFrameworkCore;
 
@@ -11,9 +12,9 @@ namespace Westwind.Weblog.Business.Models
 {
     public class Comment
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = wlApp.NewId();
 
-        public int PostId { get; set; }
+        public string PostId { get; set; }
 
         [MaxLength(128)]
         public string Title { get; set; }
@@ -34,13 +35,18 @@ namespace Westwind.Weblog.Business.Models
 
         public string Url { get; set; }
 
-        public Post Post { get; set; }
+        public virtual Post Post { get; set; }
         
         public bool IsActive { get; set; }
 
         public Comment()
         {
             
+        }
+
+        public override string ToString()
+        {
+            return "Comment: " + Title;
         }
     }
 }

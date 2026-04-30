@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,14 +33,16 @@ namespace Westwind.Weblog
             
         }
 
-        [HttpGet("admin/index")]        
+        [Route("/admin")]
+        [Route("/admin/index")]
+        [HttpGet]        
         public IActionResult Index()
         {
             var model = CreateViewModel<AdminViewModel>();
             return View(model);
         }
 
-        [HttpGet("admin/import")]
+        [HttpGet("/admin/import")]
         public IActionResult Import()
         {
             var model = CreateViewModel<AdminViewModel>();

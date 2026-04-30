@@ -1,25 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <UserSecretsId>826df5fe-bc20-4b17-9e36-39ccd496c1aa</UserSecretsId>
-    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<UserSecretsId>826df5fe-bc20-4b17-9e36-39ccd496c1aa</UserSecretsId>
+		<MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.4" />
-	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
-	  <PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.5.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.7" />
+		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+		<PackageReference Include="Westwind.AspNetCore.LiveReload" Version="0.7.0" />
+		<!--<PackageReference Include="Westwind.AspNetCore.Markdown" Version="3.20.0" />-->
+	</ItemGroup>
 
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Westwind.AspNetCore\Westwind.AspNetCore\Westwind.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
-    <ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
-    <ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />
-    <ProjectReference Include="..\Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Libraries-->
+		<ProjectReference Include="..\..\Westwind.AspNetCore.Markdown\Westwind.AspNetCore.Markdown\Westwind.AspNetCore.Markdown.csproj" />
+		<ProjectReference Include="..\..\Westwind.AspNetCore\Westwind.AspNetCore\Westwind.AspNetCore.csproj" />
+		<ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
+		<ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
+
+		<!-- Application -->
+		<ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />
+		<ProjectReference Include="..\Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj" />
+	</ItemGroup>
 
 
 </Project>

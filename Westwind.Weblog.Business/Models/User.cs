@@ -2,12 +2,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using Westwind.Data.EfCore;
+using Westwind.Weblog.Business.Configuration;
 
 namespace Westwind.Weblog.Business.Models
 {
     public class User
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = wlApp.NewId();
 
         [Required]
         public string Username { get; set; }
@@ -19,7 +20,7 @@ namespace Westwind.Weblog.Business.Models
             get { return _password; }
             set
             {
-                if (Id > 0)
+                if (!string.IsNullOrEmpty(Id))
                     _password = UserBusiness.HashPassword(value, Id.ToString());
                 else
                     _password = value;

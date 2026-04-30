@@ -75,12 +75,11 @@ namespace Westwind.Weblog.Business.Models
 
                 DataUtils.CopyObjectFromDataRow(row, post);
 
-                post.Id = pk;
-
-                post.Created = (DateTime) row["Entered"];
-                post.CommentCount = (int) row["Feedback"];
-                post.ImageUrl = row["FeaturedImageUrl"] as string;
+                post.Id = pk.ToString();
                 
+                post.Created = (DateTime) row["Entered"];                
+                post.CommentCount = (int) row["Feedback"];
+                post.FeaturedImageUrl = row["FeaturedImageUrl"] as string;                
                 context.Posts.Add(post);
 
                 // save on every 20th record to avoid 
@@ -107,15 +106,15 @@ namespace Westwind.Weblog.Business.Models
                     continue;
 
                 // skip if post doesn't exist
-                if (!context.Posts.Any(p => p.Id == postPk))
+                if (!context.Posts.Any(p => p.Id == postPk.ToString()))
                     continue;
 
                 var comment = new Comment();
 
                 DataUtils.CopyObjectFromDataRow(row, comment);
 
-                comment.Id = pk;
-                comment.PostId = postPk;
+                comment.Id = pk.ToString();
+                comment.PostId = postPk.ToString();
                 comment.Created = (DateTime)row["Entered"];
                 comment.BodyMode = (int) row["BodyMode"];
 

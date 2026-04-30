@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +20,7 @@ using Westwind.AspNetCore.Extensions;
 using System.Runtime.InteropServices;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
+using Westwind.AspNetCore.Markdown;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,9 +76,6 @@ services.AddSerilog(Log.Logger);
 
 Log.Logger.Information("Application Started.");
 
-services.AddScoped<PostBusiness>();
-services.AddScoped<AdminBusiness>();
-services.AddScoped<UserBusiness>();
 
 services.AddDbContext<WeblogContext>(builder =>
 {
@@ -91,6 +89,10 @@ services.AddDbContext<WeblogContext>(builder =>
         opt.CommandTimeout(15);
     });
 });
+
+services.AddScoped<PostBusiness>();
+services.AddScoped<AdminBusiness>();
+services.AddScoped<UserBusiness>();
 
 services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -109,7 +111,11 @@ services.AddControllersWithViews()
     .AddRazorRuntimeCompilation();
 
 
-
+services.AddMarkdown(config =>
+{
+    config.MarkdownRenderExtensions.Add(new FontAwesomeRenderExtension());
+    config.MarkdownRenderExtensions.Add(new PlantUmlMarkdownRenderExtension());
+});
 
 // ***  BUILD ***
 var app = builder.Build();
@@ -122,8 +128,8 @@ Task.Run(() =>
 {
     // can't inject configuration here :-( So we use explict
     string connectionString = wlApp.Configuration.ConnectionString; // Configuration["Data:SqlServerConnectionString"];
-    var context = WeblogContext.GetWeblogContext(connectionString);
-    context.Posts.Any(p => p.Id == -1);
+    var context = WeblogContext.CreateContext(connectionString);
+    context.Posts.Any(p => p.Id == "@!");
 });
 
 wlApp.Cache = app.Services.GetService<IMemoryCache>();

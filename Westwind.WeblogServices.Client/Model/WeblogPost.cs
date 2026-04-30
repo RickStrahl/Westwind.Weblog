@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Westwind.Weblog.Business.Models;
 
 namespace Westwind.WeblogPostService.Model
 {
@@ -35,8 +36,9 @@ namespace Westwind.WeblogPostService.Model
         public DateTime DateCreated { get; set; }
 
         /// <summary>
-        /// Actual content of the post - usually HTML that is
-        /// used to display the post online.
+        /// Actual content of the post - usually ready to render HTML 
+        /// that is used to display the post online but it could also
+        /// be Markdown that is then formatted into HTMl by the app.
         /// </summary>
         public string Body { get; set; }
 
@@ -52,6 +54,13 @@ namespace Westwind.WeblogPostService.Model
         /// HTML generation.
         /// </summary>
         public string RawPostText { get; set; }
+
+
+        /// <summary>
+        /// Optional type of the raw post text. This is typically
+        /// markdown or html or plain text.
+        /// </summary>
+        public string RawPostType { get; set; }
 
 
         /// <summary>
@@ -93,11 +102,6 @@ namespace Westwind.WeblogPostService.Model
         public string Categories { get; set; }
 
         
-        /// <summary>
-        /// Any custom fields using a string key and value
-        /// </summary>
-        public Dictionary<string,string> CustomFields { get; set; }
-
 
         /// <summary>
         /// Optional type you can attach to a post. Example: Blog, Article, Advert etc.
@@ -119,7 +123,8 @@ namespace Westwind.WeblogPostService.Model
         /// <summary>
         /// Optional a smaller thumbnail URL associated with this post.
         /// </summary>
-        public string ThumbnailUrl { get; set; }
+        public string FeaturedImageUrl { get; set; }
+
 
         /// <summary>
         /// Attach an Author to the post
@@ -127,10 +132,40 @@ namespace Westwind.WeblogPostService.Model
         public string Author { get; set; }
 
         /// <summary>
-        /// Attach a location to the p
+        /// Optional location where the post was created
         /// </summary>
         public string Location { get; set; }
-                
+
+        /// <summary>
+        /// If the post data is stored on GitHub or some
+        /// other online location you can specify the URL
+        /// here.
+        /// </summary>
+        public string SourceEditUrl { get; set; }
+
+
+        /// <summary>
+        /// Any custom fields using a string key and value
+        /// </summary>
+        public Dictionary<string, string> CustomFields { get; set; } = new Dictionary<string, string>();
+
+
+        /// <summary>
+        /// Optionally allows attaching media objects directly to the post.
+        /// Alternately you can post it separately and then fix up the document
+        /// after the fact.
+        /// </summary>
+        public List<MediaObject> MediaObjects { get; set; } = new List<MediaObject>();
+
+        public List<Comment> Comments { get; set; } = new List<Comment>();
+
+        /// <summary>
+        /// The slug URL for the title part of the URL. Doesn't include the date
+        /// which might be adjusted.
+        /// </summary>
+        public string SafeTitle { get; set; }
+
+
         /// <summary>
         /// Returns the Title of the topic
         /// </summary>
@@ -151,9 +186,75 @@ namespace Westwind.WeblogPostService.Model
             if (!CustomFields.TryGetValue(key, out string value))
                 return null;
             return value;
-        }        
+        }
+
+
+        public void FromPost(Post post)
+        {
+            PostId = post.Id.ToString();            
+            BlogId = post.Id.ToString();
+            PostType = "blog";
+            Abstract = post.Abstract;
+            Author = post.Author;
+            Body = post.Body;
+            Title = post.Title;
+            DateCreated = post.Created;
+            ImageUrl = post.FeaturedImageUrl;
+            Location = post.Location;
+            Categories = post.Categories;
+            Keywords = post.Keywords;
+            PermaLink = post.PermanentUrl;
+            PostStatus = post.Active ? PostStatuses.Published : PostStatuses.Draft;
+            SourceEditUrl = post.GithubUrl;
+            SafeTitle = post.SafeTitle;
+
+            RawPostText = post.Markdown;
+            RawPostType = "markdown";
+            SafeTitle = post.SafeTitle;
+            FeaturedImageUrl = post.FeaturedImageUrl;
+
+            Comments = post.Comments;            
+        }
+        
     }
 
 
+    public enum PostStatuses
+    {
+        Published,
+        Draft,
+        Pending,
+        Future,
+    }
 
+    public class MediaObject
+    {
+
+        public string BlogId { get; set; }
+
+        /// <summary>
+        /// The name of the Media Object.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The type of the Media Object.
+        /// </summary>
+        public string ContentType { get; set; }
+
+        /// <summary>
+        /// The byte array of the Media Object itself.
+        /// 
+        /// </summary>
+        public byte[] Data { get; set; }
+
+    }
+
+    public class WeblogInfo
+    {
+        public string BlogId { get; set; }
+        public string Url { get; set; }
+
+        public string Title { get; set; }        
+    }
 }

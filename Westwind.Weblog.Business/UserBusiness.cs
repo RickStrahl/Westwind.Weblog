@@ -48,6 +48,7 @@ namespace Westwind.Weblog.Business.Models
             var user = AuthenticateAndRetrieveUser(username, password);
             if (user == null)
                 return false;
+                       
             
             return true;
         }
@@ -100,7 +101,7 @@ namespace Westwind.Weblog.Business.Models
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public User GetUser(int id)
+        public User GetUser(string id)
         {
             return  Context.Users.FirstOrDefault(usr => usr.Id == id);
         }
@@ -169,7 +170,7 @@ namespace Westwind.Weblog.Business.Models
         }
 
 
-        public bool DeleteUser(int userId)
+        public bool DeleteUser(string userId)
         {
             var user = Context.Users             
                 .FirstOrDefault(usr => usr.Id == userId);
@@ -216,12 +217,11 @@ namespace Westwind.Weblog.Business.Models
             string saltedPassword = uniqueSalt + password + appSalt;
 
             // pre-hash
-            var sha = new SHA1CryptoServiceProvider();
-            byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes(saltedPassword));
+            //var sha = new SHA1CryptoServiceProvider();
+            byte[] hash = SHA1.HashData(Encoding.ASCII.GetBytes(saltedPassword));
 
-            // hash again
-            var sha2 = new SHA256CryptoServiceProvider();
-            hash = sha2.ComputeHash(hash);
+            // hash again            
+            hash = SHA256.HashData(hash);
 
             return StringUtils.BinaryToBinHex(hash) + HashPostFix;
         }
@@ -264,36 +264,7 @@ namespace Westwind.Weblog.Business.Models
 
         #endregion
 
-        #region CRUD Error Handling
-
-        protected void SetError()
-        {
-            SetError("CLEAR");
-        }
-
-        protected void SetError(string message)
-        {
-            if (message == null || message == "CLEAR")
-            {
-                ErrorMessage = string.Empty;
-                return;
-            }
-            ErrorMessage += message;
-        }
-
-        protected void SetError(Exception ex, bool checkInner = false)
-        {
-            if (ex == null)
-                ErrorMessage = string.Empty;
-
-            Exception e = ex;
-            if (checkInner)
-                e = e.GetBaseException();
-
-            ErrorMessage = e.Message;
-        }
-
-        #endregion
+       
 
 
 

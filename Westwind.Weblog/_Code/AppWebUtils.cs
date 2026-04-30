@@ -123,7 +123,7 @@ namespace Westwind.Weblog
                 return new HtmlString(blogStats);
 
             var config = wlApp.Configuration;
-            var context = WeblogContext.GetWeblogContext(config.ConnectionString);            
+            var context = WeblogContext.CreateContext(config.ConnectionString);            
             var postRepo = new PostBusiness(context,config);
             var counts = postRepo.GetPostStats();
 

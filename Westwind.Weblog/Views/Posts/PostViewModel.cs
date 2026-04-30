@@ -11,6 +11,8 @@ namespace Westwind.Weblog
 
         public Post Post { get; set; }
 
+        public string PostHtml { get; set; }
+
         public List<Comment> Comments { get; set; }
 
         public PostBusiness PostRepo { get; set; }

@@ -1,4 +1,6 @@
-﻿@using Westwind.AspNetCore.Components
+@using Westwind.AspNetCore.Components
+@using Westwind.AspNetCore.Markdown
+
 @model PostViewModel
 
 @{
@@ -29,10 +31,10 @@
     <meta name="twitter:site" content="https://weblog.west-wind.com">
     <meta name="twitter:creator" content="@@rickstrahl">
 
-    @if (!string.IsNullOrEmpty(post.ImageUrl))
+    @if (!string.IsNullOrEmpty(post.FeaturedImageUrl))
     {        
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="og:image" content="@(config.WeblogHomeUrl + post.ImageUrl)"/>
+        <meta property="og:image" content="@(config.WeblogHomeUrl + post.FeaturedImageUrl)"/>
     }
      
     <link href="~/css/post.css" rel="stylesheet" />
@@ -83,7 +85,7 @@
     <div class="leftbox" style="float: right;">
         @if (post.CommentCount > 0)
         {
-            <a href="@(repo.GetPostUrl(post))#Feedback">
+            <a href="@(repo.GetPostUrl(post))#Comments">
                 <i class="fa fa-comments-o"></i>
                 @repo.ShowCommentCount(post)
             </a>
@@ -113,7 +115,7 @@
             <%= App.SponsoredTopAd %>
             }*@
 
-    @Html.Raw(post.Body)
+    @Html.Raw(Model.PostHtml)
 
 
     @*<% if (RelatedPosts != null && RelatedPosts.Rows.Count > 0)
@@ -227,11 +229,11 @@
 
 @if (post.Comments.Count > 0) 
 { 
-<h2>The Voices of Reason</h2>
+<h2 id="Comments">The Voices of Reason</h2>
 <hr style="margin-bottom: 30px;" />
 
 
-    <div id="Comments" class="clearfix"></div>
+    <div class="clearfix"></div>
 
 
     foreach (var comment in post.Comments)
@@ -298,9 +300,9 @@
     <partial name="Comment_Partial" model="Model" />
 }
 else {    
-    <form action="@(Request.Path)#Comment" method="post">
+    <form action="@(Request.Path)#Comments" method="post">
         <input type="hidden" name="force" value="1" />
-        <button class="btn btn-primary" 
+        <button class="btn btn-primary" id="CommentSubmit"
                 type="submit"
                 style="font-weight: bold; padding: 10px 30px;">
             <i class="fa fa-comments-o"></i>&nbsp;

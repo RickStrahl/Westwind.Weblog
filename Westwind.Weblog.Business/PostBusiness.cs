@@ -12,37 +12,37 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business
 {
-    public class PostBusiness : EntityFrameworkBusinessObject<WeblogContext,Post>
+    public class PostBusiness : EntityFrameworkBusinessObject<WeblogContext, Post>
     {
         public readonly WeblogConfiguration Configuration;
-        
 
-        public PostBusiness(WeblogContext context,  
+
+        public PostBusiness(WeblogContext context,
                             WeblogConfiguration config) : base(context)
         {
-            Configuration = config;            
+            Configuration = config;
         }
 
         #region Post Retrieval
 
-        public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody=false )
-        {            
+        public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody = false)
+        {
             return await Context.Posts
                 .Include("Comments")
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
-                .Select( p=> new Post
+                .Select(p => new Post
                 {
-                   Id = p.Id,
-                   IsFeatured = p.IsFeatured,
-                   Abstract = p.Abstract,
-                   Title = p.Title,
-                   SafeTitle = p.SafeTitle,
-                   Location = p.Location,
-                   CommentCount  = p.CommentCount,
-                   Created = p.Created,
-                   Body = includeBody ? p.Body : null,
-                   FeaturedImageUrl = p.FeaturedImageUrl                   
+                    Id = p.Id,
+                    IsFeatured = p.IsFeatured,
+                    Abstract = p.Abstract,
+                    Title = p.Title,
+                    SafeTitle = p.SafeTitle,
+                    Location = p.Location,
+                    CommentCount = p.CommentCount,
+                    Created = p.Created,
+                    Body = includeBody ? p.Body : null,
+                    FeaturedImageUrl = p.FeaturedImageUrl
                 })
                 .ToListAsync();
         }
@@ -68,16 +68,16 @@ namespace Westwind.Weblog.Business
                 })
                 .ToList();
         }
-        
+
         public async Task<List<Comment>> GetRecentCommentsAsync(int commentCount = 50)
         {
             return await Context.Comments
                 .OrderByDescending(c => c.Created)
-                .Join(Context.Posts, c => c.PostId, 
-                                     p => p.Id, 
-                                     (c, p) => new { Comment = c, Post = p })                             
+                .Join(Context.Posts, c => c.PostId,
+                                     p => p.Id,
+                                     (c, p) => new { Comment = c, Post = p })
                 .Take(commentCount)
-                .Select( c => new  Comment
+                .Select(c => new Comment
                 {
                     Id = c.Comment.Id,
                     Title = c.Comment.Title,
@@ -87,7 +87,7 @@ namespace Westwind.Weblog.Business
                     Url = c.Comment.Url,
                     Email = c.Comment.Email,
                     Created = c.Comment.Created,
-                    PostId = c.Comment.PostId,                    
+                    PostId = c.Comment.PostId,
                     IsActive = c.Comment.IsActive,
                     Post = c.Post,
                 }).ToListAsync();
@@ -100,9 +100,9 @@ namespace Westwind.Weblog.Business
         /// <param name="slug">Post title created with GetSlug() and held in SafeTitle</param>
         /// <returns></returns>
         public async Task<Post> GetPost(string slug)
-        {            
+        {
             Entity = await Context.Posts
-                .Include("Comments")            
+                .Include("Comments")
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.SafeTitle == slug);
             return Entity;
@@ -134,7 +134,7 @@ namespace Westwind.Weblog.Business
                 post = Entity;
 
             post.Comments = await Context.Comments
-                                .Where(c => c.PostId == post.Id )
+                                .Where(c => c.PostId == post.Id)
                                 .ToListAsync();
         }
 
@@ -159,7 +159,7 @@ namespace Westwind.Weblog.Business
                 commentCountText = post.CommentCount + " comments";
 
             return commentCountText;
-               
+
         }
         #endregion
 
@@ -181,7 +181,7 @@ namespace Westwind.Weblog.Business
 
             if (string.IsNullOrEmpty(post.SafeTitle))
                 post.SafeTitle = GetSafeTitle(post.Title);
-            
+
             return GetPostUrl(post.SafeTitle, post.Created, fullyQualified);
         }
 
@@ -197,9 +197,9 @@ namespace Westwind.Weblog.Business
         /// <param name="fullyQualified">If true returns a full http(s) url</param>
         /// <returns></returns>
         public string GetPostUrl(string safeTitle, DateTime entered, bool fullyQualified = false)
-        { 
+        {
             DateTime date = entered;
-            string url = $"{Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";                         
+            string url = $"{Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";
 
             if (!fullyQualified)
                 return url;
@@ -223,7 +223,7 @@ namespace Westwind.Weblog.Business
 
             title = WebUtility.HtmlDecode(title);
 
-            title = title                
+            title = title
                 .Replace("c#", "csharp")
                 .Replace("C#", "csharp")
                 .Replace(" .net", " dotnet")
@@ -262,5 +262,45 @@ namespace Westwind.Weblog.Business
             return (postCount, commentCount);
         }
         #endregion
+
+
+        /// <summary>
+        /// Replaces the Ads in a post. Pass in either Html or Markdown
+        /// and it replaces the `##AD##` placeholders.
+        /// 
+        /// It replaces the 1st item with a fixed ad and all others
+        /// via shuffling from adsnew.xml
+        /// </summary>
+        /// <param name="postHtml">Html or Markdown to replace ##AD## values with</param>
+        /// <returns>Html or Markdown with ads replaced</returns>
+        public string EmbedAds(string postHtml)
+        {
+            if (string.IsNullOrEmpty(postHtml))
+                return postHtml;
+
+
+            var adMan = AdManager.Ads;
+
+            var ad = adMan.GetFirstContentAd();
+            var restAds = adMan.GetShuffledContentAds().ToList();
+            if (!string.IsNullOrEmpty(ad))
+            {
+                postHtml = StringUtils.ReplaceStringInstance(postHtml, "##AD##", ad, 1, true); // no Ads at the moment exclusive
+            }
+            if (restAds is { Count: > 0 })
+            {
+
+                for (int i = 1; i < restAds.Count; i++)
+                {
+                    if (!postHtml.Contains("##AD##", StringComparison.Ordinal))
+                        break;
+
+                    ad = restAds[i];
+                    postHtml = StringUtils.ReplaceStringInstance(postHtml, "##AD##", ad, 1, true);
+                }
+            }
+
+            return postHtml;
+        }
     }
 }

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Westwind.AspNetCore.Markdown;
+using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
+using Westwind.Weblog.Views.Posts;
 
 namespace Westwind.Weblog
 {
@@ -43,7 +45,7 @@ namespace Westwind.Weblog
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
         [Route("showpost.aspx")]        
-        public async Task<IActionResult> ShowPost(int year, string month, int day, string slug, string id= null)
+        public async Task<IActionResult> ShowPost(int year, string month, int day, string slug, object html, string id= null)
         {
             Post post;
             if (!string.IsNullOrEmpty(id))
@@ -57,15 +59,12 @@ namespace Westwind.Weblog
             }
 
             string postHtml;
-            // Markdown
-            postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered
-
-            // embed ads            
-            postHtml = postHtml.Replace("##AD##", ""); // no Ads at the moment exclusive
             
-            //var body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.EmbeddedContentAd, 2, true);
-            //body = StringUtils.ReplaceStringInstance(body, "##AD##", App.WestWindSquareAd, 3, true);
-            //body = body.Replace("##AD##", App.EmbeddedContentAd);
+            
+            
+            // Markdown
+            postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
+            postHtml = PostRepo.EmbedAds(postHtml);
 
             var page = Request.Query["page"].FirstOrDefault();
             int.TryParse(page, out int pageToDisplay);

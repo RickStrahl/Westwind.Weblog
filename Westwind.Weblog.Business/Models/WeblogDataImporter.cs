@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -65,7 +65,6 @@ namespace Westwind.Weblog.Business.Models
 
             var count = 0;
 
-            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Posts ON");
 
             foreach (DataRow row in data.Rows)
             {
@@ -75,14 +74,15 @@ namespace Westwind.Weblog.Business.Models
 
                 DataUtils.CopyObjectFromDataRow(row, post);
 
-                post.Id = pk.ToString();
+                post.Id = pk.ToString();                
                 
                 post.Created = (DateTime) row["Entered"];                
                 post.CommentCount = (int) row["Feedback"];
-                post.FeaturedImageUrl = row["FeaturedImageUrl"] as string;                
+                post.FeaturedImageUrl = row["FeaturedImageUrl"] as string; 
+                
                 context.Posts.Add(post);
 
-                // save on every 20th record to avoid 
+                // save on every 10th record to avoid 
                 // change tracking to overload
                 if (count % 10 == 0)
                     context.SaveChanges();
@@ -91,12 +91,10 @@ namespace Westwind.Weblog.Business.Models
             }
             context.SaveChanges();
 
-            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Posts OFF");
             
             data = sql.ExecuteTable("weblogcomments", "select * from blog_entries where EntryType=3");
 
             count = 0;
-            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Comments ON");
 
             foreach (DataRow row in data.Rows)
             {
@@ -118,6 +116,9 @@ namespace Westwind.Weblog.Business.Models
                 comment.Created = (DateTime)row["Entered"];
                 comment.BodyMode = (int) row["BodyMode"];
 
+
+                comment.IsActive = row["Active"] as bool? ?? true;
+
                 context.Comments.Add(comment);
 
                 // save on every 20th record to avoid 
@@ -131,8 +132,7 @@ namespace Westwind.Weblog.Business.Models
             // save remainder
             context.SaveChanges();
 
-            context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT Comments OFF");
-
+            
             var user = new User()
             {
                 Fullname = "Rick Strahl",      

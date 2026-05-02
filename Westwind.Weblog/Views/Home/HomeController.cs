@@ -1,7 +1,4 @@
-using Markdig;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,17 +6,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Westwind.AspNetCore;
 using Westwind.AspNetCore.Extensions;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
-using Westwind.Weblog.Models;
 using Westwind.WeblogServices.Server;
 using Westwind.WeblogServices.Server.Rss;
-using ILogger = Castle.Core.Logging.ILogger;
 
 namespace Westwind.Weblog.Views.Home
 {

@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Westwind.Utilities.Data;
 using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business.Test
@@ -27,7 +28,35 @@ namespace Westwind.Weblog.Business.Test
             var repo = GetAdminRepo();
             repo.UpdatePostCommentCounts();
         }
-        
+
+
+        [Test]
+        public void ImportOldWebLogTest(string oldWeblogConnectionString)
+        {
+            
+            var options = new DbContextOptionsBuilder<WeblogContext>()
+                .UseSqlServer(ConnectionString)
+                .Options;
+
+            var ctx = new WeblogContext(options);
+
+            Assert.IsNotNull(ctx, "Failed to create WeblogContext");
+
+            var sql = new SqlDataAccess(ConnectionString);
+            int res = sql.ExecuteNonQuery("drop table Comments");
+            res = sql.ExecuteNonQuery("drop table Posts");
+            res = sql.ExecuteNonQuery("drop table Users");
+            res = sql.ExecuteNonQuery("drop table Weblogs");
+
+            //if (res < 0)
+            //{
+            //    SetError(sql.ErrorMessage);
+            //    return false;
+            //}
+
+            Assert.IsTrue(WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=weblog;integrated security=true"), "Failed to import weblog data");
+        }
+
         [Test]
         public void CreateDatabaseTest()
         {

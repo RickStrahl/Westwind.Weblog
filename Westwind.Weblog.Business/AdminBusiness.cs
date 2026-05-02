@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -42,7 +42,7 @@ namespace Westwind.Weblog.Business
             //    return false;
             //}
 
-            return WeblogDataImporter.EnsureWeblogData(Context,"server=.;database=weblog;integrated security=true");
+            return WeblogDataImporter.EnsureWeblogData(Context, "server=.;database=weblog;integrated security=true");
         }
 
         public StringBuilder DeleteOldImages(string imageFolder)

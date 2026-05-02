@@ -3,7 +3,7 @@
 ## Must Haves
 
 * **Add Comments**  
-We need comment processing to work.
+~~We need comment processing to work.~~
 
 * **Upload Blog Posts**  
 Use custom upload format.

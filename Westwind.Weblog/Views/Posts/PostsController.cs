@@ -1,15 +1,13 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using Westwind.AspNetCore.Markdown;
-using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
-using Westwind.Weblog.Views.Posts;
 
 namespace Westwind.Weblog
 {
@@ -100,21 +98,12 @@ namespace Westwind.Weblog
         public async Task<IActionResult> ShowPostPost([FromForm] PostViewModel model, [FromRoute] int year, [FromRoute] string month, [FromRoute] int day, [FromRoute] string slug, [FromRoute] string id = null)
         {
 
-            Post post;
-            
-
+            Post post;           
             if(!string.IsNullOrEmpty(id))
                 post = await PostRepo.GetPost(id);
             else
                 post = await PostRepo.GetPost(slug);
-
-            // embed ads            
-            post.Body = post.Body.Replace("##AD##", ""); // no Ads at the moment exclusive
-
-            //var body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.EmbeddedContentAd, 2, true);
-            //body = StringUtils.ReplaceStringInstance(body, "##AD##", App.WestWindSquareAd, 3, true);
-            //body = body.Replace("##AD##", App.EmbeddedContentAd);
-
+            
             var page = Request.Query["page"].FirstOrDefault();
             int.TryParse(page, out int pageToDisplay);
             if (pageToDisplay < 1)

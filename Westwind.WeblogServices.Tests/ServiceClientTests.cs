@@ -17,13 +17,13 @@ namespace Westwind.Weblog.PostServiceTests
         private string ServiceUrl = "http://localhost:5004/api";
 
         [Test]
-        public void AuthenticateTest()
+        public async Task AuthenticateTest()
         {
             var client = new WeblogPostServiceClient()
             {
                 ApiBaseUrl = ServiceUrl
             };
-            var token = client.Authenticate("rstrahl@west-wind.com", "testing");
+            var token = await client.Authenticate("rstrahl@west-wind.com", "testing");
 
             Assert.IsNotEmpty(token);
             Console.WriteLine(token);
@@ -31,14 +31,14 @@ namespace Westwind.Weblog.PostServiceTests
         }
 
         [Test]
-        public void FailAuthenticateTest()
+        public async Task FailAuthenticateTest()
         {
             var client = new WeblogPostServiceClient()
             {
                 ApiBaseUrl = ServiceUrl
             };
 
-            var token = client.Authenticate("rstrahl@west-wind.com", "ding");
+            var token = await client.Authenticate("rstrahl@west-wind.com", "ding");
             
 
             Assert.IsNotEmpty(token);
@@ -48,7 +48,7 @@ namespace Westwind.Weblog.PostServiceTests
 
 
         [Test]
-        public void NewWeblogPostTest()
+        public async Task NewWeblogPostTest()
         {
 
             var post = new WeblogPost()
@@ -70,10 +70,10 @@ namespace Westwind.Weblog.PostServiceTests
             {
                 ApiBaseUrl = ServiceUrl
             };
-            var token = client.Authenticate("rstrahl@west-wind.com", "testing");
+            var token = await client.Authenticate("rstrahl@west-wind.com", "testing");
             
             Assert.IsNotNull(token);
-            var postId = client.UploadPost(post);
+            var postId = await client.UploadPost(post);
 
             Assert.IsNotNull(postId);
             Assert.IsNotEmpty(postId);

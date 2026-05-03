@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Threading.Tasks;
 using Westwind.Utilities;
 using Westwind.WeblogPostService.Model;
 
@@ -24,7 +25,7 @@ namespace Westwind.WeblogServices.Client
         /// <param name="password"></param>
         /// <param name="blogId"></param>
         /// <returns></returns>
-        public string Authenticate(string username, string password, string blogId = null,string relativeUrl = "/posts/authenticate")
+        public async Task<string> Authenticate(string username, string password, string blogId = null,string relativeUrl = "/posts/authenticate")
         {
             var data = new AuthenticateRequest
             {
@@ -33,9 +34,10 @@ namespace Westwind.WeblogServices.Client
                 BlogId = blogId
             };
 
-            var settings = new HttpRequestSettings
-            {
-                Content = data,
+            var settings = new HttpClientRequestSettings
+            {                 
+                RequestContent = data,
+                RequestContentType = "application/json",
                 Url = ApiBaseUrl + relativeUrl,
                 HttpVerb = "POST"
             };
@@ -43,7 +45,7 @@ namespace Westwind.WeblogServices.Client
             string token = null;
             try
             {
-                token = HttpUtils.JsonRequest<string>(settings);
+                token = await HttpClientUtils.DownloadJsonAsync<string>(settings);
             }
             catch (Exception ex)
             {
@@ -56,13 +58,14 @@ namespace Westwind.WeblogServices.Client
         }
 
 
-        public string UploadPost(WeblogPost post, string relativeUrl = "/posts")
+        public async Task<string> UploadPost(WeblogPost post, string relativeUrl = "/posts")
         {
             
 
-            var settings = new HttpRequestSettings
+            var settings = new HttpClientRequestSettings
             {
-                Content = post,
+                RequestContent = post,
+                RequestContentType = "application/json",
                 Url = ApiBaseUrl + relativeUrl,
                 HttpVerb = "POST"
             };
@@ -71,7 +74,7 @@ namespace Westwind.WeblogServices.Client
             string postId = null;
             try
             {
-                postId = HttpUtils.JsonRequest<string>(settings);
+                postId = await HttpClientUtils.DownloadJsonAsync<string>(settings);
             }
             catch (Exception ex)
             {
@@ -81,11 +84,12 @@ namespace Westwind.WeblogServices.Client
             return postId;
         }
 
-        public string UploadMediaObject(MediaObject image, string relativeUrl = "/posts/image")
+        public async Task<string> UploadMediaObject(MediaObject image, string relativeUrl = "/posts/image")
         {
-            var settings = new HttpRequestSettings
+            var settings = new HttpClientRequestSettings
             {
-                Content = image,
+                RequestContent = image,
+                RequestContentType = "application/json",
                 Url = ApiBaseUrl + relativeUrl,
                 HttpVerb = "POST"
             };
@@ -94,7 +98,7 @@ namespace Westwind.WeblogServices.Client
             string imageUrl = null;
             try
             {
-                imageUrl = HttpUtils.JsonRequest<string>(settings);
+                imageUrl = await HttpClientUtils.DownloadJsonAsync<string>(settings);
             }
             catch (Exception ex)
             {

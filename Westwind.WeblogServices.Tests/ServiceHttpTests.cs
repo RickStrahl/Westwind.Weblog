@@ -12,7 +12,7 @@ namespace Westwind.Weblog.PostServiceTests
     public class ServiceTests
     {
         [Test]
-        public void UploadMediaImageTest()
+        public async Task UploadMediaImageTest()
         {
             var file = @"c:\sailbig.jpg";
             var bytes = File.ReadAllBytes(file);
@@ -20,18 +20,19 @@ namespace Westwind.Weblog.PostServiceTests
             var media = new
             {
                 Name = "sailbig.jpg",
-                ContentType = "text/jpeg",
+                ContentType = "image/jpeg",
                 Data = bytes
             };
 
-            var settings = new HttpRequestSettings
+            var settings = new HttpClientRequestSettings
             {
-                Content = media,
+                RequestContent = media,
+                RequestContentType = "application/json",
                 Url = "http://localhost:5004/api/posts/image",
                 HttpVerb = "POST"
             };
             settings.Headers.Add("Authorization", "Bearer peucqep08vafjjcz");
-            var url = HttpUtils.JsonRequest<string>(settings);
+            var url = await HttpClientUtils.DownloadJsonAsync<string>(settings);
 
             Assert.IsNotEmpty(url);
             Console.WriteLine(url);
@@ -54,14 +55,15 @@ namespace Westwind.Weblog.PostServiceTests
                 Data = bytes
             };
 
-            var settings = new HttpRequestSettings
+            var settings = new HttpClientRequestSettings
             {
-                Content = media,
+                RequestContent = media,
+                RequestContentType = "application/json",
                 Url = "http://localhost:5004/api/posts/image",
                 HttpVerb = "POST"
             };
             settings.Headers.Add("Authorization", "Bearer peucqep08vafjjcz");
-            var url = await HttpUtils.JsonRequestAsync<string>(settings);
+            var url = await HttpClientUtils.DownloadJsonAsync<string>(settings);
 
             Assert.IsNotEmpty(url);
             Console.WriteLine(url);

@@ -18,9 +18,11 @@ using System.Net.Http;
 using Microsoft.Extensions.Hosting;
 using Westwind.AspNetCore.Extensions;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
 using Westwind.AspNetCore.Markdown;
+using Westwind.Utilities;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -108,6 +110,11 @@ services
 UserStateWebSettings.Current.IsUserStateEnabled = false;
 
 services.AddControllersWithViews()
+    .AddNewtonsoftJson(opt =>
+    {
+        if (builder.Environment.IsDevelopment())
+            opt.SerializerSettings.Formatting = Formatting.Indented;
+    })
     .AddRazorRuntimeCompilation();
 
 
@@ -130,7 +137,7 @@ Task.Run(() =>
     string connectionString = wlApp.Configuration.ConnectionString; // Configuration["Data:SqlServerConnectionString"];
     var context = WeblogContext.CreateContext(connectionString);
     context.Posts.Any(p => p.Id == "@!");
-});
+}).FireAndForget();
 
 wlApp.Cache = app.Services.GetService<IMemoryCache>();
 

@@ -17,7 +17,7 @@ namespace Westwind.Weblog
     public class AdminController : WeblogBaseController
     {
         WeblogConfiguration Configuration { get; }
-        public IHostingEnvironment Host { get; }
+        public IWebHostEnvironment Host { get; }
 
         AdminBusiness AdminRepo { get; }
         
@@ -25,10 +25,10 @@ namespace Westwind.Weblog
         
         public AdminController(AdminBusiness repo, 
                                WeblogConfiguration configuration,
-                               IHostingEnvironment Host)
+                               IWebHostEnvironment host)
         {
             Configuration = configuration;
-            this.Host = Host;
+            Host = host;
             AdminRepo = repo;
             
         }

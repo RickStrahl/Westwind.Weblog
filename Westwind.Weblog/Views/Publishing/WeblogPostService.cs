@@ -11,26 +11,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
+using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
+
 using Westwind.WeblogPostService.Model;
 using Westwind.WeblogServices.Server;
 using Westwind.WeblogServices.Server.Rss;
 
 namespace Westwind.AspNetCore.Controllers
 {
+
+
+
+
+
     /// <summary>
     /// Handles upload and download of posts, media objects and categories.
     /// </summary>    
-    [Route("/api/posts")]
+    [Route("/api/publish")]
     public class WeblogPostService : WeblogPostServiceBase
     {
         private readonly PostBusiness PostBusiness;
         UserBusiness UserBusiness { get;  }
-        IHostingEnvironment Host { get; }
+        IWebHostEnvironment Host { get; }
 
         public WeblogPostService(UserBusiness userBus, 
             PostBusiness postBusiness, 
-            IHostingEnvironment host)
+            IWebHostEnvironment host)
         {
             PostBusiness = postBusiness;
             UserBusiness = userBus;
@@ -39,12 +46,11 @@ namespace Westwind.AspNetCore.Controllers
             
         }
 
-
         public static ConcurrentDictionary<string, string> UserTokens = new ConcurrentDictionary<string, string>();
 
         [HttpPost]
         [Route("authenticate")]
-        public override string Authenticate([FromBody] AuthenticateRequest auth)
+        public override WeblogTokenInfo Authenticate([FromBody] AuthenticateRequest auth)
         {
             var user = UserBusiness.AuthenticateAndRetrieveUser(auth.Username, auth.Password);
             if (user == null)
@@ -58,10 +64,10 @@ namespace Westwind.AspNetCore.Controllers
             }
 
             var token = DataUtils.GenerateUniqueId(16);
-
+            
             UserTokens[token] = user.Username;
 
-            return token;
+            return new WeblogTokenInfo { Token = token };
         }
 
         [HttpPost]
@@ -193,7 +199,7 @@ namespace Westwind.AspNetCore.Controllers
         }
 
         [Route("{postId}/{blogId?}")]
-        public override Westwind.WeblogPostService.Model.WeblogPost GetPost(string postId, string blogId)
+        public override WeblogPost GetPost(string postId, string blogId)
         {
             if (!int.TryParse(postId, out int id) || id < 1)
                 throw new InvalidOperationException("Invalid PostId. Please make sure you provide an Id of an existing post.");
@@ -202,7 +208,7 @@ namespace Westwind.AspNetCore.Controllers
             if (post == null)
                 throw new ArgumentException("Unable to retrieve Post: " + UserBusiness.ErrorMessage);
 
-            var blogPost = new Westwind.WeblogPostService.Model.WeblogPost()
+            var blogPost = new WeblogPost()
             {
                 BlogId = "1", // only one blog so we hardcode this
                 PostId = post.Id.ToString(),
@@ -210,6 +216,7 @@ namespace Westwind.AspNetCore.Controllers
                 Body = post.Body,
                 RawPostText = post.Markdown,
                 DateCreated = post.Created,
+                Location = post.Location,
                 Url = PostBusiness.GetPostUrl(post),                
             };
             blogPost.PermaLink = blogPost.Url;
@@ -221,24 +228,34 @@ namespace Westwind.AspNetCore.Controllers
         }
 
         [HttpPost]
-        [Route("list")]
-        public override IList<WeblogMinimalPost> GetPosts([FromBody] PostListFilter listFilter)
+        [Route("recent")]
+        public override IList<WeblogMinimalPost> GetRecentPosts([FromBody] PostListFilter? listFilter)
         {            
-            var posts = PostBusiness.GetLastPosts(listFilter.NumberOfPosts);
+            if (listFilter == null)
+            {
+                listFilter = new PostListFilter();
+            }
+
+            var posts = PostBusiness.GetLastPosts(listFilter.NumberOfPosts, listFilter.IncludeBody);
 
             var postList = new List<WeblogMinimalPost>();
             foreach (var post in posts)
             {
-                postList.Add(item: new WeblogMinimalPost()
+                var weblogPost = new WeblogMinimalPost()
                 {
-                    PostId = post.Id.ToString(),
+                    PostId = post.Id,
                     Title = post.Title,
                     Abstract = post.Abstract,
                     Created = post.Created,
-                    Url = PostBusiness.GetPostUrl(post),
-                    ImageUrl = post.FeaturedImageUrl,
-                    CommentCount = post.CommentCount,                    
-                });
+                    Location = post.Location,
+                    Url = wlApp.Configuration.WeblogHomeUrl?.TrimEnd('/') + PostBusiness.GetPostUrl(post),
+                    FeaturedImageUrl = post.FeaturedImageUrl,
+                    CommentCount = post.CommentCount,
+                };
+                if (listFilter.IncludeBody)
+                    weblogPost.Body = post.Body;
+                postList.Add(weblogPost);
+
             }
             
             return postList;

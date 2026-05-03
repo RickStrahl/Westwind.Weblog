@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +10,17 @@ using Westwind.WeblogPostService.Model;
 
 namespace Westwind.WeblogServices.Server
 {
+
+
+    public class WeblogTokenInfo
+    {
+        public static int TokenTimeoutSeconds = 30 * 60;
+
+        public string Token { get; set; }
+        public DateTime ExpirationUtc { get; set; } = DateTime.UtcNow.AddSeconds(TokenTimeoutSeconds);
+
+    }
+
 
     public abstract class WeblogPostServiceBase : BaseApiController
     {
@@ -48,7 +59,7 @@ namespace Westwind.WeblogServices.Server
         /// </summary>
         /// <param name="getAuthRequest">Auth request with username and password</param>
         /// <returns></returns>
-        public abstract string Authenticate(AuthenticateRequest getAuthRequest);
+        public abstract WeblogTokenInfo Authenticate(AuthenticateRequest getAuthRequest);
 
         
         /// <summary>
@@ -84,6 +95,6 @@ namespace Westwind.WeblogServices.Server
         /// </summary>
         /// <param name="listFilter"></param>
         /// <returns></returns>
-        public abstract IList<WeblogMinimalPost> GetPosts(PostListFilter listFilter);
+        public abstract IList<WeblogMinimalPost> GetRecentPosts(PostListFilter listFilter);
     }
 }

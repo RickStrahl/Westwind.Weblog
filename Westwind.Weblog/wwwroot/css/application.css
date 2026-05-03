@@ -668,8 +668,8 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 }
 
     .comment.inactive {
-        opacity: 0.55;
-        background: #ffdcdc;        
+        opacity: 0.65;
+        background: #fff1f1;        
     }
 
 .comment-panel-left {

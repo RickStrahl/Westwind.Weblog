@@ -58,12 +58,9 @@ namespace Westwind.Weblog
                 return Redirect("/");                
             }
 
-            string postHtml;
-            
-            
             
             // Markdown
-            postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
+            string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
             postHtml = PostRepo.EmbedAds(postHtml);
 
             var page = Request.Query["page"].FirstOrDefault();
@@ -138,12 +135,15 @@ namespace Westwind.Weblog
             else
                 totalPages = 1;
 
-            
-            
+            // Markdown
+            string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
+            postHtml = PostRepo.EmbedAds(postHtml);
+
+
             model.Post = post;
             model.PostRepo = PostRepo;
 
-            var newModel = new PostViewModel { Post = post, ActiveComment = model.ActiveComment, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages };
+            var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages };
             var comment = newModel.ActiveComment;
 
 

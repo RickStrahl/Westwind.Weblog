@@ -6,11 +6,13 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Westwind.AspNetCore.Errors;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
 
 using Westwind.WeblogPostService.Model;
+using Westwind.WeblogServices.Client;
 using Westwind.WeblogServices.Server;
 
 namespace Westwind.AspNetCore.Controllers
@@ -39,10 +41,7 @@ namespace Westwind.AspNetCore.Controllers
             Host = host;            
         }
 
-       
             
-
-        public static ConcurrentDictionary<string, string> UserTokens = new ConcurrentDictionary<string, string>();
 
         [HttpPost]
         [Route("authenticate")]
@@ -50,17 +49,12 @@ namespace Westwind.AspNetCore.Controllers
         {
             var user = UserBusiness.AuthenticateAndRetrieveUser(auth.Username, auth.Password);
             if (user == null)
-            {
-                if (!string.IsNullOrEmpty(user.Username))
-                {
-                    var tok = UserTokens.FirstOrDefault(kv => kv.Value == user.Username);
-                    UserTokens.TryRemove(tok.Key, out string t);                    
-                }
-                throw new UnauthorizedAccessException("Invalid Username or Password.");
-            }
+                throw new ApiException("Invalid Username or Password.", 401);
 
             var tokenString = CreateNewToken(user.Id);
-            
+            if (string.IsNullOrEmpty(tokenString))
+                throw new ApiException("Failed to create authentication token.", 401);
+
             return new WeblogTokenInfo { Token = tokenString };
         }
 
@@ -138,7 +132,7 @@ namespace Westwind.AspNetCore.Controllers
             }
 
             if (!PostBusiness.Save(newPost))
-                throw new InvalidOperationException(PostBusiness.ErrorMessage);
+                throw new ApiException(PostBusiness.ErrorMessage);
 
             post.FromPost(newPost);
 
@@ -168,7 +162,7 @@ namespace Westwind.AspNetCore.Controllers
                     using (Bitmap bitmap = new Bitmap(ms))
                     {
                         if (bitmap == null || bitmap.Width < 1)
-                            throw new UnauthorizedAccessException("Only image uploads are allowed.");
+                            throw new ApiException("Only image uploads are allowed.",401);
                     }
                 }
 
@@ -200,12 +194,12 @@ namespace Westwind.AspNetCore.Controllers
         [Route("{postId}/{blogId?}")]
         public override WeblogPost GetPost(string postId, string blogId)
         {
-            if (!int.TryParse(postId, out int id) || id < 1)
-                throw new InvalidOperationException("Invalid PostId. Please make sure you provide an Id of an existing post.");
+            if (string.IsNullOrEmpty(postId))
+                throw new ApiException("Invalid PostId. Please make sure you provide an Id of an existing post.", 400);
             
-            var post = PostBusiness.Load(id);
+            var post = PostBusiness.Load(postId);
             if (post == null)
-                throw new ArgumentException("Unable to retrieve Post: " + UserBusiness.ErrorMessage);
+                throw new ApiException("Post not found.", 404);
 
             var blogPost = new WeblogPost()
             {
@@ -228,7 +222,7 @@ namespace Westwind.AspNetCore.Controllers
 
         [HttpPost]
         [Route("recent")]
-        public override IList<WeblogMinimalPost> GetRecentPosts([FromBody] PostListFilter? listFilter)
+        public override IList<WeblogMinimalPost> GetRecentPosts([FromBody] PostListFilter listFilter)
         {            
             if (listFilter == null)
             {

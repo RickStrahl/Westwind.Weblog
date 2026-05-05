@@ -8,19 +8,10 @@ using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
 using Westwind.Utilities.Data.Security;
 using Westwind.WeblogPostService.Model;
+using Westwind.WeblogServices.Client;
 
 namespace Westwind.WeblogServices.Server
 {
-
-
-    public class WeblogTokenInfo
-    {
-        public static int TokenTimeoutSeconds = 30 * 60;
-
-        public string Token { get; set; }
-        public DateTime ExpirationUtc { get; set; } = DateTime.UtcNow.AddSeconds(TokenTimeoutSeconds);
-
-    }
 
 
     public abstract class WeblogPostServiceBase : BaseApiController

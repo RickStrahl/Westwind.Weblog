@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -79,12 +79,18 @@ namespace Westwind.Weblog.Business.Models
                     return null;
                 }                
 
-                string passwordHash = HashPassword(password, user.Id.ToString());
+                string passwordHash = HashPassword(password, user.Id);
                 if (user.Password != passwordHash && user.Password != password)
                 {
                     SetError("Invalid username or password.");
                     return null;
                 }            
+
+                if (!user.Password.EndsWith(HashPostFix))
+                {
+                    user.Password = HashPassword(user.Password, user.Id);
+                    Context.SaveChanges();
+                }
 
                 return user;
             }

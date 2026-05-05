@@ -24,12 +24,7 @@ Websurge-Request-Name: Failed Authenticate
 
 ------------------------------------------------------------------
 
-GET  HTTP/2.0
-Accept-Encoding: gzip,deflate
-
-------------------------------------------------------------------
-
-GET /api/publish/514820 HTTP/2.0
+GET api/publish/5311031 HTTP/2.0
 Accept-Encoding: gzip,deflate
 Authorization: Bearer ei5redpjb21s79hhc
 Websurge-Request-Name: Get Post
@@ -146,7 +141,7 @@ Authorization: Bearer peucqep08vafjjcz
   "ReplaceQueryStringValuePairs": null,
   "ReplaceCookieValue": "",
   "TrackPerSessionCookies": true,
-  "ReplaceAuthorization": "Bearer 9c7gnk8ofw62vko",
+  "ReplaceAuthorization": "Bearer 9b9bovz26pey4bd",
   "Username": null,
   "Password": null,
   "UsernamePasswordType": "Negotiate",

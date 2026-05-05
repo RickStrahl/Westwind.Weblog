@@ -9,7 +9,7 @@ namespace Westwind.WeblogServices.Client
 {
     public class WeblogPostServiceClient
     {
-        public string AuthenticationToken { get; set; }
+        public WeblogTokenInfo AuthenticationToken { get; set; }
 
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Westwind.WeblogServices.Client
         /// <param name="password"></param>
         /// <param name="blogId"></param>
         /// <returns></returns>
-        public async Task<WeblogTokenInfo> Authenticate(string username, string password, string blogId = null,string relativeUrl = "/publish/authenticate")
+        public async Task<WeblogTokenInfo> Authenticate(string username, string password, string blogId = null,string relativeUrl = "publish/authenticate")
         {
             var data = new AuthenticateRequest
             {
@@ -48,7 +48,7 @@ namespace Westwind.WeblogServices.Client
             {                 
                 RequestContent = data,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl + relativeUrl,
+                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
                 HttpVerb = "POST"          ,
                 CaptureRequestAndResponse = true
             };
@@ -62,6 +62,7 @@ namespace Westwind.WeblogServices.Client
                     SetError("Failed to authenticate: " + settings.CapturedResponseContent);
                     ParseJsonError(settings, "Failed to authenticate.");
                 }
+
             }
             catch (Exception ex)
             {
@@ -69,68 +70,90 @@ namespace Westwind.WeblogServices.Client
                 ParseJsonError(settings, "Failed to authenticate",ex);
             }
 
-                        
+            AuthenticationToken = token;
+
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
+
             return token;
         }
 
 
-        public async Task<WeblogPost> GetPost(string postId, string blogId, string relativeUrl = "/publish/recent")
+        public async Task<WeblogPost> GetPost(string postId, string blogId = null, string relativeUrl = "publish")
         {
+            EnsureAuthToken();
+
             var settings = new HttpClientRequestSettings
             {                
-                Url = $"{ApiBaseUrl}{relativeUrl?.Trim('/')}/{postId}",
+                Url  = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/') + "/" + postId,
                 HttpVerb = "POST",
-                CaptureRequestAndResponse = true
+                CaptureRequestAndResponse = true,                
             };
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
+
             WeblogPost post = null;
+
+            Console.WriteLine(settings.Url);
 
             try
             {
-                post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);                
+                post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);
+                if (post == null)
+                {
+                    ParseJsonError(settings, "Couldn't retrieve post.");
+                }
+
             }
             catch (Exception ex)
             {                
-                ParseJsonError(settings, "Couldn't retrieve post: " + ex.Message);
+                ParseJsonError(settings, "Couldn't retrieve post.", ex);
             }
-            if (post == null)
-            {
-                ParseJsonError(settings, "Couldn't retrieve post.");
-            }
+            
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
 
             return post;
         }
 
-        public async Task<string> UploadPost(WeblogPost post, string relativeUrl = "/posts")
+        public async Task<WeblogPost> UploadPost(WeblogPost post, string relativeUrl = "publish")
         {
-            
+            EnsureAuthToken();
 
             var settings = new HttpClientRequestSettings
             {
                 RequestContent = post,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl + relativeUrl,
-                HttpVerb = "POST"
+                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                HttpVerb = "POST",
+                CaptureRequestAndResponse = true
             };
-            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken}");
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
 
-            string postId = null;
+            post = null;
             try
             {
-                postId = await HttpClientUtils.DownloadJsonAsync<string>(settings);
+                post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);
+                if (post == null)
+                {
+                    ParseJsonError(settings, "Failed to publish new post.");
+                }
+
             }
             catch (Exception ex)
             {
-                SetError("Failed to send Post: " + ex.Message);
+                ParseJsonError(settings, "Failed to publish new post.", ex);
             }
 
             LastRequestContent = settings.CapturedRequestContent;
             LastResponseContent = settings.CapturedResponseContent;
 
-            return postId;
+            return post;
         }
 
         public async Task<string> UploadMediaObject(MediaObject image, string relativeUrl = "/posts/image")
         {
+            EnsureAuthToken();
+
             var settings = new HttpClientRequestSettings
             {
                 RequestContent = image,
@@ -138,7 +161,8 @@ namespace Westwind.WeblogServices.Client
                 Url = ApiBaseUrl + relativeUrl,
                 HttpVerb = "POST"
             };
-            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken}");
+            if (AuthenticationToken != null)
+                settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken.Token}");
 
             string imageUrl = null;
             try
@@ -154,11 +178,28 @@ namespace Westwind.WeblogServices.Client
         }
 
         /// <summary>
+        /// Checks to see if the Authorization token has been set is not expired.
+        /// If not throws an exception.
+        /// </summary>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        protected void EnsureAuthToken()
+        {
+            if (string.IsNullOrEmpty(AuthenticationToken?.Token))
+            {
+                throw new UnauthorizedAccessException("Please make sure to call Authenticate before making this request.");
+            }
+            if (AuthenticationToken.ExpirationUtc < DateTime.UtcNow)
+            {
+                throw new UnauthorizedAccessException("Authentication token has expired, please call Authenticate again.");
+            }            
+        }
+
+        /// <summary>
         /// Parses out an error message from Json if it exists.
         /// 
         /// Looks for `message` property in the returned JSON content.
         /// </summary>
-        /// <param name="settings">HttpClientSettings instance from request</param>
+        /// <param name="settings">HttpClientSettings instance from re quest</param>
         /// <param name="baseMessage">A base error message that if provided is pre-pended to any retrieve error message.</param>
         /// <param name="ex">Optional exception that is used if there's no error content</param>
         protected void ParseJsonError(HttpClientRequestSettings settings, string baseMessage = null, Exception ex = null )
@@ -238,7 +279,7 @@ namespace Westwind.WeblogServices.Client
 
         public override string ToString()
         {
-            return $"{Token ?? "No Token Set"}";
+            return Token;
         }
     }
 

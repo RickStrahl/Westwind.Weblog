@@ -206,16 +206,35 @@ namespace Westwind.AspNetCore.Controllers
                 BlogId = "1", // only one blog so we hardcode this
                 PostId = post.Id.ToString(),
                 Abstract = post.Abstract,
+                Title = post.Title,
                 Body = post.Body,
                 RawPostText = post.Markdown,
+                RawPostType = post.BodyMode == 2 ? "markdown" : "html",
                 DateCreated = post.Created,
                 Location = post.Location,
-                Url = PostBusiness.GetPostUrl(post),                
+                Url = PostBusiness.GetPostUrl(post),
+                PostStatus = post.Active ? PostStatuses.Published : PostStatuses.Draft,
             };
             blogPost.PermaLink = blogPost.Url;
 
             if (!string.IsNullOrEmpty(post.Categories))
                 blogPost.Categories = post.Categories.Split(',')?.ToList() ?? [];
+
+            blogPost.Comments = PostBusiness.Context.Comments?
+                .Where(c => c.PostId == postId)
+                .Select(c => new Comment
+                {
+                    Id = c.Id.ToString(),
+                    PostId = c.PostId,
+                    Author = c.Author,
+                    Title = c.Title,
+                    Body = c.Body,
+                    Created = c.Created,
+                    Email = c.Email,
+                    Url = c.Url,
+                    BodyMode = c.BodyMode,
+                    IsActive = c.IsActive
+                }).ToList() ?? [];
 
             return blogPost;
         }
@@ -248,7 +267,6 @@ namespace Westwind.AspNetCore.Controllers
                 if (listFilter.IncludeBody)
                     weblogPost.Body = post.Body;
                 postList.Add(weblogPost);
-
             }
             
             return postList;

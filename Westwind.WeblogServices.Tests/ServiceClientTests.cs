@@ -64,7 +64,7 @@ namespace Westwind.Weblog.PostServiceTests
                 ImageUrl = "http://localhost:5004/images/RickHero1.jpg", 
                 Keywords = "long,post,pointless"
             };
-            post.Categories = "Life., .NET, ASP.NET";
+            post.Categories = ["Life", ".NET", "ASP.NET"];
 
             var client = new WeblogPostServiceClient()
             {

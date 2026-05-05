@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
+using Westwind.Utilities.Data.Security;
 using Westwind.WeblogPostService.Model;
 
 namespace Westwind.WeblogServices.Server
@@ -30,46 +31,96 @@ namespace Westwind.WeblogServices.Server
         /// </summary>
         protected string UserToken { get; set; }
 
+        protected string ConnectionString { get; set;  }
+
+        public WeblogPostServiceBase(string connectionString) 
+        {
+            ConnectionString = connectionString;
+        }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            UserToken = Request.Headers["Authorization"].FirstOrDefault();            
-
-            if (!string.IsNullOrEmpty(UserToken) && UserToken.StartsWith("bearer ", StringComparison.OrdinalIgnoreCase))
+            UserToken = Request.Headers.Authorization;
+            if (string.IsNullOrEmpty(UserToken))
+                UserToken = Request.Query["token"].FirstOrDefault() ?? string.Empty;
+            
+            if (UserToken.StartsWith("bearer ", StringComparison.OrdinalIgnoreCase))
                 UserToken = UserToken.Substring(7);
 
-            if (string.IsNullOrEmpty(UserToken))
-                UserToken = Request.Query["token"].FirstOrDefault();
-
             var descriptor = context.ActionDescriptor as ControllerActionDescriptor;
-
-            if (descriptor == null || 
-                (descriptor.ActionName != "Authenticate" &&
-                string.IsNullOrEmpty(UserToken)))
+            if (descriptor == null)
             {
-                context.Result = new UnauthorizedResult();
-                return;
+                throw new ApiException("Invalid publish url");
             }
+           
+            if (!descriptor.ActionName.Equals("authenticate", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrEmpty(UserToken))
+                {
+                    throw new ApiException("You're not authorized to access this request. Missing Authorization token.", 401);
+                }
+
+                var tm = new UserTokenManager(ConnectionString);
+                tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
+                if (!tm.IsTokenValid(UserToken))
+                {
+                    throw new ApiException("Invalid or expired authorization token.", 401);
+                }
+            }
+
 
             base.OnActionExecuting(context);
         }
 
 
+
         /// <summary>
-        /// Authenticate a user and pass back a user token
+        /// Creates a new User Token
+        /// </summary>
+        /// <param name="userToken"></param>
+        /// <returns></returns>
+        public string CreateNewToken(string userToken = null)
+        {
+            var tm = new UserTokenManager(ConnectionString);
+            tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
+            var token = tm.CreateNewToken(userToken);
+            if (token == null)
+            {
+                throw new ApiException("Unable to create a new user token");
+            }
+            return token;
+        }
+
+        /// <summary>
+        /// Checks to see if a user token is valid
+        /// </summary>
+        /// <param name="userToken">token to check if it's valid</param>
+        /// <returns></returns>
+        public bool ValidateUserToken(string userToken)
+        {
+            var tm = new UserTokenManager(ConnectionString);
+            tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
+            return tm.IsTokenValid(userToken);
+        }
+
+
+        /// <summary>
+        /// Authenticate a user and pass back a user token via a WeblogTokenInfo object.
+        /// Call `CreateNewToken` to generate the actual token to assign.
         /// </summary>
         /// <param name="getAuthRequest">Auth request with username and password</param>
-        /// <returns></returns>
+        /// <returns>WeblogTokenInfo that you create with a token parameter</returns>
         public abstract WeblogTokenInfo Authenticate(AuthenticateRequest getAuthRequest);
 
-        
+
         /// <summary>
         /// Upload a new or updated blog post. If the post has a previous
         /// post Id it is assumed to be an existing post that is looked up.
         /// </summary>
-        /// <param name="blogId"></param>
         /// <param name="post"></param>
+        /// <param name="blogId"></param>
         /// <returns></returns>
-        public abstract string UploadPost([FromBody] WeblogPost post);
+        public abstract WeblogPost UploadPost([FromBody] WeblogPost post);
 
         /// <summary>
         /// Uploads a media object like an image or video to the server

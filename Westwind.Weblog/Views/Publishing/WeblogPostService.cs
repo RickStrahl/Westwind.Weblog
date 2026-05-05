@@ -4,19 +4,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
-using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
 
 using Westwind.WeblogPostService.Model;
 using Westwind.WeblogServices.Server;
-using Westwind.WeblogServices.Server.Rss;
 
 namespace Westwind.AspNetCore.Controllers
 {
@@ -37,14 +32,15 @@ namespace Westwind.AspNetCore.Controllers
 
         public WeblogPostService(UserBusiness userBus, 
             PostBusiness postBusiness, 
-            IWebHostEnvironment host)
+            IWebHostEnvironment host) : base(wlApp.Configuration.ConnectionString)
         {
             PostBusiness = postBusiness;
             UserBusiness = userBus;
-            Host = host;
-
-            
+            Host = host;            
         }
+
+       
+            
 
         public static ConcurrentDictionary<string, string> UserTokens = new ConcurrentDictionary<string, string>();
 
@@ -63,26 +59,25 @@ namespace Westwind.AspNetCore.Controllers
                 throw new UnauthorizedAccessException("Invalid Username or Password.");
             }
 
-            var token = DataUtils.GenerateUniqueId(16);
+            var tokenString = CreateNewToken(user.Id);
             
-            UserTokens[token] = user.Username;
-
-            return new WeblogTokenInfo { Token = token };
+            return new WeblogTokenInfo { Token = tokenString };
         }
 
         [HttpPost]
         [Route("")]
-        public override string UploadPost([FromBody] Westwind.WeblogPostService.Model.WeblogPost post)
+        public override WeblogPost UploadPost([FromBody] WeblogPost post)
         {
-            int.TryParse(post.PostId, out int postId);
-            if (postId < 1)
-                postId = 0;
+            var postId = post.PostId;
+
 
             Post lastPost = null;
             Post newPost = null;
-            if (postId > 0)
-            {
-                
+
+            bool isNewPost = false;
+
+            if (!string.IsNullOrEmpty(postId))
+            {                
                 newPost = PostBusiness.Load(postId);
             }
 
@@ -91,6 +86,7 @@ namespace Westwind.AspNetCore.Controllers
                 newPost = PostBusiness.Create();
                 lastPost = PostBusiness.LoadLastPost();
                 newPost.Location = lastPost.Location;
+                isNewPost = true;
             }
 
             newPost.Title = post.Title;
@@ -105,14 +101,15 @@ namespace Westwind.AspNetCore.Controllers
             if (string.IsNullOrEmpty(newPost.SafeTitle))
                 newPost.SafeTitle = PostBusiness.GetSafeTitle(newPost.Title);
 
-            if (string.IsNullOrEmpty(post.Location) && lastPost != null)
+            if (!string.IsNullOrEmpty(post.Location))
+                newPost.Location = post.Location;
+            else if (isNewPost && lastPost != null)  // new post
                 newPost.Location = lastPost.Location;
-
-            if (string.IsNullOrEmpty(newPost.Author))
+            if (!string.IsNullOrEmpty(newPost.Author))
                 newPost.Author = UserBusiness.Configuration.WeblogAuthor;
             
             newPost.Keywords = post.Keywords;
-            newPost.Categories = post.Categories;
+            newPost.Categories = string.Join( ',', post.Categories);
             
             if (newPost.Created.Year < 2000)
                 newPost.Created = post.DateCreated;
@@ -143,11 +140,13 @@ namespace Westwind.AspNetCore.Controllers
             if (!PostBusiness.Save(newPost))
                 throw new InvalidOperationException(PostBusiness.ErrorMessage);
 
-            return newPost.Id.ToString();
+            post.FromPost(newPost);
+
+            return post;
         }
 
         [HttpPost]
-        [Route("image")]
+        [Route("media")]
         public override string UploadMediaObject([FromBody] MediaObject media)
         {
             var imagePath = Url.Content("~/images/") + DateTime.Now.Year;
@@ -222,7 +221,7 @@ namespace Westwind.AspNetCore.Controllers
             blogPost.PermaLink = blogPost.Url;
 
             if (!string.IsNullOrEmpty(post.Categories))
-                blogPost.Categories = post.Categories;
+                blogPost.Categories = post.Categories.Split(',')?.ToList() ?? [];
 
             return blogPost;
         }

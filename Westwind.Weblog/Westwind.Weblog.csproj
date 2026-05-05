@@ -23,8 +23,8 @@
 		<ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
 
 		<!-- Application -->
-		<ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />
 		<ProjectReference Include="..\Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj" />
+		<!--<ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />-->
 	</ItemGroup>
 
 

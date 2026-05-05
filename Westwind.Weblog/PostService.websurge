@@ -13,7 +13,7 @@ Websurge-Request-Name: Authenticate - Get Bearer Token
 
 GET /api/publish/514820 HTTP/2.0
 Accept-Encoding: gzip,deflate
-Authorization: Bearer peucqep08vafjjcz
+Authorization: Bearer ei5redpjb21s79hhc
 Websurge-Request-Name: Get Post
 
 ------------------------------------------------------------------
@@ -25,28 +25,78 @@ content-type: application/json
 Websurge-Request-Name: Recent Posts List
 
 {
-  "postCount": 100
+  "numberOfPosts": 10,
+  "includeBody": true
 }
 
 ------------------------------------------------------------------
 
-POST http://localhost:5004/api/posts HTTP/2.0
+POST /api/publish HTTP/2.0
 Accept-Encoding: gzip,deflate
 content-type: application/json
 Authorization: Bearer peucqep08vafjjcz
 Websurge-Request-Name: New Post
 
 {
-   postId: "0",
-   title: "Test Post",
-   body: "THis is a long story that nobody wants to listen to",
-   abstract: "THis is a long story...",
-   markdown: "THis is a **long** story that nobody wants to listen to",
-   author: "Rick Strahl",
-   location: "Paia, HI",
-   postStatus: "Published",
-   keywords: "long, story",
-   Categories: [ "Life", ".NET" ]   
+  "title": "Test Post",
+  "body": "THis is a long story that nobody wants to listen to",
+  "abstract": "THis is a long story...",
+  "markdown": "THis is a **long** story that nobody wants to listen to",
+  "author": "Rick Strahl",
+  "location": "Paia, HI",
+  "postStatus": "Published",
+  "keywords": "long, story",
+  "Categories": [
+    "Life",
+    ".NET"
+  ]
+}
+
+------------------------------------------------------------------
+
+POST /api/publish/media HTTP/2.0
+Accept-Encoding: gzip,deflate
+content-type: application/json
+Authorization: Bearer peucqep08vafjjcz
+Websurge-Request-Name: Upload Media Image
+
+{
+  "title": "Test Post",
+  "body": "THis is a long story that nobody wants to listen to",
+  "abstract": "THis is a long story...",
+  "markdown": "THis is a **long** story that nobody wants to listen to",
+  "author": "Rick Strahl",
+  "location": "Paia, HI",
+  "postStatus": "Published",
+  "keywords": "long, story",
+  "Categories": [
+    "Life",
+    ".NET"
+  ]
+}
+
+------------------------------------------------------------------
+
+POST /api/publish HTTP/2.0
+Accept-Encoding: gzip,deflate
+content-type: application/json
+Authorization: Bearer peucqep08vafjjcz
+Websurge-Request-Name: Update Post (provide postId)
+
+{
+  "postId": "80aqeuxi0c36",
+  "title": "Test Post (Updated)",
+  "body": "UPDATED - THis is a long story that nobody wants to listen to",
+  "abstract": "THis is a long story...",
+  "markdown": "THis is a **long** story that nobody wants to listen to",
+  "author": "Rick Strahl",
+  "location": "Paia, HI",
+  "postStatus": "Published",
+  "keywords": "long, story",
+  "Categories": [
+    "Life",
+    ".NET"
+  ]
 }
 
 ------------------------------------------------------------------
@@ -86,7 +136,7 @@ Authorization: Bearer peucqep08vafjjcz
   "ReplaceQueryStringValuePairs": null,
   "ReplaceCookieValue": "",
   "TrackPerSessionCookies": true,
-  "ReplaceAuthorization": "Bearer ei5redpjb2179hhc",
+  "ReplaceAuthorization": "Bearer bajv01gkg6sawr2i",
   "Username": null,
   "Password": null,
   "UsernamePasswordType": "Negotiate",

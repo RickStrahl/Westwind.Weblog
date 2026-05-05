@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Westwind.Weblog.Business.Models;
 
 namespace Westwind.WeblogPostService.Model
@@ -99,7 +100,7 @@ namespace Westwind.WeblogPostService.Model
         /// <summary>
         /// Post categories for this post as a comma delimited list
         /// </summary>
-        public string Categories { get; set; }
+        public List<string> Categories { get; set; } = [];
 
         
 
@@ -201,7 +202,7 @@ namespace Westwind.WeblogPostService.Model
             DateCreated = post.Created;
             ImageUrl = post.FeaturedImageUrl;
             Location = post.Location;
-            Categories = post.Categories;
+            Categories = post.Categories.Split(',')?.ToList();
             Keywords = post.Keywords;
             PermaLink = post.PermanentUrl;
             PostStatus = post.Active ? PostStatuses.Published : PostStatuses.Draft;
@@ -247,6 +248,24 @@ namespace Westwind.WeblogPostService.Model
         /// 
         /// </summary>
         public byte[] Data { get; set; }
+
+
+        public bool LoadDataFromFile(string file)
+        {
+            // implement 
+            try
+            {
+                Data = System.IO.File.ReadAllBytes(file);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        
 
     }
 

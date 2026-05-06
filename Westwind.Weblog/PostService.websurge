@@ -31,6 +31,13 @@ Websurge-Request-Name: Get Post
 
 ------------------------------------------------------------------
 
+GET api/publish/last HTTP/2.0
+Accept-Encoding: gzip,deflate
+Authorization: Bearer ei5redpjb21s79hhc
+Websurge-Request-Name: Get Last Post
+
+------------------------------------------------------------------
+
 POST /api/publish/recent HTTP/2.0
 Accept-Encoding: gzip,deflate
 Authorization: Bearer peucqep08vafjjcz
@@ -141,7 +148,7 @@ Authorization: Bearer peucqep08vafjjcz
   "ReplaceQueryStringValuePairs": null,
   "ReplaceCookieValue": "",
   "TrackPerSessionCookies": true,
-  "ReplaceAuthorization": "Bearer 9b9bovz26pey4bd",
+  "ReplaceAuthorization": "Bearer yji9s4qxgu2zqq1",
   "Username": null,
   "Password": null,
   "UsernamePasswordType": "Negotiate",

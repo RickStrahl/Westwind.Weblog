@@ -8,6 +8,7 @@ namespace Westwind.Weblog.Business.Models
 {
     public class User
     {
+        [MaxLength(50)]
         public string Id { get; set; } = wlApp.NewId();
 
         [Required]

@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/BlazePostApi/">
+    <Project Path="BlazePostApi/BlazePostApi.Client/BlazePostApi.Client.csproj" />
+    <Project Path="BlazePostApi/BlazePostApi.Server/BlazePostApi.Server.csproj" />
+    <Project Path="BlazePostApi/BlazePostApi.Test/BlazePostApi.Test.csproj" />
+  </Folder>
+  <Folder Name="/SupportFiles/">
+    <File Path="TODO.md" />
+  </Folder>
+  <Folder Name="/SupportLibraries/">
+    <Project Path="../Westwind.AspNetCore.Markdown/Westwind.AspNetCore.Markdown/Westwind.AspNetCore.Markdown.csproj" />
+    <Project Path="../Westwind.AspNetCore/Westwind.AspNetCore/Westwind.AspNetCore.csproj" />
+    <Project Path="../Westwind.Data.EfCore/Westwind.Data.EfCore/Westwind.Data.EfCore.csproj" />
+    <Project Path="../Westwind.Utilities/Westwind.Utilities/Westwind.Utilities.csproj" />
+  </Folder>
+  <Project Path="Westwind.Weblog.Business.Test/Westwind.Weblog.Business.Test.csproj" />
+  <Project Path="Westwind.Weblog.Business/Westwind.Weblog.Business.csproj" />
+  <Project Path="Westwind.Weblog/Westwind.Weblog.csproj" />
+</Solution>

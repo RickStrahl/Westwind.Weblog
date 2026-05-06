@@ -1,11 +1,11 @@
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Westwind.Utilities;
 using Westwind.WeblogPostService.Model;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Westwind.WeblogServices.Client
+namespace BlazePostApi.Client
 {
     public class WeblogPostServiceClient
     {
@@ -83,17 +83,21 @@ namespace Westwind.WeblogServices.Client
         {
             EnsureAuthToken();
 
+
+            var url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/') + "/" + postId;
+            if (!string.IsNullOrWhiteSpace(blogId))
+                url += "/" + blogId;
+
+
             var settings = new HttpClientRequestSettings
-            {                
-                Url  = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/') + "/" + postId,
+            {
+                Url = url,
                 HttpVerb = "POST",
-                CaptureRequestAndResponse = true,                
+                CaptureRequestAndResponse = true,
             };
             settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
 
             WeblogPost post = null;
-
-            Console.WriteLine(settings.Url);
 
             try
             {
@@ -105,10 +109,80 @@ namespace Westwind.WeblogServices.Client
 
             }
             catch (Exception ex)
-            {                
+            {
                 ParseJsonError(settings, "Couldn't retrieve post.", ex);
             }
-            
+
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
+
+            return post;
+        }
+
+        public async Task<IList<WeblogMinimalPost>> GetRecentPosts(PostListFilter listFilter = null, string relativeUrl = "publish/recent")
+        {
+            EnsureAuthToken();
+
+            listFilter ??= new PostListFilter();
+
+            var settings = new HttpClientRequestSettings
+            {
+                RequestContent = listFilter,
+                RequestContentType = "application/json",
+                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                HttpVerb = "POST",
+                CaptureRequestAndResponse = true
+            };
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
+
+            IList<WeblogMinimalPost> posts = null;
+            try
+            {
+                posts = await HttpClientUtils.DownloadJsonAsync<List<WeblogMinimalPost>>(settings);
+                if (posts == null)
+                {
+                    ParseJsonError(settings, "Failed to retrieve recent posts.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ParseJsonError(settings, "Failed to retrieve recent posts.", ex);
+            }
+
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
+
+            return posts;
+        }
+
+
+
+        public async Task<WeblogPost> GetLastPost(string blogId = null, string relativeUrl = "publish/last")
+        {
+            EnsureAuthToken();            
+
+            var settings = new HttpClientRequestSettings
+            {
+                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                HttpVerb = "GET",
+                CaptureRequestAndResponse = true
+            };
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
+
+            WeblogPost post = null;
+            try
+            {
+                post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);
+                if (post == null)
+                {
+                    ParseJsonError(settings, "Failed to retrieve last post.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ParseJsonError(settings, "Failed to retrieve last post.", ex);
+            }
+
             LastRequestContent = settings.CapturedRequestContent;
             LastResponseContent = settings.CapturedResponseContent;
 
@@ -150,7 +224,7 @@ namespace Westwind.WeblogServices.Client
             return post;
         }
 
-        public async Task<string> UploadMediaObject(MediaObject image, string relativeUrl = "/posts/image")
+        public async Task<string> UploadMediaObject(MediaObject image, string relativeUrl = "publish/media")
         {
             EnsureAuthToken();
 
@@ -158,24 +232,34 @@ namespace Westwind.WeblogServices.Client
             {
                 RequestContent = image,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl + relativeUrl,
-                HttpVerb = "POST"
+                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                HttpVerb = "POST",
+                CaptureRequestAndResponse = true
             };
-            if (AuthenticationToken != null)
-                settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken.Token}");
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
 
             string imageUrl = null;
             try
             {
-                imageUrl = await HttpClientUtils.DownloadJsonAsync<string>(settings);
+                // Returns a plain text string - not JSON!
+                imageUrl = await HttpClientUtils.DownloadStringAsync(settings);
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    ParseJsonError(settings, "Failed to upload media object.");
+                }
             }
             catch (Exception ex)
             {
-                SetError("Failed to upload media object: " + ex.Message);
+                ParseJsonError(settings, "Failed to upload media object.", ex);
             }
+
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
 
             return imageUrl;
         }
+
+        #region Helpers
 
         /// <summary>
         /// Checks to see if the Authorization token has been set is not expired.
@@ -233,6 +317,8 @@ namespace Westwind.WeblogServices.Client
                 SetError(baseMessage);
             }
         }
+
+        #endregion
 
         #region Errors
 

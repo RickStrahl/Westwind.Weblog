@@ -9,9 +9,13 @@ using Westwind.Weblog.Business.Configuration;
 namespace Westwind.Weblog.Business.Models
 {
     public class Post
-    {        
+    {
+        [MaxLength(50)]
         public string Id { get; set; } = wlApp.NewId();
-        
+
+        [MaxLength(50)]
+        public string BlogId { get; set; } 
+                
         [MaxLength(150)]
         public string Title { get; set; }
 
@@ -29,6 +33,10 @@ namespace Westwind.Weblog.Business.Models
         [MaxLength(128)]
         public string Author { get; set; }
 
+
+        /// <summary>
+        /// 0 - Html,  2 - Markdown
+        /// </summary>
         public int BodyMode { get; set; }
 
 

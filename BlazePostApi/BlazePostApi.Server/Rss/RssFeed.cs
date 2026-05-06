@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Westwind.WeblogServices.Server.Rss
+namespace BlazePostApi.Rss
 {
     [DebuggerDisplay("{Title} - {Link}")]
     public class RssFeed
@@ -60,7 +60,7 @@ namespace Westwind.WeblogServices.Server.Rss
             channel.Add(new XElement("copyright", Copyright));
             channel.Add(new XElement("pubDate", PubDate));
             if (LastUpdate > new DateTime(2000, 1, 1))
-                channel.Add(new XElement("lastBuildDate"), LastUpdate.ToUniversalTime());
+                channel.Add(new XElement("lastBuildDate", LastUpdate.ToUniversalTime()));
             
             if (!string.IsNullOrEmpty(Generator))
                 channel.Add(new XElement("generator", Generator));

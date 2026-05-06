@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<AssemblyName>BlazePostApi</AssemblyName>
+		<RootNamespace>BlazePostApi</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Westwind.AspNetCore\Westwind.AspNetCore\Westwind.AspNetCore.csproj" />
+		<ProjectReference Include="..\BlazePostApi.Client\BlazePostApi.Client.csproj" />
+	</ItemGroup>
+
+</Project>

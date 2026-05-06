@@ -19,11 +19,11 @@
 		<!-- Libraries-->
 		<ProjectReference Include="..\..\Westwind.AspNetCore.Markdown\Westwind.AspNetCore.Markdown\Westwind.AspNetCore.Markdown.csproj" />
 		<ProjectReference Include="..\..\Westwind.AspNetCore\Westwind.AspNetCore\Westwind.AspNetCore.csproj" />
-		<ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
+		<ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />	
+		<ProjectReference Include="..\BlazePostApi\BlazePostApi.Server\BlazePostApi.Server.csproj" />
 		<ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
 
 		<!-- Application -->
-		<ProjectReference Include="..\Westwind.WeblogServices.Server\Westwind.WeblogServices.Server.csproj" />
 		<!--<ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />-->
 	</ItemGroup>
 

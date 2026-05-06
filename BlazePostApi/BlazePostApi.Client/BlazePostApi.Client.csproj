@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
+    <ProjectReference Include="..\..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
   </ItemGroup>
 
 </Project>

@@ -13809,4 +13809,16 @@ System.IO.IOException: Failed to bind to address https://127.0.0.1:5001: address
    at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
    at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
 
+---[2026-05-05 17:37:18 ERR] Connection id "0HNLB0RFBF0RT", Request id "0HNLB0RFBF0RT:00000009": An unhandled exception was thrown by the application.
+System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   at Microsoft.WebTools.BrowserLink.Net.TaskHelpers.WaitWithCancellationAsync[ResultType](Task`1 task, CancellationToken cancellationToken, ResultType resultIfCancelled)
+   at Microsoft.WebTools.BrowserLink.Net.SocketReader.ReceiveMoreBytesAsync(CancellationToken cancellationToken)
+   at Microsoft.WebTools.BrowserLink.Net.SocketReader.ReadBytesIntoResponseHandlerAsync(Int64 totalBytesToRead, ResponseHandler handler, CancellationToken cancellationToken)
+   at Microsoft.WebTools.BrowserLink.Net.HttpSocketAdapter.ResponseReader.ReadBytesIntoResponseAsync(Int64 bytesToRead)
+   at Microsoft.WebTools.BrowserLink.Net.HttpSocketAdapter.ResponseReader.ReadChunkedContentAsync()
+   at Microsoft.WebTools.BrowserLink.Net.HttpSocketAdapter.ResponseReader.ReadResponseAsync()
+   at Microsoft.WebTools.BrowserLink.Net.VsContentMiddleware.GetVsContentAsync(HttpContext context, String contentPath)
+   at Microsoft.AspNetCore.Watch.BrowserRefresh.BrowserRefreshMiddleware.InvokeAsync(HttpContext context) in /_3/BrowserRefreshMiddleware.cs:line 84
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+
 ---

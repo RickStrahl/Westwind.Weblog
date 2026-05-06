@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,9 +12,12 @@ namespace Westwind.Weblog.Business.Models
 {
     public class Comment
     {
+        [MaxLength(50)]
         public string Id { get; set; } = wlApp.NewId();
 
+        [MaxLength(50)]
         public string PostId { get; set; }
+       
 
         [MaxLength(128)]
         public string Title { get; set; }

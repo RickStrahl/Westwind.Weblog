@@ -158,7 +158,21 @@ namespace Westwind.WeblogPostService.Model
         /// </summary>
         public List<MediaObject> MediaObjects { get; set; } = new List<MediaObject>();
 
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+        /// <summary>
+        /// Comments for post when returning a single post
+        /// </summary>
+        public List<Comment> Comments { get; set; } = [];
+
+
+        public int CommentCount
+        {
+            get
+            {
+                if (Comments.Count > 0) return Comments.Count;
+                return field;
+            }
+            set => field = value;
+        }
 
         /// <summary>
         /// The slug URL for the title part of the URL. Doesn't include the date
@@ -192,7 +206,7 @@ namespace Westwind.WeblogPostService.Model
 
         public void FromPost(Post post)
         {
-            PostId = post.Id.ToString();            
+            PostId = post.Id.ToString();
             BlogId = post.Id.ToString();
             PostType = "blog";
             Abstract = post.Abstract;
@@ -214,8 +228,13 @@ namespace Westwind.WeblogPostService.Model
             SafeTitle = post.SafeTitle;
             FeaturedImageUrl = post.FeaturedImageUrl;
 
-            Comments = post.Comments;            
+            Comments = post.Comments;
         }
+
+    }
+
+    public class WeblogComment
+    {
         
     }
 
@@ -231,10 +250,35 @@ namespace Westwind.WeblogPostService.Model
     public class MediaObject
     {
 
+        /// <summary>
+        /// Optional Blog Id. 
+        /// 
+        /// If passed the BlogId can be an additional identifier
+        /// for uniqueness of the media object.
+        /// </summary>
         public string BlogId { get; set; }
 
+
         /// <summary>
-        /// The name of the Media Object.
+        /// Optional PostId to which this media object is attached.
+        /// 
+        /// If passed the PostId can be an additional identifier
+        /// for uniqueness of the media object.
+        /// </summary>
+        public string PostId { get; set; }
+
+        /// <summary>
+        /// The name of the Media Object. Can optionally include a path
+        /// prefix that can be used to construct a save path on disk or
+        /// prefix for data stored in a database.
+        /// 
+        /// Examples:
+        /// SomeImage.png
+        /// Weblog-Post-1234/SomeImage.png
+        /// 
+        /// I like to store posts on disk and use the folder prefix
+        /// in a year subfolder to store media objects. If stored in
+        /// this fashion they can be overridden.        
         /// </summary>
         public string Name { get; set; }
 

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Westwind.WeblogServices.Server
+namespace BlazePostApi.Rss
 {
     [DebuggerDisplay("{Title} - {Link}")]
     public class RssItem

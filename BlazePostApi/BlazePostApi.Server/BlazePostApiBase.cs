@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BlazePostApi.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -8,13 +9,13 @@ using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
 using Westwind.Utilities.Data.Security;
 using Westwind.WeblogPostService.Model;
-using Westwind.WeblogServices.Client;
 
-namespace Westwind.WeblogServices.Server
+
+namespace BlazePostApi
 {
 
 
-    public abstract class WeblogPostServiceBase : BaseApiController
+    public abstract class BlazePostApiBase : BaseApiController
     {
         /// <summary>
         /// Optional internal value that holds the Authorization token
@@ -24,7 +25,7 @@ namespace Westwind.WeblogServices.Server
 
         protected string ConnectionString { get; set;  }
 
-        public WeblogPostServiceBase(string connectionString) 
+        public BlazePostApiBase(string connectionString) 
         {
             ConnectionString = connectionString;
         }
@@ -61,37 +62,6 @@ namespace Westwind.WeblogServices.Server
 
 
             base.OnActionExecuting(context);
-        }
-
-
-
-        /// <summary>
-        /// Creates a new User Token
-        /// </summary>
-        /// <param name="userToken"></param>
-        /// <returns></returns>
-        public string CreateNewToken(string userToken = null)
-        {
-            var tm = new UserTokenManager(ConnectionString);
-            tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
-            var token = tm.CreateNewToken(userToken);
-            if (token == null)
-            {
-                throw new ApiException("Unable to create a new user token");
-            }
-            return token;
-        }
-
-        /// <summary>
-        /// Checks to see if a user token is valid
-        /// </summary>
-        /// <param name="userToken">token to check if it's valid</param>
-        /// <returns></returns>
-        public bool ValidateUserToken(string userToken)
-        {
-            var tm = new UserTokenManager(ConnectionString);
-            tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
-            return tm.IsTokenValid(userToken);
         }
 
 
@@ -138,5 +108,40 @@ namespace Westwind.WeblogServices.Server
         /// <param name="listFilter"></param>
         /// <returns></returns>
         public abstract IList<WeblogMinimalPost> GetRecentPosts(PostListFilter listFilter);
+
+        public abstract WeblogPost GetLastPost(string blogId);
+
+        #region Token Service Helpers
+
+        /// <summary>
+        /// Creates a new User Token
+        /// </summary>
+        /// <param name="userToken"></param>
+        /// <returns></returns>
+        protected string CreateNewToken(string userToken = null)
+        {
+            var tm = new UserTokenManager(ConnectionString);
+            tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
+            var token = tm.CreateNewToken(userToken);
+            if (token == null)
+            {
+                throw new ApiException("Unable to create a new user token");
+            }
+            return token;
+        }
+
+        /// <summary>
+        /// Checks to see if a user token is valid
+        /// </summary>
+        /// <param name="userToken">token to check if it's valid</param>
+        /// <returns></returns>
+        protected bool ValidateUserToken(string userToken)
+        {
+            var tm = new UserTokenManager(ConnectionString);
+            tm.TokenTimeoutSeconds = WeblogTokenInfo.TokenTimeoutSeconds;
+            return tm.IsTokenValid(userToken);
+        }
+
+        #endregion
     }
 }

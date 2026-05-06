@@ -1,38 +1,32 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
+using BlazePostApi.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Westwind.AspNetCore.Errors;
+using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
-
 using Westwind.WeblogPostService.Model;
-using Westwind.WeblogServices.Client;
-using Westwind.WeblogServices.Server;
+using BlazePostApi;
 
 namespace Westwind.AspNetCore.Controllers
 {
-
-
-
-
 
     /// <summary>
     /// Handles upload and download of posts, media objects and categories.
     /// </summary>    
     [Route("/api/publish")]
-    public class WeblogPostService : WeblogPostServiceBase
+    public class BlazePostApi : BlazePostApiBase
     {
         private readonly PostBusiness PostBusiness;
         UserBusiness UserBusiness { get;  }
         IWebHostEnvironment Host { get; }
 
-        public WeblogPostService(UserBusiness userBus, 
+        public BlazePostApi(UserBusiness userBus, 
             PostBusiness postBusiness, 
             IWebHostEnvironment host) : base(wlApp.Configuration.ConnectionString)
         {
@@ -139,7 +133,7 @@ namespace Westwind.AspNetCore.Controllers
             return post;
         }
 
-        [HttpPost]
+        [HttpPost]        
         [Route("media")]
         public override string UploadMediaObject([FromBody] MediaObject media)
         {
@@ -147,24 +141,12 @@ namespace Westwind.AspNetCore.Controllers
             var rootPath = Host.WebRootPath;
 
             string ImagePhysicalPath = Path.Combine(rootPath, "images",DateTime.Now.Year.ToString()) + Path.DirectorySeparatorChar;
-            string ImageWebPath = Request.Scheme + "//" + Request.Host + imagePath;
+            string ImageWebPath = Request.Scheme + "://" + Request.Host + imagePath;
 
             if (media.Data != null)
             {
-
-                // we only allow images
-                using (MemoryStream ms = new MemoryStream(media.Data))
-                {
-                    var buffer = new byte[20];
-                    var size= ms.Read(buffer , 0, 20);
-
-
-                    using (Bitmap bitmap = new Bitmap(ms))
-                    {
-                        if (bitmap == null || bitmap.Width < 1)
-                            throw new ApiException("Only image uploads are allowed.",401);
-                    }
-                }
+                if (!ImageUtils.IsImage(media.Data))
+                    throw new ApiException("Only image uploads are allowed.", 401);                
 
                 ImagePhysicalPath = Path.Combine(ImagePhysicalPath, media.Name);
                 string PathOnly = Path.GetDirectoryName(ImagePhysicalPath);
@@ -172,22 +154,12 @@ namespace Westwind.AspNetCore.Controllers
                     Directory.CreateDirectory(PathOnly);
 
                 // TODO: Validate Image by loading into Image Class
-                System.IO.File.WriteAllBytes(ImagePhysicalPath,media.Data);
-                
-                // TODO: Pack down Images
-                //if (Path.GetExtension(ImagePhysicalPath).ToLower() == ".png")
-                //{
-                //    var pngOutPath = HttpContext.Current.Server.MapPath("~/") + "tools\\pngout.exe";
-                //    var p = Process.Start(pngOutPath, "\"" + ImagePhysicalPath + "\"");
-                //    p.ErrorDataReceived += (sender, e) =>
-                //    {
-                //        LogManager.Current.LogError("pngOut failed", e.Data);
-                //    };
-                //}
+                System.IO.File.WriteAllBytes(ImagePhysicalPath,media.Data);             
             }
 
             var url = ImageWebPath + "/" + media.Name;
             url = url.Replace(" ", "%20");
+
             return url;            
         }
 
@@ -239,7 +211,17 @@ namespace Westwind.AspNetCore.Controllers
             return blogPost;
         }
 
-        [HttpPost]
+        [Route("last")]
+        public override WeblogPost GetLastPost(string blogId)
+        {
+
+            var postId = PostBusiness.Context.Posts.OrderByDescending(p => p.Created).Select(p => p.Id).FirstOrDefault();
+            if(string.IsNullOrEmpty(postId))
+                throw new ApiException("No posts found.",404);
+            return GetPost(postId, blogId);
+        }
+
+            [HttpPost]
         [Route("recent")]
         public override IList<WeblogMinimalPost> GetRecentPosts([FromBody] PostListFilter listFilter)
         {            
@@ -247,7 +229,7 @@ namespace Westwind.AspNetCore.Controllers
             {
                 listFilter = new PostListFilter();
             }
-
+            
             var posts = PostBusiness.GetLastPosts(listFilter.NumberOfPosts, listFilter.IncludeBody);
 
             var postList = new List<WeblogMinimalPost>();
@@ -272,82 +254,6 @@ namespace Westwind.AspNetCore.Controllers
             return postList;
         }
 
-        //[AllowAnonymous]
-        //[HttpGet]
-        //[Route("/rss")]
-        //public async Task<ActionResult> RssFeed(bool force)
-        //{
-        //    var config = PostBusiness.Configuration;
-
-        //    var rssFeed = new RssFeed()
-        //    {
-        //        Title = config.ApplicationName,
-        //        Link = config.WeblogHomeUrl,
-        //        Copyright = "(c) West Wind Technologies 2006-" + DateTime.Now.Year,
-        //        Description = "Wind, waves, code and everything in between",
-        //         Generator = "Rick Strahl's West Wind Weblog"    ,
-        //        PubDate = DateTime.UtcNow,
-        //        ImageUrl = config.WeblogImageUrl                                                
-        //    };
-            
-
-        //    var posts = await PostBusiness.GetLastPostsAsync(10, includeBody: true);
-        //    var lastPost = posts.FirstOrDefault();
-        //    if (lastPost != null)
-        //        rssFeed.LastUpdate = lastPost.Created.ToUniversalTime();
-
-        //    int count = 0;
-        //    foreach (var post in posts)
-        //    {
-        //        count++;
-
-        //        var rssItem = new RssItem()
-        //        {
-        //            Title = post.Title,
-        //            CommentCount = post.CommentCount,
-        //            Link = PostBusiness.GetPostUrl(post,fullyQualified: true),                    
-        //            Permalink = PostBusiness.GetPostUrl(post),
-        //            PublishDate = post.Created,
-        //            Guid = post.Id.ToString()
-        //        };
-        //        rssItem.Author.Name = post.Author ?? config.WeblogAuthor;
-        //        rssItem.CommentsUrl = rssItem.Link + "#Comments";
-                
-
-        //        if (!string.IsNullOrEmpty(post.Categories))                
-        //            rssItem.Categories = post.Categories
-        //                            .Split('.', StringSplitOptions.RemoveEmptyEntries)
-        //                            .ToList();
-                
-                
-        //        //string body = StringUtils.ReplaceStringInstance(post.Body, "##AD##", App.SponsorSquareAd, 1, true);
-                
-        //        string body = post.Body;
-        //        if (!string.IsNullOrEmpty(body))
-        //            body = body
-        //                .Replace("##AD##", "")
-        //                .Replace("##PAGEBREAK##", "");
-
-        //        if (count > 3)
-        //            body = post.Abstract ?? StringUtils.TextAbstract(body, 250);
-
-        //        rssItem.Body = body;
-
-                
-        //        rssFeed.Items.Add(rssItem);
-
-                
-
-                
-        //    }
-            
-        //    return Content(rssFeed.SerializeToString(), new MediaTypeHeaderValue("text/xml"));
-        //}
-
         
-    }
-
-
-
-    
+    }    
 }

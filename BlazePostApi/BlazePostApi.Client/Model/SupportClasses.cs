@@ -84,10 +84,12 @@ namespace Westwind.WeblogPostService.Model
 
         public bool IncludeBody { get; set; } = false;
 
-        public string Body { get; set; }
+        public bool LastPostOnly { get; set; }
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
+        
     }
 
 

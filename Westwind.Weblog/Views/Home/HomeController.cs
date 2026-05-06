@@ -7,12 +7,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using BlazePostApi.Rss;
 using Westwind.AspNetCore.Extensions;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
-using Westwind.WeblogServices.Server;
-using Westwind.WeblogServices.Server.Rss;
+
 
 namespace Westwind.Weblog.Views.Home
 {

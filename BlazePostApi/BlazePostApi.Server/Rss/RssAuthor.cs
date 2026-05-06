@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 
-namespace Westwind.WeblogServices.Server
+namespace BlazePostApi.Rss
 {
 
     [DebuggerDisplay("{Name}")]

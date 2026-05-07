@@ -1,11 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net10.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net10.0</TargetFrameworks>
+		<AssemblyName>Westwind.BlazePostApi.Client</AssemblyName>
+		<RootNamespace>Westwind.BlazePostApi.Client</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Westwind.Utilities\Westwind.Utilities\Westwind.Utilities.csproj" />
+		<!--<ProjectReference Include="..\..\Westwind.Weblog.Business\Westwind.Weblog.Business.csproj" />-->
+	</ItemGroup>
 
 </Project>

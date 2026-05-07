@@ -1,4 +1,4 @@
-POST api/publish/authenticate HTTP/2.0
+POST authenticate HTTP/2.0
 Accept-Encoding: gzip,deflate
 content-type: application/json
 WebSurge-Request-CaptureAndSetAuthorizationBearerTokenFromJson: token
@@ -11,7 +11,7 @@ Websurge-Request-Name: Authenticate - Get Bearer Token
 
 ------------------------------------------------------------------
 
-POST api/publish/authenticate HTTP/2.0
+POST authenticate HTTP/2.0
 Accept-Encoding: gzip,deflate
 content-type: application/json
 WebSurge-Request-CaptureAndSetAuthorizationBearerTokenFromJson: token
@@ -24,21 +24,21 @@ Websurge-Request-Name: Failed Authenticate
 
 ------------------------------------------------------------------
 
-GET api/publish/5311031 HTTP/2.0
+GET 5311031 HTTP/2.0
 Accept-Encoding: gzip,deflate
 Authorization: Bearer ei5redpjb21s79hhc
 Websurge-Request-Name: Get Post
 
 ------------------------------------------------------------------
 
-GET api/publish/last HTTP/2.0
+GET last HTTP/2.0
 Accept-Encoding: gzip,deflate
 Authorization: Bearer ei5redpjb21s79hhc
 Websurge-Request-Name: Get Last Post
 
 ------------------------------------------------------------------
 
-POST /api/publish/recent HTTP/2.0
+POST recent HTTP/2.0
 Accept-Encoding: gzip,deflate
 Authorization: Bearer peucqep08vafjjcz
 content-type: application/json
@@ -51,21 +51,23 @@ Websurge-Request-Name: Recent Posts List
 
 ------------------------------------------------------------------
 
-POST /api/publish HTTP/2.0
+POST  HTTP/2.0
 Accept-Encoding: gzip,deflate
-content-type: application/json
-Authorization: Bearer peucqep08vafjjcz
+Content-Type: application/json
+Authorization: Bearer fvons1vkb4k1vwx
 Websurge-Request-Name: New Post
 
 {
+  "postId": null,
+  "blogId": "1",
   "title": "Test Post",
-  "body": "THis is a long story that nobody wants to listen to",
+  "body": "!THis is a long story that nobody wants to listen to",
   "abstract": "THis is a long story...",
   "markdown": "THis is a **long** story that nobody wants to listen to",
   "author": "Rick Strahl",
   "location": "Paia, HI",
   "postStatus": "Published",
-  "keywords": "long, story",
+  "keywords": ["long","story"],
   "Categories": [
     "Life",
     ".NET"
@@ -74,7 +76,7 @@ Websurge-Request-Name: New Post
 
 ------------------------------------------------------------------
 
-POST /api/publish/media HTTP/2.0
+POST media HTTP/2.0
 Accept-Encoding: gzip,deflate
 content-type: application/json
 Authorization: Bearer peucqep08vafjjcz
@@ -97,7 +99,7 @@ Websurge-Request-Name: Update Post (provide postId)
 
 {
   "postId": "80aqeuxi0c36",
-  "title": "Test Post (Updated)",
+  "title": "Test Post (Updated!)",
   "body": "UPDATED - THis is a long story that nobody wants to listen to",
   "abstract": "THis is a long story...",
   "markdown": "THis is a **long** story that nobody wants to listen to",
@@ -123,8 +125,9 @@ Authorization: Bearer peucqep08vafjjcz
 ----- Start WebSurge Options -----
 
 {
-  "SiteBaseUrl": "https://localhost:5001/",
+  "SiteBaseUrl": "https://localhost:5001/blazepostapi/",
   "RecentSiteBaseUrlList": [
+    "https://localhost:5001/blazepostapi/",
     "https://localhost:5001/"
   ],
   "OnlineSessionId": null,
@@ -148,7 +151,7 @@ Authorization: Bearer peucqep08vafjjcz
   "ReplaceQueryStringValuePairs": null,
   "ReplaceCookieValue": "",
   "TrackPerSessionCookies": true,
-  "ReplaceAuthorization": "Bearer yji9s4qxgu2zqq1",
+  "ReplaceAuthorization": "Bearer 95y5h09k9smiue0",
   "Username": null,
   "Password": null,
   "UsernamePasswordType": "Negotiate",

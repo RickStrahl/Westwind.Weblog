@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Westwind.Weblog.Business.Models;
+using System.Diagnostics;
 
-namespace Westwind.WeblogPostService.Model
+
+namespace BlazePostApi.Client
 {
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace Westwind.WeblogPostService.Model
         /// <summary>
         /// Comma delimited list of keywords.
         /// </summary>
-        public string Keywords { get; set; }
+        public List<string> Keywords { get; set; } = [];
 
 
         /// <summary>
@@ -156,12 +156,12 @@ namespace Westwind.WeblogPostService.Model
         /// Alternately you can post it separately and then fix up the document
         /// after the fact.
         /// </summary>
-        public List<MediaObject> MediaObjects { get; set; } = new List<MediaObject>();
+        public List<WeblogMediaObject> MediaObjects { get; set; } = new List<WeblogMediaObject>();
 
         /// <summary>
         /// Comments for post when returning a single post
         /// </summary>
-        public List<Comment> Comments { get; set; } = [];
+        public List<WeblogComment> Comments { get; set; } = [];
 
 
         public int CommentCount
@@ -202,40 +202,20 @@ namespace Westwind.WeblogPostService.Model
                 return null;
             return value;
         }
-
-
-        public void FromPost(Post post)
-        {
-            PostId = post.Id.ToString();
-            BlogId = post.Id.ToString();
-            PostType = "blog";
-            Abstract = post.Abstract;
-            Author = post.Author;
-            Body = post.Body;
-            Title = post.Title;
-            DateCreated = post.Created;
-            ImageUrl = post.FeaturedImageUrl;
-            Location = post.Location;
-            Categories = post.Categories.Split(',')?.ToList();
-            Keywords = post.Keywords;
-            PermaLink = post.PermanentUrl;
-            PostStatus = post.Active ? PostStatuses.Published : PostStatuses.Draft;
-            SourceEditUrl = post.GithubUrl;
-            SafeTitle = post.SafeTitle;
-
-            RawPostText = post.Markdown;
-            RawPostType = "markdown";
-            SafeTitle = post.SafeTitle;
-            FeaturedImageUrl = post.FeaturedImageUrl;
-
-            Comments = post.Comments;
-        }
-
     }
 
     public class WeblogComment
     {
-        
+        public int BodyMode { get; set; }
+        public bool IsActive { get; set; }
+        public string Url { get; set; }
+        public string Email { get; set; }
+        public DateTime Created { get; set; }
+        public string Body { get; set; }
+        public string Title { get; set; }
+        public string Author { get; set; }
+        public string PostId { get; set; }
+        public string Id { get; set; }
     }
 
 
@@ -247,7 +227,7 @@ namespace Westwind.WeblogPostService.Model
         Future,
     }
 
-    public class MediaObject
+    public class WeblogMediaObject
     {
 
         /// <summary>

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using BlazePostApi.Client;
 using NUnit.Framework;
 using Westwind.Utilities;
-using Westwind.WeblogPostService.Model;
 
 
 
@@ -15,7 +14,7 @@ namespace Westwind.Weblog.PostServiceTests
     [TestFixture]
     public class ServiceClientTests
     {
-        private string ServiceUrl = "https://localhost:5001/api";
+        private string ServiceUrl = "https://localhost:5001/blazepostapi";
 
         private const string Username = "test@test.com";
         private const string Password = "test";
@@ -23,7 +22,7 @@ namespace Westwind.Weblog.PostServiceTests
         [Test]
         public async Task AuthenticateTest()
         {
-            var client = new WeblogPostServiceClient()
+            var client = new BlazePostApiClient()
             {
                 ApiBaseUrl = ServiceUrl,                   
             };
@@ -37,7 +36,7 @@ namespace Westwind.Weblog.PostServiceTests
         [Test]
         public async Task FailAuthenticateTest()
         {
-            var client = new WeblogPostServiceClient()
+            var client = new BlazePostApiClient()
             {
                 ApiBaseUrl = ServiceUrl,
             };
@@ -53,9 +52,9 @@ namespace Westwind.Weblog.PostServiceTests
         [Test]
         public async Task GetPostTest()
         {
-            string postId = "5314605";
+            string postId = "dc52mpticdz4";
 
-            var client = new WeblogPostServiceClient()
+            var client = new BlazePostApiClient()
             {
                 ApiBaseUrl = ServiceUrl 
             };
@@ -76,7 +75,7 @@ namespace Westwind.Weblog.PostServiceTests
         [Test]
         public async Task GetLastPostTest()
         {
-            var client = new WeblogPostServiceClient()
+            var client = new BlazePostApiClient()
             {
                 ApiBaseUrl = ServiceUrl
             };
@@ -91,47 +90,9 @@ namespace Westwind.Weblog.PostServiceTests
         }
 
         [Test]
-        public async Task NewWeblogPostTest()
-        {
-
-            var post = new WeblogPost()
-            {
-                Title = $"New Post! {DataUtils.GenerateUniqueId(6)} A new Test Post ",
-                Body = "This is a <b>long post</b> with pointless points.",
-                Abstract = "This is an abstracted abstract that's just as pointless - and longer.",
-                Author = "Rick Strahl",
-                DateCreated = DateTime.Now,
-                RawPostText = "his is a **long post** with pointless points.",
-                Location = "Paia, HI",
-                ImageUrl = "http://localhost:5001/images/RickHero1.jpg",
-                Keywords = "long,post,pointless"
-            };
-            post.Categories = ["Life", ".NET", "ASP.NET"];
-            post.CustomFields.Add("mt_GithubUrl", "https://github.com/rickstrahl/imagedrop");
-
-            var client = new WeblogPostServiceClient()
-            {
-                ApiBaseUrl = ServiceUrl
-            };
-
-            var token = await client.Authenticate(Username, Password);
-            Assert.IsNotNull(token, client.ErrorMessage);
-
-
-            Assert.IsNotNull(token);
-            Console.WriteLine(token.Token);
-
-
-            post = await client.UploadPost(post);
-
-            Assert.IsNotNull(post, client.ErrorMessage);
-
-        }
-
-        [Test]
         public async Task GetRecentPostsTest()
         {
-            var client = new WeblogPostServiceClient()
+            var client = new BlazePostApiClient()
             {
                 ApiBaseUrl = ServiceUrl
             };
@@ -152,11 +113,26 @@ namespace Westwind.Weblog.PostServiceTests
             Console.WriteLine($"Returned {posts.Count} posts");
         }
 
-
         [Test]
-        public async Task UploadMediaObjectTest()
+        public async Task NewWeblogPostTest()
         {
-            var client = new WeblogPostServiceClient()
+
+            var post = new WeblogPost()
+            {
+                Title = $"New Post! {DataUtils.GenerateUniqueId(6)} A new Test Post ",
+                Body = "This is a <b>long post</b> with pointless points.",
+                Abstract = "This is an abstracted abstract that's just as pointless - and longer.",
+                Author = "Rick Strahl",
+                DateCreated = DateTime.Now,
+                RawPostText = "his is a **long post** with pointless points.",
+                Location = "Paia, HI",
+                ImageUrl = "http://localhost:5001/images/RickHero1.jpg",
+                Keywords = ["long","post","pointless"]
+            };
+            post.Categories = ["Life", ".NET", "ASP.NET"];
+            post.CustomFields.Add("mt_GithubUrl", "https://github.com/rickstrahl/imagedrop");
+
+            var client = new BlazePostApiClient()
             {
                 ApiBaseUrl = ServiceUrl
             };
@@ -164,7 +140,30 @@ namespace Westwind.Weblog.PostServiceTests
             var token = await client.Authenticate(Username, Password);
             Assert.IsNotNull(token, client.ErrorMessage);
 
-            var media = new MediaObject
+
+            Assert.IsNotNull(token);
+            Console.WriteLine(token.Token);
+
+
+            post = await client.UploadPost(post);
+
+            Assert.IsNotNull(post, client.ErrorMessage);
+
+        }
+
+
+        [Test]
+        public async Task UploadMediaObjectTest()
+        {
+            var client = new BlazePostApiClient()
+            {
+                ApiBaseUrl = ServiceUrl
+            };
+
+            var token = await client.Authenticate(Username, Password);
+            Assert.IsNotNull(token, client.ErrorMessage);
+
+            var media = new WeblogMediaObject
             {
                 Name = $"Test-Post/test-{DataUtils.GenerateUniqueId(8)}.png",
                 ContentType = "image/png",

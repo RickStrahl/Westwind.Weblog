@@ -1,4 +1,0 @@
-﻿namespace Westwind.WeblogPostService.Model
-{
-  
-}

@@ -8,13 +8,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
 using Westwind.Utilities.Data.Security;
-using Westwind.WeblogPostService.Model;
 
 
 namespace BlazePostApi
 {
-
-
     public abstract class BlazePostApiBase : BaseApiController
     {
         /// <summary>
@@ -87,9 +84,9 @@ namespace BlazePostApi
         /// Uploads a media object like an image or video to the server
         /// and returns a url if successful.
         /// </summary>
-        /// <param name="media">a media object</param>
+        /// <param name="weblogMedia">a media object</param>
         /// <returns></returns>
-        public abstract string UploadMediaObject([FromBody] MediaObject media);
+        public abstract string UploadMediaObject([FromBody] WeblogMediaObject weblogMedia);
 
         //public abstract string UploadRawMediaObject([FromBody] MediaObject media);
 

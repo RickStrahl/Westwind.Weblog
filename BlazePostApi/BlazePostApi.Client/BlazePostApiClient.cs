@@ -3,17 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Westwind.Utilities;
-using Westwind.WeblogPostService.Model;
 
 namespace BlazePostApi.Client
 {
-    public class WeblogPostServiceClient
+    public class BlazePostApiClient
     {
         public WeblogTokenInfo AuthenticationToken { get; set; }
 
 
         /// <summary>
-        /// An Api base url such as http://site.com/api 
+        /// An Api base url such as https://site.com/blazepostapi or https://publish.site.com
+        /// 
+        /// The relative Url (ie. authenticate or recent or `{{postId}} '
+        /// is added to the base url when making requests.
         /// </summary>
         public string ApiBaseUrl
         {
@@ -21,9 +23,15 @@ namespace BlazePostApi.Client
             set;
         }
 
+        /// <summary>
+        /// Captures the entire last request content
+        /// </summary>
 
         public string LastRequestContent { get; set; }
 
+        /// <summary>
+        /// Captures the entire last response content
+        /// </summary>
         public string LastResponseContent { get; set; }
 
 
@@ -33,9 +41,10 @@ namespace BlazePostApi.Client
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
-        /// <param name="blogId"></param>
+        /// <param name="blogId">Optional blog Id</param>
+        /// <param name="relativeUrl">Optional relative URL for the authentication endpoint</param>
         /// <returns></returns>
-        public async Task<WeblogTokenInfo> Authenticate(string username, string password, string blogId = null,string relativeUrl = "publish/authenticate")
+        public async Task<WeblogTokenInfo> Authenticate(string username, string password, string blogId = null,string relativeUrl = "authenticate")
         {
             var data = new AuthenticateRequest
             {
@@ -48,7 +57,7 @@ namespace BlazePostApi.Client
             {                 
                 RequestContent = data,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
                 HttpVerb = "POST"          ,
                 CaptureRequestAndResponse = true
             };
@@ -79,12 +88,30 @@ namespace BlazePostApi.Client
         }
 
 
-        public async Task<WeblogPost> GetPost(string postId, string blogId = null, string relativeUrl = "publish")
+        /// <summary>
+        /// Checks to see if there's an active valid Token
+        /// set on this instance.
+        /// 
+        /// Checks for a token and whether it's expired.
+        /// </summary>
+        /// <returns>true or false</returns>
+        public bool IsTokenValid()
+        {
+            if (AuthenticationToken == null || string.IsNullOrEmpty(AuthenticationToken.Token))
+                return false;
+            if (AuthenticationToken.ExpirationUtc < DateTime.UtcNow)
+                return false;
+            return true;
+        }
+
+
+        public async Task<WeblogPost> GetPost(string postId, string blogId = null, string relativeUrl = "")
         {
             EnsureAuthToken();
 
 
-            var url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/') + "/" + postId;
+            var url = ("/" + relativeUrl + postId).Replace("//","/");
+            url = ApiBaseUrl + url.Trim() ;
             if (!string.IsNullOrWhiteSpace(blogId))
                 url += "/" + blogId;
 
@@ -119,7 +146,7 @@ namespace BlazePostApi.Client
             return post;
         }
 
-        public async Task<IList<WeblogMinimalPost>> GetRecentPosts(PostListFilter listFilter = null, string relativeUrl = "publish/recent")
+        public async Task<IList<WeblogMinimalPost>> GetRecentPosts(PostListFilter listFilter = null, string relativeUrl = "recent")
         {
             EnsureAuthToken();
 
@@ -129,7 +156,7 @@ namespace BlazePostApi.Client
             {
                 RequestContent = listFilter,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
                 HttpVerb = "POST",
                 CaptureRequestAndResponse = true
             };
@@ -157,13 +184,13 @@ namespace BlazePostApi.Client
 
 
 
-        public async Task<WeblogPost> GetLastPost(string blogId = null, string relativeUrl = "publish/last")
+        public async Task<WeblogPost> GetLastPost(string blogId = null, string relativeUrl = "last")
         {
             EnsureAuthToken();            
 
             var settings = new HttpClientRequestSettings
             {
-                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
                 HttpVerb = "GET",
                 CaptureRequestAndResponse = true
             };
@@ -189,7 +216,7 @@ namespace BlazePostApi.Client
             return post;
         }
 
-        public async Task<WeblogPost> UploadPost(WeblogPost post, string relativeUrl = "publish")
+        public async Task<WeblogPost> UploadPost(WeblogPost post, string relativeUrl = "")
         {
             EnsureAuthToken();
 
@@ -197,7 +224,7 @@ namespace BlazePostApi.Client
             {
                 RequestContent = post,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
                 HttpVerb = "POST",
                 CaptureRequestAndResponse = true
             };
@@ -224,7 +251,7 @@ namespace BlazePostApi.Client
             return post;
         }
 
-        public async Task<string> UploadMediaObject(MediaObject image, string relativeUrl = "publish/media")
+        public async Task<string> UploadMediaObject(WeblogMediaObject image, string relativeUrl = "media")
         {
             EnsureAuthToken();
 
@@ -232,7 +259,7 @@ namespace BlazePostApi.Client
             {
                 RequestContent = image,
                 RequestContentType = "application/json",
-                Url = ApiBaseUrl.TrimEnd('/') + "/" + relativeUrl.Trim('/'),
+                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
                 HttpVerb = "POST",
                 CaptureRequestAndResponse = true
             };

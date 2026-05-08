@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -60,10 +60,12 @@ namespace Westwind.Weblog.Views.Account
             
             if (user.IsAdmin)                
                 identity.AddClaim(new Claim(ClaimTypes.Role,"Admin"));
-            
+
+
+
             // Set cookie and attach claims
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity));
+                new ClaimsPrincipal(identity), null);
 
             if (!string.IsNullOrEmpty(model.RedirectUrl))            
                 return Redirect(model.RedirectUrl);

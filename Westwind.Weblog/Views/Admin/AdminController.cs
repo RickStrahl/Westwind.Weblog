@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -83,11 +84,104 @@ namespace Westwind.Weblog
 
             return View("Index",model);
         }
+
+        [HttpGet("/admin/ads")]
+        public IActionResult Ads()
+        {
+            var model = CreateViewModel<AdsViewModel>();
+            LoadAdsFromXml(model);
+            return View(model);
+        }
+
+        [HttpPost("/admin/ads")]
+        public IActionResult Ads(AdsViewModel posted)
+        {
+            var model = CreateViewModel<AdsViewModel>();
+            model.BottomPostAd = posted.BottomPostAd;
+            model.TopPostAd = posted.TopPostAd;
+            model.TopPageAd = posted.TopPageAd;
+            model.ContentAds = posted.ContentAds?
+                .Where(a => !string.IsNullOrWhiteSpace(a)).ToList() ?? new List<string>();
+            model.SponsorBanners = posted.SponsorBanners?
+                .Where(b => !string.IsNullOrWhiteSpace(b)).ToList() ?? new List<string>();
+
+            if (SaveAdsToXml(model))
+            {
+                AdManager.Reload();
+                model.Message = "Ads saved successfully.";
+            }
+            else
+            {
+                model.IsError = true;
+                model.Message = "Failed to save ads — check file permissions.";
+            }
+
+            return View(model);
+        }
+
+        private void LoadAdsFromXml(AdsViewModel model)
+        {
+            var path = Path.Combine(Host.WebRootPath, "admin", "adsnew.xml");
+            if (!System.IO.File.Exists(path)) return;
+
+            var root = XDocument.Load(path, LoadOptions.PreserveWhitespace).Root;
+            if (root == null) return;
+
+            model.BottomPostAd = root.Element("BottomPostAd")?.Value ?? string.Empty;
+            model.TopPostAd    = root.Element("TopPostAd")?.Value    ?? string.Empty;
+            model.TopPageAd    = root.Element("TopPageAd")?.Value    ?? string.Empty;
+
+            model.SponsorBanners.AddRange(
+                root.Element("SponsorBanners")?
+                    .Elements("Banner").Select(e => e.Value)
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                ?? Enumerable.Empty<string>());
+
+            model.ContentAds.AddRange(
+                root.Element("ContentAds")?
+                    .Elements("Ad").Select(e => e.Value)
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                ?? Enumerable.Empty<string>());
+        }
+
+        private bool SaveAdsToXml(AdsViewModel model)
+        {
+            try
+            {
+                var path = Path.Combine(Host.WebRootPath, "admin", "adsnew.xml");
+                var doc = new XDocument(
+                    new XDeclaration("1.0", "utf-8", null),
+                    new XElement("Ads",
+                        new XElement("BottomPostAd", model.BottomPostAd ?? string.Empty),
+                        new XElement("TopPostAd",    model.TopPostAd    ?? string.Empty),
+                        new XElement("TopPageAd",    model.TopPageAd    ?? string.Empty),
+                        new XElement("SponsorBanners",
+                            model.SponsorBanners.Select(b => new XElement("Banner", b))),
+                        new XElement("ContentAds",
+                            model.ContentAds.Select(a => new XElement("Ad", a)))));
+                doc.Save(path);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
     public class AdminViewModel : WeblogBaseViewModel
     {
         public string Message { get; set; }
+    }
 
+    public class AdsViewModel : WeblogBaseViewModel
+    {
+        public string Message { get; set; }
+        public bool IsError { get; set; }
+        public string BottomPostAd { get; set; }
+        public string TopPostAd { get; set; }
+        public string TopPageAd { get; set; }
+        public List<string> ContentAds { get; set; } = new();
+        public List<string> SponsorBanners { get; set; } = new();
     }
 }

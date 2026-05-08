@@ -1,0 +1,182 @@
+@model AdsViewModel
+
+@{
+    ViewData["Title"] = "Manage Ads";
+}
+
+<h1>Manage Ads</h1>
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert @(Model.IsError ? "alert-danger" : "alert-success")">
+        @Html.Raw(Model.Message)
+    </div>
+}
+
+<form method="post" asp-action="Ads">
+
+    <div style="margin-bottom: 20px;">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save"></i> Save Ads
+        </button>
+        <a asp-action="Index" class="btn btn-default">
+            <i class="fa fa-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+
+    <!-- ── Content Ads ─────────────────────────────────── -->
+    <h3>Content Ads
+        <small class="text-muted" style="font-size: 0.6em;">
+            (@Model.ContentAds.Count) — sidebar display ads, rotated randomly
+        </small>
+    </h3>
+
+    <div id="content-ads-container">
+        @for (int i = 0; i < Model.ContentAds.Count; i++)
+        {
+            <div class="ad-entry panel panel-default">
+                <div class="panel-heading">
+                    Content Ad <span class="ad-index">@(i + 1)</span>
+                    <button type="button" class="btn btn-xs btn-danger pull-right btn-remove-ad">
+                        <i class="fa fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <textarea name="ContentAds" class="form-control" rows="4">@Model.ContentAds[i]</textarea>
+                </div>
+
+                <div>
+                    @Html.Raw(Model.ContentAds[i])
+                </div>
+
+            </div>
+        }
+    </div>
+    <button type="button"
+            class="btn btn-sm btn-default btn-add-ad"
+            data-container="content-ads-container"
+            data-label="Content Ad"
+            data-fieldname="ContentAds">
+        <i class="fa fa-plus"></i> Add Content Ad
+    </button>
+
+    <hr />
+
+    <!-- ── Sponsor Banners ────────────────────────────── -->
+    <h3>Sponsor Banners
+        <small class="text-muted" style="font-size: 0.6em;">
+            (@Model.SponsorBanners.Count) — top-of-page sponsor strip, rotated randomly
+        </small>
+    </h3>
+
+    <div id="sponsor-banners-container">
+        @for (int i = 0; i < Model.SponsorBanners.Count; i++)
+        {
+            <div class="ad-entry panel panel-default">
+                <div class="panel-heading">
+                    Sponsor Banner <span class="ad-index">@(i + 1)</span>
+                    <button type="button" class="btn btn-xs btn-danger pull-right btn-remove-ad">
+                        <i class="fa fa-trash"></i> Remove
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <textarea name="SponsorBanners" class="form-control" rows="4">@Model.SponsorBanners[i]</textarea>
+                </div>
+            </div>
+        }
+    </div>
+    <button type="button"
+            class="btn btn-sm btn-default btn-add-ad"
+            data-container="sponsor-banners-container"
+            data-label="Sponsor Banner"
+            data-fieldname="SponsorBanners">
+        <i class="fa fa-plus"></i> Add Sponsor Banner
+    </button>
+
+    <hr />
+
+    <!-- ── Page / Post Ads ────────────────────────────── -->
+    <h3>Page &amp; Post Ads
+        <small class="text-muted" style="font-size: 0.6em;">single-slot HTML ads</small>
+    </h3>
+
+    <div class="form-group">
+        <label>Top Page Ad
+            <small class="text-muted">— displayed at the very top of every page</small>
+        </label>
+        <textarea name="TopPageAd" class="form-control" rows="5">@Model.TopPageAd</textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Top Post Ad
+            <small class="text-muted">— displayed above blog post content</small>
+        </label>
+        <textarea name="TopPostAd" class="form-control" rows="5">@Model.TopPostAd</textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Bottom Post Ad
+            <small class="text-muted">— displayed below blog post content</small>
+        </label>
+        <textarea name="BottomPostAd" class="form-control" rows="5">@Model.BottomPostAd</textarea>
+    </div>
+
+    <div style="margin-top: 20px; margin-bottom: 30px;">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save"></i> Save Ads
+        </button>
+        <a asp-action="Index" class="btn btn-default">
+            <i class="fa fa-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+
+</form>
+
+@section scripts {
+<script>
+$(function () {
+
+    // Remove — delegated so it works on dynamically added entries too
+    $(document).on('click', '.btn-remove-ad', function () {
+        var $entry = $(this).closest('.ad-entry');
+        var $container = $entry.parent();
+        $entry.remove();
+        renumber($container);
+    });
+
+    // Add
+    $('.btn-add-ad').on('click', function () {
+        var containerId = $(this).data('container');
+        var label       = $(this).data('label');
+        var fieldName   = $(this).data('fieldname');
+        var $container  = $('#' + containerId);
+        var count       = $container.find('.ad-entry').length;
+
+        var html =
+            '<div class="ad-entry panel panel-default">' +
+              '<div class="panel-heading">' +
+                label + ' <span class="ad-index">' + (count + 1) + '</span>' +
+                ' <button type="button" class="btn btn-xs btn-danger pull-right btn-remove-ad">' +
+                  '<i class="fa fa-trash"></i> Remove' +
+                '</button>' +
+              '</div>' +
+              '<div class="panel-body">' +
+                '<textarea name="' + fieldName + '" class="form-control" rows="4"></textarea>' +
+              '</div>' +
+            '</div>';
+
+        $container.append(html);
+        $container.find('.ad-entry:last textarea').focus();
+    });
+
+    function renumber($container) {
+        $container.find('.ad-entry .ad-index').each(function (i) {
+            $(this).text(i + 1);
+        });
+    }
+});
+</script>
+<style>
+    .ad-entry { margin-bottom: 2em; padding-bottom: 2em; border-bottom: 0.1px solid #ccc}
+</style>
+}

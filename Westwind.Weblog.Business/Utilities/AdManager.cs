@@ -9,9 +9,11 @@ namespace Westwind.Weblog.Business
 {
     public class AdManager
     {
-                private static readonly Lazy<AdManager> CurrentAds = new(LoadFromXml);
+                private static Lazy<AdManager> _currentAds = new(LoadFromXml);
 
-        public static AdManager Ads { get; } = CurrentAds.Value;
+        public static AdManager Ads => _currentAds.Value;
+
+        public static void Reload() => _currentAds = new Lazy<AdManager>(LoadFromXml);
 
         ///// <summary>
         ///// Gets the ad configuration loaded from wwwroot/admin/ads.xml.

@@ -47,7 +47,7 @@
         - The Markdown Editor for Windows
         &lt;a href="https://markdownmonster.west-wind.com?utm_campaign=westwind-weblog-sponsored"
            title="Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship to remove all other ads on this site."&gt;
-            &lt;i class="fa fa-external-link" style="color: #333; padding: 0 5px; font-weight: bold"&gt;&lt;/i&gt;
+            &lt;i class="fa fa-external-link" style="color:  var(--text-faint);; padding: 0 5px; font-weight: bold"&gt;&lt;/i&gt;
         &lt;/a&gt;
     &lt;/div&gt;    
     &lt;div class="right"&gt;

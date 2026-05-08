@@ -38,6 +38,9 @@
     --footer-fg:           #ccc;
     --input-bg:            #F5F7FA;
     --input-color:          #333;
+    --borderbox-top:      goldenrod;
+    --dialog-header-from:   steelblue;
+    --dialog-header-fg:     #383838;
 }
 
 [data-theme="dark"] {
@@ -75,6 +78,9 @@
     --footer-fg: #555;
     --input-bg: #2a2e38;
     --input-color: #ddd;
+    --borderbox-top:      #274b69;
+    --dialog-header-from: #1e3a52;
+    --dialog-header-fg:   #bbb;
 }
 
 
@@ -518,22 +524,28 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 .marquee-bottom-menu {
     background: var(--menu-bg);
     background-image: url('../../images/FloralBackground_darkgrey.gif');
-    color: white;
+    color: var(--text);
     padding: 7px;
-    padding-left: 265px;
+    padding-left: 215px;
     transition: background-color 0.25s ease;
 }
 
+
     .marquee-bottom-menu a, .marquee-bottom-menu a:visited {
-        color: white;
+        color: var(--text);
     }
+@media(max-width: 760px) {
+    .marquee-bottom-menu {
+        padding-left: 1em !important;
+    }
+}
 
 .marquee-bottom-sharing {
     float: right;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
-    margin-right: 20px;
+    margin-right: 10px;
     margin-top: -19px;
     font-size: 35px;
 }
@@ -608,9 +620,15 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     border-right: none;
 }
 
+
     .post-content.expand {
         margin-left: 0;
         padding: 2em 3.5em 2em 3.5em;
+    }
+    @media(max-width: 760px) {
+            .post-content.expand {
+            padding: 1em 1em 2em .85em;
+        }
     }
 
     .post-content h2 {
@@ -753,7 +771,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     padding: 10px 15px;
     border-radius: 4px;
     border: 1px solid var(--border);
-    background: linear-gradient(to bottom, rgb(255, 194, 0) 0, white 70px);
+    background: linear-gradient(to bottom, var(--borderbox-top) 0, var(--bg) 60px);
     margin: 30px 0 10px;
     min-height: 30px;
 }
@@ -1573,9 +1591,7 @@ pre > code, pre.code, pre.csharpcode {
         padding-top: 0;
     }
 
-    .marquee-bottom-menu {
-        padding-left: 15px;
-    }
+    
 
     #ArticleBody {
     }

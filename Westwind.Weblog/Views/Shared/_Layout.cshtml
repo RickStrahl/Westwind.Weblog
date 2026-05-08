@@ -10,7 +10,15 @@
 <head runat="server">
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
-    <script>(function(){var t=localStorage.getItem('ww-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}());</script>
+
+    <script>
+        (function(){
+            var t=localStorage.getItem('ww-theme');            
+            if(!t || t==='dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        }());
+    </script>
     <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/css/application.css" rel="stylesheet" type="text/css"  />
     <link href="/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
@@ -54,22 +62,18 @@
                             onclick="window.location='@Url.Content("~/")';">
                         <h2 style="margin: 0 !important">@wlApp.Configuration.ApplicationName</h2>
                         <b>@Html.Raw(wlApp.Configuration.ApplicationByLineHtml)</b>
+
                     </header>
                 </div>
 
-                <div class="marquee-bottom-menu" style="margin-bottom: 0;">
+            <div class="marquee-bottom-menu" style="margin-bottom: 0;">
 
                     <div class="marquee-bottom-sharing">
-                        <button id="theme-toggle" class="theme-toggle-btn" 
-                                title="Toggle dark/light mode" 
-                                style="margin-top: .8em; color: goldenrod"
-                                aria-label="Toggle dark/light mode">
-                            <i id="theme-icon" class="fas fa-moon"></i>
-                        </button>
+                   
                         <a href="http://twitter.com/rickstrahl" title="Rick Strahl on Twitter" style="text-decoration:none;">
-                            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;margin-top: 0.2em">
                                 <i class="fa fa-circle fa-stack-1x" style="color: white; font-size: 0.7em"></i>
-                                <i class="fab fa-square-twitter fa-stack-1x" style="color: rgb(53, 155, 240);"></i>
+                                <i class="fab fa-square-x-twitter fa-stack-1x" style="color: black"></i>
                             </span>
                         </a>
                         <a href="@FeedUrl" title="RSS feed for @wlApp.Configuration.ApplicationName">
@@ -79,6 +83,14 @@
                                    style="--fa-primary-color: white; --fa-secondary-color:#ff6a00; --fa-secondary-opacity: 1"></i>
                             </span>
                         </a>
+
+                        <button id="theme-toggle" 
+                                class="theme-toggle-btn ms-1" 
+                                title="Toggle dark/light mode" 
+                                style="margin-top: .6em; font-size: .75em; color: goldenrod"
+                                aria-label="Toggle dark/light mode">
+	                        <i id="theme-icon" class="fas fa-moon"></i>
+                        </button>
                     </div>
 
                     <span class="marquee-bottom-links">
@@ -90,11 +102,22 @@
                     </span>
 
                 </div>
+                
+   
+            @{
+                    string sponsorPanel;
 
-                @{
-				    var sponsorPanel = AdManager.Ads.SponsorBanners.FirstOrDefault();
-                }
-                @Html.Raw(sponsorPanel);
+                    if (AdManager.Ads.SponsorBanners.Count > 1)
+                    {
+                        var random = new Random();
+                        sponsorPanel = AdManager.Ads.SponsorBanners[random.Next(AdManager.Ads.SponsorBanners.Count)];
+                    }
+                    else 
+				{
+					sponsorPanel = AdManager.Ads.SponsorBanners.Count == 1 ? AdManager.Ads.SponsorBanners[0] : string.Empty;
+				}
+            }
+                @Html.Raw(sponsorPanel)
 @* 
                 <div id="SponsorPanel"
                      onclick="window.location.href='http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored'"
@@ -146,7 +169,10 @@
                             <div>
                                 <a href="@FeedUrl"
                                    title="RSS feed for this Weblog">
-                                    <i class="fas fa-fw fa-rss-square" style="color: orange" class="product-icon"></i>
+                                   
+	                                <i class="fad fa-square-rss"
+	                                   style="--fa-primary-color: white; --fa-secondary-color:#ff6a00; --fa-secondary-opacity: 1"></i>
+                                    
                                     RSS Feed
                                 </a>
                             </div>
@@ -202,10 +228,10 @@
                         </div>
 
                         <div>
-                            <a href="https://golden-bear-productions.printify.me/" title="Bear Styled Custom T-Shirts">
-                                <img src="https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/16851761/f2ae8be6-67dd-4223-bba0-100a3dcd63f8" class="product-icon" />
-                                Golden Bear T-Shirts
-                            </a>
+	                        <a href="https://goldenbeartshirts.com" title="Bear Styled Custom T-Shirts">
+		                        <img src="https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/16851761/6b436631-ed8a-4c82-a81c-30b2128cf04a" class="product-icon"> 
+		                        Golden Bear T-Shirts
+	                        </a>
                         </div>
                     </nav>
 
@@ -219,18 +245,19 @@
                             </a>
                         </div>
                         <div>
+	                        <a href="https://documentationmonster.com"
+	                           title="Documentation Monster - Build and organize documentation quickly">
+		                        <img src="https://documentationmonster.com/favicon.png" class="product-icon" />
+		                        Documentation Monster
+	                        </a>
+                        <div>
                             <a href="https://websurge.west-wind.com"
                                title="West Wind WebSurge: Http Request and Load Testing on Windows">
                                 <img src="https://websurge.west-wind.com/favicon.png" class="product-icon" />
                                 WebSurge
                             </a>
                         </div>
-                        <div>
-                            <a href="https://helpbuilder.west-wind.com"
-                               title="West Wind Html Help Builder - Build and organize documentation quickly">
-                                <img src="https://helpbuilder.west-wind.com/images/wwhelp32.png" class="product-icon" />
-                                Html Help Builder
-                            </a>
+                        
                         </div>
                         <div>
                             <a href="https://webconnection.west-wind.com"
@@ -240,27 +267,6 @@
                             </a>
                         </div>
                     </nav>
-
-                    <div class="sidebar-header">Rick's Products</div>
-                        <nav class="sidebar-group">
-                            <div>
-                                <a href="https://markdownmonster.west-wind.com"
-                                   title="Markdown Monster - extensible Markdown Editing on Windows">Markdown Monster</a>
-                            </div>
-                            <div>
-                                <a href="https://websurge.west-wind.com"
-                                   title="West Wind WebSurge Web URL and Load Tester">WebSurge</a>
-                            </div>
-                            <div>
-                                <a href="https://helpbuilder.west-wind.com"
-                                   title="West Wind Html Help Builder">Html Help Builder</a>
-                            </div>
-                            <div>
-                                <a href="https://west-wind.com/webmonitor"
-                                   title="West Wind Web Monitor">Web Monitor</a>
-                            </div>
-                        </nav>
-
                   
 
                         <hr />
@@ -278,7 +284,7 @@
                         
                     </aside>
 
-                    <main class="post-content">               
+                    <main class="post-content">                           
                         @RenderBody()
                     </main>
                 </div>

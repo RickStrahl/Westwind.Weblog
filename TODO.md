@@ -2,14 +2,12 @@
 
 ## Must Haves
 
-* **Add Comments**  
-~~We need comment processing to work.~~
+* Remember Light and Dark Theme settings
 
-* **Upload Blog Posts**  
-Use custom upload format.
 
-* **Ad and Sponsor Link embedding**  
-`Ads.xml` file (easier to hand edit until we have UI) to hold ads along with page to edit the ad text. Maybe store in DB instead so we have this self contained.
+* Comments Markdown formatting isn't working
+* Comment remember me is not working (never did)
+
 
 
 ## Later

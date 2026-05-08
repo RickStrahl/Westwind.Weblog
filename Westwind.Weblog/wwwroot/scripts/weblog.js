@@ -1,4 +1,4 @@
-﻿/// <reference path="jquery.js" />
+/// <reference path="jquery.js" />
 $(document).ready(function () {
     $(window).on("scroll",function (e) {
         if (window.innerWidth > 767 && window.innerWidth < 1300) {
@@ -20,7 +20,7 @@ $(document).ready(function () {
 
     if (btn && icon) {
         function getTheme() {
-            return localStorage.getItem(STORAGE_KEY) || 'light';
+            return localStorage.getItem(STORAGE_KEY) || 'dark';
         }
 
         function applyTheme(theme) {

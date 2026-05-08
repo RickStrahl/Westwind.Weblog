@@ -114,7 +114,8 @@
     font-weight: bold;
     padding: 0.2em 0;
     margin: 0 -0.2em;
-    background: linear-gradient(to bottom, rgb(255, 182, 49), var(--surface));
+    background: linear-gradient(to bottom, var(--dialog-header-from), var(--surface));
+    color: var(--dialog-header-fg);
 }
 
 

@@ -12,6 +12,7 @@ namespace Westwind.Weblog.Business.Test
     public class AdminTests
     {
         public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;encrypt=false";
+        public string OldConnectionString = "server=.;database=Weblog;integrated security=true;encrypt=false";
 
         [Test]
         public void DeleteOldImages()
@@ -31,7 +32,7 @@ namespace Westwind.Weblog.Business.Test
 
 
         [Test]
-        public void ImportOldWebLogTest(string oldWeblogConnectionString)
+        public void ImportOldWebLogTest()
         {
             
             var options = new DbContextOptionsBuilder<WeblogContext>()
@@ -54,7 +55,7 @@ namespace Westwind.Weblog.Business.Test
             //    return false;
             //}
 
-            Assert.IsTrue(WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=weblog;integrated security=true"), "Failed to import weblog data");
+            Assert.IsTrue(WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=weblog;integrated security=true;encrypt=false;"), "Failed to import weblog data");
         }
 
         [Test]
@@ -80,7 +81,7 @@ namespace Westwind.Weblog.Business.Test
 
             var ctx = new WeblogContext(options);
 
-            WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=Weblog;integrated security=true;encrypt=false");
+            WeblogDataImporter.EnsureWeblogData(ctx, OldConnectionString);
             return ctx;
         }
 

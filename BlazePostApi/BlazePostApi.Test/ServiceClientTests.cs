@@ -126,7 +126,7 @@ namespace Westwind.Weblog.PostServiceTests
                 DateCreated = DateTime.Now,
                 RawPostText = "his is a **long post** with pointless points.",
                 Location = "Paia, HI",
-                ImageUrl = "http://localhost:5001/images/RickHero1.jpg",
+                FeaturedImageUrl = "http://localhost:5001/images/RickHero1.jpg",
                 Keywords = ["long","post","pointless"]
             };
             post.Categories = ["Life", ".NET", "ASP.NET"];

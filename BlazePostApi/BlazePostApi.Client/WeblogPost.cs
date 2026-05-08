@@ -115,12 +115,7 @@ namespace BlazePostApi.Client
         /// </summary>
         public PostStatuses PostStatus { get; set; }
 
-        
-        /// <summary>
-        /// Image associated with this post
-        /// </summary>
-        public string ImageUrl { get; set; }
-
+       
         /// <summary>
         /// Optional a smaller thumbnail URL associated with this post.
         /// </summary>

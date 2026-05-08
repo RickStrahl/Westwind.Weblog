@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using Westwind.Utilities;
 using Westwind.Utilities.Configuration;
 
 namespace Westwind.Weblog.Business.Configuration
@@ -33,7 +34,18 @@ namespace Westwind.Weblog.Business.Configuration
         /// <summary>
         /// The server relative root path for this application
         /// </summary>
-        public string ApplicationBasePath { get; set; } = "/";
+        public string ApplicationBasePath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(field))
+                    return "/";
+
+
+                return StringUtils.TerminateString(field, "/");
+            }
+            set;
+        }
 
         /// <summary>
         /// The page size of an individual post

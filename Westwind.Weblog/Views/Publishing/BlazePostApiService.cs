@@ -83,8 +83,7 @@ namespace Westwind.AspNetCore.Controllers
             newPost.Markdown = post.RawPostText;
             newPost.Author = post.Author;
             newPost.Active = post.PostStatus == PostStatuses.Published;
-            newPost.FeaturedImageUrl = post.ImageUrl;
-
+            newPost.FeaturedImageUrl = post.FeaturedImageUrl;
 
             if (string.IsNullOrEmpty(newPost.SafeTitle))
                 newPost.SafeTitle = PostBusiness.GetSafeTitle(newPost.Title);
@@ -97,7 +96,7 @@ namespace Westwind.AspNetCore.Controllers
                 newPost.Author = UserBusiness.Configuration.WeblogAuthor;
 
             newPost.Keywords = string.Join(',', post.Keywords);
-            newPost.Categories = string.Join(',', post.Categories);
+            newPost.Categories = string.Join(',', post.Categories);            
 
             if (newPost.Created.Year < 2000)
                 newPost.Created = post.DateCreated;
@@ -108,7 +107,18 @@ namespace Westwind.AspNetCore.Controllers
                 // and created date.
                 var kvl = post.CustomFields.FirstOrDefault(cf => cf.Key == "mt_updateslug");
                 if (kvl.Key != null)
+                {
                     newPost.SafeTitle = PostBusiness.GetSafeTitle(newPost.Title);
+                    post.SafeTitle = newPost.SafeTitle;
+                    newPost.PermanentUrl = null;    // force to recalculate 
+                }
+
+                kvl = post.CustomFields.FirstOrDefault(cf => cf.Key == "mt_featuredimage");
+                if (kvl.Key != null)
+                {
+                    newPost.FeaturedImageUrl = kvl.Value;
+                    post.FeaturedImageUrl = kvl.Value;
+                }
 
                 // Update the created date which also changes the slug
                 // Use with caution: This will change the URL
@@ -123,11 +133,27 @@ namespace Westwind.AspNetCore.Controllers
                         newPost.SafeTitle = PostBusiness.GetSafeTitle(newPost.Title); // have to update the slug
                     }
                 }
+
+                kvl = post.CustomFields.FirstOrDefault(cf => cf.Key == "mt_markdown");
+                if (kvl.Key != null) 
+                     newPost.Markdown = kvl.Value;
+                
+                kvl = post.CustomFields.FirstOrDefault(cf => cf.Key == "mt_location");
+                if (kvl.Key != null)
+                    newPost.Location = kvl.Value;
+
+                kvl = post.CustomFields.FirstOrDefault(cf => cf.Key == "mt_githuburl");
+                if (kvl.Key != null)
+                    newPost.GithubUrl = kvl.Value;
             }
+
+            if (string.IsNullOrEmpty(newPost.PermanentUrl))
+                newPost.PermanentUrl = newPost.GetPostUrl();
+            post.Url = newPost.PermanentUrl;
 
             if (!PostBusiness.Save(newPost))
                 throw new ApiException(PostBusiness.ErrorMessage);
-
+            
             post.FromPost(newPost);
 
             return post;
@@ -184,10 +210,10 @@ namespace Westwind.AspNetCore.Controllers
                 RawPostType = post.BodyMode == 2 ? "markdown" : "html",
                 DateCreated = post.Created,
                 Location = post.Location,
-                Url = PostBusiness.GetPostUrl(post),
+                FeaturedImageUrl = post.FeaturedImageUrl,
+                Url = post.GetPostUrl(),
                 PostStatus = post.Active ? PostStatuses.Published : PostStatuses.Draft,
             };
-            blogPost.PermaLink = blogPost.Url;
 
             if (!string.IsNullOrEmpty(post.Categories))
                 blogPost.Categories = post.Categories.Split(',')?.ToList() ?? [];
@@ -204,7 +230,7 @@ namespace Westwind.AspNetCore.Controllers
                     Created = c.Created,
                     Email = c.Email,
                     Url = c.Url,
-                    BodyMode = c.BodyMode,
+                    BodyMode = c.BodyMode,                    
                     IsActive = c.IsActive
                 }).ToList() ?? [];
 
@@ -269,7 +295,7 @@ namespace Westwind.AspNetCore.Controllers
             weblogPost.Body = post.Body;
             weblogPost.Title = post.Title;
             weblogPost.DateCreated = post.Created;
-            weblogPost.ImageUrl = post.FeaturedImageUrl;
+            weblogPost.FeaturedImageUrl = post.FeaturedImageUrl;
             weblogPost.Location = post.Location;
             weblogPost.Categories = post.Categories.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.ToList();
             weblogPost.Keywords = post.Keywords.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)?.ToList();
@@ -281,7 +307,7 @@ namespace Westwind.AspNetCore.Controllers
             weblogPost.RawPostText = post.Markdown;
             weblogPost.RawPostType = "markdown";
             weblogPost.SafeTitle = post.SafeTitle;
-            weblogPost.FeaturedImageUrl = post.FeaturedImageUrl;
+            
 
             weblogPost.Comments = post.Comments.Select(c => new WeblogComment
             {

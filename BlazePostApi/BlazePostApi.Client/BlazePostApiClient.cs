@@ -107,7 +107,8 @@ namespace BlazePostApi.Client
 
         public async Task<WeblogPost> GetPost(string postId, string blogId = null, string relativeUrl = "")
         {
-            EnsureAuthToken();
+            if (!EnsureAuthToken())
+                return null;
 
 
             var url = ("/" + relativeUrl + postId).Replace("//","/");
@@ -148,7 +149,8 @@ namespace BlazePostApi.Client
 
         public async Task<IList<WeblogMinimalPost>> GetRecentPosts(PostListFilter listFilter = null, string relativeUrl = "recent")
         {
-            EnsureAuthToken();
+            if (!EnsureAuthToken())
+                return null;
 
             listFilter ??= new PostListFilter();
 
@@ -186,7 +188,8 @@ namespace BlazePostApi.Client
 
         public async Task<WeblogPost> GetLastPost(string blogId = null, string relativeUrl = "last")
         {
-            EnsureAuthToken();            
+            if (!EnsureAuthToken())
+                return null;
 
             var settings = new HttpClientRequestSettings
             {
@@ -218,7 +221,8 @@ namespace BlazePostApi.Client
 
         public async Task<WeblogPost> UploadPost(WeblogPost post, string relativeUrl = "")
         {
-            EnsureAuthToken();
+            if (!EnsureAuthToken())
+                return null;
 
             var settings = new HttpClientRequestSettings
             {
@@ -253,7 +257,8 @@ namespace BlazePostApi.Client
 
         public async Task<string> UploadMediaObject(WeblogMediaObject image, string relativeUrl = "media")
         {
-            EnsureAuthToken();
+            if (!EnsureAuthToken())
+                return null;
 
             var settings = new HttpClientRequestSettings
             {
@@ -293,16 +298,19 @@ namespace BlazePostApi.Client
         /// If not throws an exception.
         /// </summary>
         /// <exception cref="UnauthorizedAccessException"></exception>
-        protected void EnsureAuthToken()
+        protected bool EnsureAuthToken()
         {
             if (string.IsNullOrEmpty(AuthenticationToken?.Token))
             {
-                throw new UnauthorizedAccessException("Please make sure to call Authenticate before making this request.");
+                ErrorMessage = "Please make sure to call Authenticate before making this request.";
+                return false;
             }
             if (AuthenticationToken.ExpirationUtc < DateTime.UtcNow)
             {
-                throw new UnauthorizedAccessException("Authentication token has expired, please call Authenticate again.");
-            }            
+                ErrorMessage = "Authentication token has expired, please call Authenticate again.";
+                return false;
+            }
+            return true;
         }
 
         /// <summary>

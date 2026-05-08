@@ -37,7 +37,7 @@
             <div class="ad-entry panel panel-default">
                 <div class="panel-heading">
                     Content Ad <span class="ad-index">@(i + 1)</span>
-                    <button type="button" class="btn btn-xs btn-danger pull-right btn-remove-ad">
+                    <button type="button" class="btn btn-sm btn-danger float-end">
                         <i class="fa fa-trash"></i> Remove
                     </button>
                 </div>
@@ -72,14 +72,14 @@
     <div id="sponsor-banners-container">
         @for (int i = 0; i < Model.SponsorBanners.Count; i++)
         {
-            <div class="ad-entry panel panel-default">
-                <div class="panel-heading">
+            <div class="ad-entry card card">
+                <div class="card-header">
                     Sponsor Banner <span class="ad-index">@(i + 1)</span>
-                    <button type="button" class="btn btn-xs btn-danger pull-right btn-remove-ad">
+                    <button type="button" class="btn btn-sm btn-danger float-sm-end">
                         <i class="fa fa-trash"></i> Remove
                     </button>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <textarea name="SponsorBanners" class="form-control" rows="4">@Model.SponsorBanners[i]</textarea>
                 </div>
             </div>
@@ -177,6 +177,14 @@ $(function () {
 });
 </script>
 <style>
-    .ad-entry { margin-bottom: 2em; padding-bottom: 2em; border-bottom: 0.1px solid #ccc}
+    .ad-entry { margin-bottom: 1em; padding-bottom: 2em; border-bottom: 0.1px solid #ccc}
+    
+    img.da-content-image {
+
+	    display: block;
+	    margin: 1em auto 0 auto;
+	    width: 100%;
+	    max-width: 680px;
+    }
 </style>
 }

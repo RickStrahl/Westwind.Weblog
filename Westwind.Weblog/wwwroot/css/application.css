@@ -4,43 +4,49 @@
    THEME TOKENS  —  light defaults + dark overrides
    ═══════════════════════════════════════════════════ */
 :root {
-    --bg:                  #ffffff;
-    --surface:             #f5f8fa;
-    --surface2:            #f2f7fb;
-    --text:                #222;
-    --text-muted:          #555;
-    --text-faint:          #888;  
-    --accent:              #4e92c9;
-    --accent-2:            #569ad4;
-    --heading-color:       steelblue;
-    --link:                #4e92c9;
-    --link-visited:        teal;
-    --link-hover:          maroon;
-    --border:              #ddd;
-    --border-light:        lightgray;
-    --header-bg:           #333;
-    --menu-bg:             #535353;
-    --sidebar-header-fg:   #000;
-    --code-inline-bg:      rgba(27,31,35,.05);
-    --code-inline-fg:      #444;
-    --blockquote-bg:       #f2f7fb;
-    --blockquote-border:   #569ad4;
-    --sponsor-bg:          tan;
-    --sponsor-fg:          #444;
-    --table-header-bg:     #555;
-    --table-header-fg:     #eee;
-    --table-alt-bg:        #eee;
+    --bg: #ffffff;
+    --surface: #f5f8fa;
+    --surface2: #f2f7fb;
+    --text: #222;
+    --text-muted: #555;
+    --text-faint: #888;
+    --accent: #4e92c9;
+    --accent-2: #569ad4;
+    --heading-color: steelblue;
+    --link: #4e92c9;
+    --link-visited: teal;
+    --link-hover: maroon;
+    --border: #ddd;
+    --border-light: lightgray;
+    --header-bg: #333;
+    --menu-bg: #535353;
+    --sidebar-header-fg: #000;
+    --code-inline-bg: rgba(27,31,35,.05);
+    --code-inline-fg: #444;
+    --blockquote-bg: #f2f7fb;
+    --blockquote-border: #569ad4;
+    --sponsor-bg: tan;
+    --sponsor-fg: #444;
+    --table-header-bg: #555;
+    --table-header-fg: #eee;
+    --table-alt-bg: #eee;
     --comment-inactive-bg: #fff1f1;
-    --scrollbar-track:     #505050;
-    --scrollbar-thumb:     #aaa;
-    --pager-color:         coral;
-    --pager-bg:            #f8f8f8;
-    --footer-fg:           #ccc;
-    --input-bg:            #F5F7FA;
-    --input-color:          #333;
-    --borderbox-top:      goldenrod;
-    --dialog-header-from:   steelblue;
-    --dialog-header-fg:     #383838;
+    --scrollbar-track: #505050;
+    --scrollbar-thumb: #aaa;
+    --pager-color: coral;
+    --pager-bg: #f8f8f8;
+    --footer-fg: #ccc;
+    --input-bg: #F5F7FA;
+    --input-color: #333;
+    --borderbox-top: goldenrod;
+    --dialog-header-from: steelblue;
+    --dialog-header-fg: #383838;
+    --font: "Trebuchet MS", /* Windows */
+               "Lucida Grande", /* Older macOS */
+               "Helvetica Neue", /* Modern macOS fallback */
+               "Liberation Sans", /* Linux */
+               "Nimbus Sans", /* Linux fallback */
+               Arial, sans-serif;
 }
 
 [data-theme="dark"] {
@@ -78,9 +84,15 @@
     --footer-fg: #555;
     --input-bg: #2a2e38;
     --input-color: #ddd;
-    --borderbox-top:      #274b69;
+    --borderbox-top: #274b69;
     --dialog-header-from: #1e3a52;
-    --dialog-header-fg:   #bbb;
+    --dialog-header-fg: #bbb;
+    --font: "Trebuchet MS", /* Windows */
+               "Lucida Grande", /* Older macOS */
+               "Helvetica Neue", /* Modern macOS fallback */
+               "Liberation Sans", /* Linux */
+               "Nimbus Sans", /* Linux fallback */
+               Arial, sans-serif;
 }
 
 
@@ -154,10 +166,10 @@ p {
 
 
 /* BUILT-IN ELEMENT CUSTOMIZATION */
-html, body, table, td, th, input, textarea, select {
-    font-family: 'Segoe UI', "Helvetica Neue", sans-serif, Geneva, Verdana, sans-serif;
+/*, table, td, th, input, textarea, select*/
+html, body {
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    font-family: var(--font);
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
     height: 100%;
@@ -173,15 +185,19 @@ html, body {
     font-size: 15.5px;
 }
 
-    body::-webkit-scrollbar {
+   /*::-webkit-scrollbar {
         width: 8px;
         height: 8px;
         background: var(--scrollbar-track);
     }
 
-    body::-webkit-scrollbar-thumb {
+   ::-webkit-scrollbar-thumb {
         background: var(--scrollbar-thumb);
-    }
+    }*/
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
 
 main {
     display: block
@@ -369,35 +385,24 @@ legend {
     text-align: left;
 }
 
-input[type=text], input[type=password], input[type=email], select, textarea {
+input[type=text], input[type=password], input[type=email], select, textarea, .form-control {
+    color: var(--input-color);
     background-color: var(--input-bg);
     border: solid 1px lightsteelblue;
+    box-sizing: border-box;        
+    font-size: 1em;
     border-style: solid;
     border-radius: 2px;
     font-weight: 600;
-    color: var(--input-color);
-    transition: background-color 0.25s ease, color 0.25s ease;
+
+    padding: 5px 10px;
 }
-
-    input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, select:focus, textarea:focus {
-        background-color: Ivory !important;
-        box-shadow: 2px 2px 6px lightgray;
-    }
-
 
     input[type]::placeholder, textarea::placeholder {
         color: var(--text-faint); 
     }
 
-
-[data-theme="dark"] input[type=text]:focus,
-[data-theme="dark"] input[type=password]:focus,
-[data-theme="dark"] input[type=email]:focus,
-[data-theme="dark"] select:focus,
-[data-theme="dark"] textarea:focus {
-    background-color: #2a3040 !important;
-    box-shadow: 2px 2px 6px #000;
-}
+    
 
 .clearfix, .clear {
     clear: both;

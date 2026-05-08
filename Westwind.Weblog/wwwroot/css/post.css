@@ -69,13 +69,11 @@
         display: block;
         text-decoration: none;
         padding: 5px 0px 6px 8px;
-        border-left: 1.5px var(--border) solid;
-        color: var(--text-muted);
+        border-left: 1.5px #eee solid;
     }
 
     .document-outline-content a.active {
-        border-left: 3px var(--accent) solid;
-        color: var(--accent);
+        border-left: 3px steelblue solid;
     }
 
     .document-outline a.outline-level1 {

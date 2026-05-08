@@ -2,6 +2,7 @@
 
 ## Must Haves
 
+* Post Sidebar missing
 * Remember Light and Dark Theme settings
 
 

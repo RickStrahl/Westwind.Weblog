@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Path \"D:\\\\projects\\\\Westwind.Weblog\" -Directory)",
-      "Bash(Select-Object Name)"
+      "Bash(Select-Object Name)",
+      "Bash(Select-Object -ExpandProperty Name)"
     ]
   }
 }

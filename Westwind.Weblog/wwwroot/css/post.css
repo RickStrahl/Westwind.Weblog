@@ -1,4 +1,4 @@
-﻿
+
 .comment > a:first-child {
     text-decoration: none;
 }
@@ -69,11 +69,13 @@
         display: block;
         text-decoration: none;
         padding: 5px 0px 6px 8px;
-        border-left: 1.5px #eee solid;
+        border-left: 1.5px var(--border) solid;
+        color: var(--text-muted);
     }
 
     .document-outline-content a.active {
-        border-left: 3px steelblue solid;
+        border-left: 3px var(--accent) solid;
+        color: var(--accent);
     }
 
     .document-outline a.outline-level1 {
@@ -101,17 +103,18 @@
     margin: 1.5em !important;
     text-align: left;
     margin: 2em auto;
-    background: #f4f4f4 ;   
+    background: var(--surface);
     padding: 0 0.3em 0.3em 0.3em;
+    transition: background-color 0.25s ease;
 }
 
-.comment-dialog-header {    
+.comment-dialog-header {
     text-align: center;
     font-size: 1.4em;
     font-weight: bold;
-    padding: 0.2em 0;    
+    padding: 0.2em 0;
     margin: 0 -0.2em;
-    background: linear-gradient(to bottom, rgb(255, 182, 49), #f4f4f4);
+    background: linear-gradient(to bottom, rgb(255, 182, 49), var(--surface));
 }
 
 
@@ -130,6 +133,8 @@
     font-weight: bold;
     margin-bottom: 8px;
     padding: 5px 10px;
+    color: var(--input-color) !important;    
+    background: var(--input-bg);
 }
 
 .comment-dialog textarea {
@@ -138,12 +143,13 @@
 
 .comment-directions {
     width: 100%;
-    color: #535353;
-    background: cornsilk;
+    color: var(--text-muted);
+    background: var(--surface2);
     text-align: center;
     font-size: 0.8em;
     padding: 10px 10px;
     margin-top: 13px;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 @media (max-width: 639px) {
@@ -190,18 +196,19 @@
 a.post-pager-item, a.post-pager-item:visited {
     display: block;
     text-decoration: none;
-    background: #f8f8f8;
-    border: 2px coral solid;
-    color: coral;
+    background: var(--pager-bg);
+    border: 2px var(--pager-color) solid;
+    color: var(--pager-color);
     padding: 7px 15px;
     float: left;
     margin: 2px;
     border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
     a.post-pager-item:hover {
         color: white;
-        background: coral;
+        background: var(--pager-color);
     }
 
 

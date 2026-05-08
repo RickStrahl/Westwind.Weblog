@@ -65,13 +65,13 @@
         </a>
         <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share on Facebook">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
+                <i class="fa fa-square fa-stack-1x" style=" color: white; font-size: 0.9em "></i>
                 <i class="fab fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>                
             </span>
         </a>
         <a href="http://www.reddit.com/submit?url=@pageUrl&amp;title=@Model.Post.Title" target="_blank" title="Submit to Reddit">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 1em "></i>
+                <i class="fa fa-square fa-stack-1x" style=" color: white; font-size: .9em"></i>
                 <i class="fab fa-square-reddit fa-stack-1x" style=" color: rgb(245, 58, 0); "></i>                
             </span>
         </a>                     
@@ -80,17 +80,18 @@
     <div class="leftbox">
         <i class="far fa-clock-rotate-left text-info"></i>
         @(AppWebUtils.WebLogDateString(post.Created, false))
-        @(string.IsNullOrEmpty(post.Location) ? "" : " - from " + post.Location)
-    </div>
-    <div class="leftbox" style="float: right;">
-        @if (post.CommentCount > 0)
-        {
-            <a href="@(repo.GetPostUrl(post))#Comments">
-                <i class="fa fa-comments-o"></i>
+            @(string.IsNullOrEmpty(post.Location) ? "" : " • from " + post.Location)
+            @if (post.CommentCount > 0) {
+            
+            <span>
+	            • <i class="far fa-comment-lines"></i>
+	            <a href="@(repo.GetPostUrl(post))#Comments">
                 @repo.ShowCommentCount(post)
-            </a>
-        }
+                </a>
+            </span>
+            }
     </div>
+    
 
 
     @*<div class="leftbox" id="ShareIconContainer" style="float: right;">

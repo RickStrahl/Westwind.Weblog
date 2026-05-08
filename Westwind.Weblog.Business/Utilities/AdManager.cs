@@ -9,7 +9,7 @@ namespace Westwind.Weblog.Business
 {
     public class AdManager
     {
-                private static Lazy<AdManager> _currentAds = new(LoadFromXml);
+        private static Lazy<AdManager> _currentAds = new(LoadFromXml);
 
         public static AdManager Ads => _currentAds.Value;
 

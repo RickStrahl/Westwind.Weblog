@@ -10,7 +10,7 @@
 <head runat="server">
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
-       
+    <script>(function(){var t=localStorage.getItem('ww-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}());</script>
     <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/css/application.css" rel="stylesheet" type="text/css"  />
     <link href="/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
@@ -58,33 +58,44 @@
                 </div>
 
                 <div class="marquee-bottom-menu" style="margin-bottom: 0;">
-                   
-                    <div class="marquee-bottom-sharing" style="float: right; margin-right:20px; margin-top: -19px; font-size: 35px;  ">        
-                        <a href="http://twitter.com/rickstrahl" title="Rick Strahl on Twitter" style="text-decoration:none;" >                            
+
+                    <div class="marquee-bottom-sharing">
+                        <button id="theme-toggle" class="theme-toggle-btn" 
+                                title="Toggle dark/light mode" 
+                                style="margin-top: .8em; color: goldenrod"
+                                aria-label="Toggle dark/light mode">
+                            <i id="theme-icon" class="fas fa-moon"></i>
+                        </button>
+                        <a href="http://twitter.com/rickstrahl" title="Rick Strahl on Twitter" style="text-decoration:none;">
                             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                                <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                                <i class="fab fa-square-twitter fa-stack-1x" style=" color: rgb(53, 155, 240); "></i>                
+                                <i class="fa fa-circle fa-stack-1x" style="color: white; font-size: 0.7em"></i>
+                                <i class="fab fa-square-twitter fa-stack-1x" style="color: rgb(53, 155, 240);"></i>
                             </span>
-                        </a>                                
-                        <a href="@FeedUrl" title="RSS feed for @wlApp.Configuration.ApplicationName">
-                        <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                        <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                        <i class="fad fa-square-rss"
-                                style="--fa-primary-color: white; --fa-secondary-color:#ff6a00; --fa-secondary-opacity: 1"></i>                            
-                        </span>                    
                         </a>
-        
+                        <a href="@FeedUrl" title="RSS feed for @wlApp.Configuration.ApplicationName">
+                            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+                                <i class="fa fa-circle fa-stack-1x" style="color: white; font-size: 0.7em"></i>
+                                <i class="fad fa-square-rss"
+                                   style="--fa-primary-color: white; --fa-secondary-color:#ff6a00; --fa-secondary-opacity: 1"></i>
+                            </span>
+                        </a>
                     </div>
 
                     <span class="marquee-bottom-links">
                         <a href="https://west-wind.com/contact/" title="">Contact</a> &nbsp; &bull; &nbsp;
                         <a href="https://west-wind.com/articles.aspx">Articles</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
-                        <a href="https://store.west-wind.com" class="hide-small">Products</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span> 
-                        <a href="https://support.west-wind.com" class="hide-small">Support</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span> 
+                        <a href="https://store.west-wind.com" class="hide-small">Products</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
+                        <a href="https://support.west-wind.com" class="hide-small">Support</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
                         <a href="https://weblog.west-wind.com/advertise" class="hide-small">Advertise</a>
-                    </span> 
+                    </span>
+
                 </div>
 
+                @{
+				    var sponsorPanel = AdManager.Ads.SponsorBanners.FirstOrDefault();
+                }
+                @Html.Raw(sponsorPanel);
+@* 
                 <div id="SponsorPanel"
                      onclick="window.location.href='http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored'"
                      style="cursor: pointer">
@@ -101,10 +112,10 @@
                         - the market leader of .NET and Java APIs for file formats – natively work with DOCX, XLSX, PPT, PDF, images and more
                         <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
                            title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
-                            <i class="fa fa-external-link" style="color: #333; padding: 0 5px; font-weight: bold"></i>
+                            <i class="fa fa-external-link" style="padding: 0 5px; font-weight: bold"></i>
                         </a>
                     </div>
-                </div>
+                </div> *@
                 <div class="clearfix"></div>
             
                 <div class="post-container">

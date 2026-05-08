@@ -1,5 +1,83 @@
 
 
+/* ═══════════════════════════════════════════════════
+   THEME TOKENS  —  light defaults + dark overrides
+   ═══════════════════════════════════════════════════ */
+:root {
+    --bg:                  #ffffff;
+    --surface:             #f5f8fa;
+    --surface2:            #f2f7fb;
+    --text:                #222;
+    --text-muted:          #555;
+    --text-faint:          #888;  
+    --accent:              #4e92c9;
+    --accent-2:            #569ad4;
+    --heading-color:       steelblue;
+    --link:                #4e92c9;
+    --link-visited:        teal;
+    --link-hover:          maroon;
+    --border:              #ddd;
+    --border-light:        lightgray;
+    --header-bg:           #333;
+    --menu-bg:             #535353;
+    --sidebar-header-fg:   #000;
+    --code-inline-bg:      rgba(27,31,35,.05);
+    --code-inline-fg:      #444;
+    --blockquote-bg:       #f2f7fb;
+    --blockquote-border:   #569ad4;
+    --sponsor-bg:          tan;
+    --sponsor-fg:          #444;
+    --table-header-bg:     #555;
+    --table-header-fg:     #eee;
+    --table-alt-bg:        #eee;
+    --comment-inactive-bg: #fff1f1;
+    --scrollbar-track:     #505050;
+    --scrollbar-thumb:     #aaa;
+    --pager-color:         coral;
+    --pager-bg:            #f8f8f8;
+    --footer-fg:           #ccc;
+    --input-bg:            #F5F7FA;
+    --input-color:          #333;
+}
+
+[data-theme="dark"] {
+    --bg: #1a1d23;
+    --surface: #242830;
+    --surface2: #1c2230;
+    --text: #d4d8df;
+    --text-muted: #9aa0aa;
+    --text-faint: #606060;
+    --accent: #6aaddf;
+    --accent-2: #5a9dc9;
+    --heading-color: #6aaddf;
+    --link: #6aaddf;
+    --link-visited: #93b3b2;
+    --link-hover: #f08080;
+    --border: #3a3e47;
+    --border-light: #3a3e47;
+    --header-bg: #111318;
+    --menu-bg: #1a1e26;
+    --sidebar-header-fg: #c8cdd5;
+    --code-inline-bg: rgba(255,255,255,.08);
+    --code-inline-fg: #c9d1d9;
+    --blockquote-bg: #1c2535;
+    --blockquote-border: #4a8ab8;
+    --sponsor-bg: #2a2410;
+    --sponsor-fg: #c8a96e;
+    --table-header-bg: #2d3542;
+    --table-header-fg: #c8cdd5;
+    --table-alt-bg: #2a2e38;
+    --comment-inactive-bg: #2a1a1a;
+    --scrollbar-track: #2a2e38;
+    --scrollbar-thumb: #555;
+    --pager-color: #e0886a;
+    --pager-bg: #2a2e38;
+    --footer-fg: #555;
+    --input-bg: #2a2e38;
+    --input-color: #ddd;
+}
+
+
 /* BROWSER RESET (based on Eric Meyer's Reset) */
 html, body, div, span, object, iframe, table, caption, tbody, tfoot, thead, tr, th, td,
 del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var,
@@ -20,9 +98,10 @@ dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, main, nav, ins {
 }
 
 body {
-    background: white;
+    background: var(--bg);
     line-height: 1.35;
-    color: black;
+    color: var(--text);
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 
@@ -71,7 +150,7 @@ p {
 /* BUILT-IN ELEMENT CUSTOMIZATION */
 html, body, table, td, th, input, textarea, select {
     font-family: 'Segoe UI', "Helvetica Neue", sans-serif, Geneva, Verdana, sans-serif;
-    color: #3e433e;
+    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
@@ -80,7 +159,6 @@ html, body, table, td, th, input, textarea, select {
 
 html, body {
     font-size: 16px;
-    
     height: 100%;
     box-sizing: border-box;
 }
@@ -92,11 +170,11 @@ html, body {
     body::-webkit-scrollbar {
         width: 8px;
         height: 8px;
-        background: #505050;
+        background: var(--scrollbar-track);
     }
 
     body::-webkit-scrollbar-thumb {
-        background: #aaa;
+        background: var(--scrollbar-thumb);
     }
 
 main {
@@ -116,12 +194,13 @@ a {
 }
 
 blockquote {
-    background: #f2f7fb;
+    background: var(--blockquote-bg);
     font-size: 1.02em;
     padding: 10px 20px;
     margin: 1.2em;
-    border-left: 9px #569ad4 solid;
+    border-left: 9px var(--blockquote-border) solid;
     border-radius: 4px 0 0 4px;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
     blockquote *:first-child {
@@ -136,17 +215,17 @@ hr {
     margin: 12px 0;
     height: 1px;
     border-width: 1px;
-    color: #ddd;
+    color: var(--border);
 }
 
 .post-content a {
     font-weight: 600;
-    color: #4e92c9;
+    color: var(--accent);
     text-decoration: none;
 }
 
     .post-content a:hover {
-        color: steelblue;
+        color: var(--heading-color);
     }
 
 h1, h2, h3, h4, h5 {
@@ -159,22 +238,22 @@ h1, h2, h3, h4, h5 {
 h1 {
     font-size: 1.7em;
     padding-bottom: 10px;
-    color: steelblue;
-    border-bottom: 1px solid #eee;
+    color: var(--heading-color);
+    border-bottom: 1px solid var(--border);
 }
 
 h2 {
-    color: Steelblue;
+    color: var(--heading-color);
     font-size: 1.45em;
 }
 
 h3 {
-    color: steelblue;
+    color: var(--heading-color);
     font-size: 1.3em;
 }
 
 h4, h5, h6 {
-    color: #2D2A2A;
+    color: var(--text);
     font-size: 1.1em;
 }
 
@@ -189,11 +268,11 @@ table {
     border-spacing: 0;
     border-collapse: collapse;
     margin: 15px 0;
-    border-color: gray;
+    border-color: var(--border);
 }
 
 td, th {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     padding: 6px 13px;
     display: table-cell;
     vertical-align: inherit;
@@ -201,12 +280,12 @@ td, th {
 
 th {
     font-weight: bold;
-    background: #555;
-    color: #eee;
+    background: var(--table-header-bg);
+    color: var(--table-header-fg);
 }
 
 tbody > tr:nth-child(even) {
-    background: #eee;
+    background: var(--table-alt-bg);
 }
 
 table.blackborder td {
@@ -221,15 +300,15 @@ th {
 }
 
 a {
-    color: navy;
+    color: var(--link);
 }
 
     a:visited {
-        color: teal;
+        color: var(--link-visited);
     }
 
     a:hover {
-        color: maroon;
+        color: var(--link-hover);
     }
 
 small, .smalltext, .small {
@@ -246,8 +325,8 @@ small, .smalltext, .small {
 }
 
 hr {
-    color: silver;
-    background: silver;
+    color: var(--border);
+    background: var(--border);
     border: 0;
     height: 1px;
 }
@@ -259,7 +338,7 @@ b, strong {
 footer {
     margin: 20px 10px;
     height: 80px;
-    color: #ccc;
+    color: var(--footer-fg);
 }
 
 fieldset {
@@ -285,17 +364,34 @@ legend {
 }
 
 input[type=text], input[type=password], input[type=email], select, textarea {
-    background-color: #F5F7FA;
+    background-color: var(--input-bg);
     border: solid 1px lightsteelblue;
-    border-style: solid;    
+    border-style: solid;
     border-radius: 2px;
     font-weight: 600;
+    color: var(--input-color);
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
     input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, select:focus, textarea:focus {
         background-color: Ivory !important;
         box-shadow: 2px 2px 6px lightgray;
     }
+
+
+    input[type]::placeholder, textarea::placeholder {
+        color: var(--text-faint); 
+    }
+
+
+[data-theme="dark"] input[type=text]:focus,
+[data-theme="dark"] input[type=password]:focus,
+[data-theme="dark"] input[type=email]:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+    background-color: #2a3040 !important;
+    box-shadow: 2px 2px 6px #000;
+}
 
 .clearfix, .clear {
     clear: both;
@@ -378,8 +474,8 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     background: white;
     text-align: left;
 }
-/* 
-   used on the main page left table column 
+/*
+   used on the main page left table column
    the default contains the wave background
 */
 .categorylistbackground {
@@ -410,7 +506,8 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 }
 
 #toplevel {
-    background: #333;
+    background: var(--header-bg);
+    transition: background-color 0.25s ease;
 }
 
 .pagemarquee {
@@ -419,16 +516,46 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 
 
 .marquee-bottom-menu {
-    background: #535353;
+    background: var(--menu-bg);
     background-image: url('../../images/FloralBackground_darkgrey.gif');
     color: white;
     padding: 7px;
     padding-left: 265px;
+    transition: background-color 0.25s ease;
 }
 
     .marquee-bottom-menu a, .marquee-bottom-menu a:visited {
         color: white;
     }
+
+.marquee-bottom-sharing {
+    float: right;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 20px;
+    margin-top: -19px;
+    font-size: 35px;
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.85);
+    font-size: 18px;
+    padding: 2px 4px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    color: white;
+    opacity: 1;
+}
 
 .hero-image {
     width: 100%;
@@ -439,7 +566,8 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 .post-container {
     display: flex;
     width: 100%;
-    background: #f5f8fa;
+    background: var(--surface);
+    transition: background-color 0.25s ease;
 }
 
 #ArticleBody {
@@ -469,14 +597,14 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     width: 100%;
     font-size: 17px;
     min-height: 500px;
-    background: white;
+    background: var(--bg);
     margin: 15px 0 20px 10px;
     padding: 2em 0.7em 2em 1em;
-    transition: margin-left 0.5s;
+    transition: margin-left 0.5s, background-color 0.25s ease;
     border-radius: 6px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    border: 1px solid lightgray;
+    border: 1px solid var(--border-light);
     border-right: none;
 }
 
@@ -489,6 +617,13 @@ input[type=text], input[type=password], input[type=email], select, textarea {
         margin-top: 0;
         padding-top: 0;
     }
+
+/* Images in post content scale to container */
+.post-content img, .postcontent img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
 
 .author-image {
     position: absolute;
@@ -505,15 +640,14 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     position: absolute;
     background: #393939;
-    opacity: 0.80;
+    opacity: 0.85;
     padding: 0.1em 0.1em 0.2em 0.7em;
     color: cornsilk;
-    position: absolute;
     cursor: pointer;
     left: 170px;
     bottom: 7px;
     width: auto;
-    z-index: 1001;    
+    z-index: 1001;
     border-radius: 4px;
     box-shadow: 4px 4px 6px #535353;
     transition: top 0.7s ease-in-out;
@@ -528,12 +662,13 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 
 #SponsorPanel {
     clear: both;
-    background-color: tan;
-    color: #444;
+    background-color: var(--sponsor-bg);
+    color: var(--sponsor-fg);
     font-size: 0.9em;
     padding: 9px;
     display: flex;
     line-height: 1.45;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
     #SponsorPanel .ad-free-msg {
@@ -571,7 +706,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 .twitter-name a {
     font-size: 1.1em;
     text-decoration: none;
-    color: steelblue;
+    color: var(--accent);
 }
 /*.twitter-timeline {
     width: 220px !important;
@@ -579,14 +714,15 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 /*#twitter-widget-0,#twitter-widget-2
 {
     width: 194px;
-    padding: 3px;    
+    padding: 3px;
 }*/
 .sidebar-header {
     font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 1.4em;
     font-weight: bold;
     margin-top: 10px;
-    color: black;
+    color: var(--sidebar-header-fg);
+    transition: color 0.25s ease;
 }
 
 .sidebar-group {
@@ -597,11 +733,11 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 }
 
     .sidebar-group a {
-        color: steelblue;
+        color: var(--accent);
     }
 
         .sidebar-group a:hover, .sidebar-group a:active {
-            color: #727272;
+            color: var(--text-muted);
         }
 
 
@@ -616,7 +752,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 .borderbox {
     padding: 10px 15px;
     border-radius: 4px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     background: linear-gradient(to bottom, rgb(255, 194, 0) 0, white 70px);
     margin: 30px 0 10px;
     min-height: 30px;
@@ -665,11 +801,12 @@ input[type=text], input[type=password], input[type=email], select, textarea {
 .comment {
     margin-bottom: 1.2em;
     padding: 0.5em;
+    transition: background-color 0.25s ease;
 }
 
     .comment.inactive {
         opacity: 0.65;
-        background: #fff1f1;        
+        background: var(--comment-inactive-bg);
     }
 
 .comment-panel-left {
@@ -686,8 +823,8 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     min-height: 8.5em;
     margin: 0;
     margin-left: 130px;
-    padding: 0 1em 0 0.9em;    
-    border-left: 1px solid lightgrey;   
+    padding: 0 1em 0 0.9em;
+    border-left: 1px solid var(--border-light);
 }
 
 .post-list-byline {
@@ -702,7 +839,7 @@ input[type=text], input[type=password], input[type=email], select, textarea {
         float: none;
         padding-left: 10px;
         margin-bottom: 10px;
-        border-right: 1px solid lightgrey;
+        border-right: 1px solid var(--border-light);
     }
 
     .comment-panel-right {
@@ -714,21 +851,25 @@ input[type=text], input[type=password], input[type=email], select, textarea {
     font-size: 1.1em;
     font-weight: bold;
     text-decoration: none;
-    color: steelblue;
+    color: var(--accent);
 }
 
     .commentheader:hover {
         text-decoration: underline;
-        color: maroon;
+        color: var(--link-hover);
     }
 
 .commentauthor {
     background: url(images/lightorangegradient.png) repeat-x top;
 }
 
+[data-theme="dark"] .commentauthor {
+    background: var(--surface2);
+}
+
 .byline {
     font-size: 0.8em;
-    color: #555;
+    color: var(--text-muted);
 }
 
 .commenttime {
@@ -1245,13 +1386,14 @@ pre.code span {
 }
 
 code {
-    background: rgba(27,31,35,.05);
+    background: var(--code-inline-bg);
     padding: .2em .4em;
-    color: #444;
+    color: var(--code-inline-fg);
     padding: 2px 5px;
     border-radius: 3px;
     font-size: 0.9em;
     font-family: consolas,monospace;
+    transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 pre > code, pre.code, pre.csharpcode {
@@ -1450,6 +1592,7 @@ pre > code, pre.code, pre.csharpcode {
 
     .post-content {
         font-size: 1.13em;
+        line-height: 1.65;
     }
 
     #Article {
@@ -1461,7 +1604,7 @@ pre > code, pre.code, pre.csharpcode {
     #toplevel {
         max-width: 1600px;
         margin: 0 auto;
-        color: #333;
+        color: var(--text);
     }
 
     .post-content {
@@ -1473,6 +1616,10 @@ pre > code, pre.code, pre.csharpcode {
         background: linear-gradient(to bottom, #333 0, #444 100%) !important;
         color: #eee;
     }
+
+    [data-theme="dark"] #page-wrapper {
+        background: linear-gradient(to bottom, #0e1015 0, #111318 100%) !important;
+    }
 }
 
 @media print {
@@ -1482,7 +1629,7 @@ pre > code, pre.code, pre.csharpcode {
         height: auto;
     }
 
-    .banner, #SponsorPanel, .post-sidebar, .marquee-bottom-menu, .share-box {
+    .banner, #SponsorPanel, .post-sidebar, .marquee-bottom-menu, .share-box, .theme-toggle-btn {
         display: none;
     }
 

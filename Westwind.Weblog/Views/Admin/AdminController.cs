@@ -47,7 +47,7 @@ namespace Westwind.Weblog
         public IActionResult Import()
         {
             var model = CreateViewModel<AdminViewModel>();
-            model.Message = !AdminRepo.ImportOldWebLog("server=.;database=Weblog;integrated security=true;encrypt=true") 
+            model.Message = !AdminRepo.ImportOldWebLog(wlApp.Configuration.OldWeblogConnectionString) 
                     ? AdminRepo.ErrorMessage 
                     : "Import completed.";
 

@@ -1,9 +1,20 @@
 @using System.Security.Claims
 @inject WeblogConfiguration Configuration
 @{
-    string FeedUrl = "http://feeds.feedburner.com/rickstrahl";    
-    var appUser = User.GetAppUser();
-    bool isAdmin = appUser.IsAdmin;
+	string FeedUrl = "http://feeds.feedburner.com/rickstrahl";    
+	var appUser = User.GetAppUser();
+	bool isAdmin = appUser.IsAdmin;
+
+	string HeroImage()
+	{
+		Random shared = Random.Shared;
+		int val = shared.Next(wlApp.Configuration.HeroImageCount) + 1;
+	    return Westwind.AspNetCore.Utilities.WebUtils.ResolveUrl("~/images/HeroImages/RickHero" + val + ".jpg");
+    }
+	string HeroImageSmall() => HeroImage().Replace(".jpg", "-640.jpg");	
+
+	var heroImage = HeroImage();
+	var heroImageSmall = HeroImageSmall();
 }
 <!DOCTYPE HTML>
 <html>
@@ -55,7 +66,13 @@
 
             
                 <div class="pagemarquee">
-                    <img class="hero-image" src="~/images/RickHero1.jpg" />
+                    <img
+	                    class="hero-image"
+	                    src="@heroImage"
+	                    srcset="@heroImageSmall 640w, @heroImage 1500w"
+	                    sizes="(max-width: 640px) 100vw, 1500px"
+	                    alt="West Wind Hero Image" />
+
                     <img class="author-image" src="~/images/rick175x175.jpg"/>
 
                     <header class="blog-name-container" 

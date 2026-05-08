@@ -2,13 +2,8 @@
 
 ## Must Haves
 
-* Post Sidebar missing
-* Remember Light and Dark Theme settings
-
-
 * Comments Markdown formatting isn't working
 * Comment remember me is not working (never did)
-
 
 
 ## Later

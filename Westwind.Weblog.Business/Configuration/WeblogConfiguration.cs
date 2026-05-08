@@ -32,6 +32,11 @@ namespace Westwind.Weblog.Business.Configuration
         public string ConnectionString { get; set; }
 
         /// <summary>
+        /// REMOVE after migration
+        /// </summary>
+        public string OldWeblogConnectionString => "server=.;database=Weblog;integrated security=true;encrypt=true";
+
+        /// <summary>
         /// The server relative root path for this application
         /// </summary>
         public string ApplicationBasePath
@@ -57,6 +62,11 @@ namespace Westwind.Weblog.Business.Configuration
         /// </summary>
         public int HomePagePostCount { get; set; } = 30;
 
+        /// <summary>
+        /// Number of Hero Images used by the hero banner in /images/HeroImages
+        /// </summary>
+        public int HeroImageCount { get; set; } = 16;
+
         public string PayPalEmail { get; set; }
 
         public string WeblogAuthor { get; set; } = "Rick Strahl";
@@ -67,6 +77,7 @@ namespace Westwind.Weblog.Business.Configuration
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
 
         public SystemConfiguration System { get; set; } = new SystemConfiguration();
+
 
 
         protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)

@@ -97,14 +97,13 @@ namespace Westwind.Weblog.Business.Configuration
 
         public string MailServerPassword { get; set; }
 
-        public bool MailServerUseSsl { get; set; }
-
-        public bool SendAdminEmails { get; set; }
+        public bool UseTls { get; set; }
 
         public string SenderName { get; set; }
         public string SenderEmail { get; set; }
-        public string AdminSenderEmail { get; set; }
-        
+
+        public bool SendEmails { get; set; }
+        public bool SendAdminEmails { get; set; }
     }
 
     public class SystemConfiguration

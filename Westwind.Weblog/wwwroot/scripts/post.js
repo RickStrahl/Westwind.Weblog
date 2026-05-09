@@ -18,10 +18,6 @@
                     OnTextTyped();
                 });
         }
-
-        $(".commentedit").click(commentEdit);
-        $(".remove-comment").click(DeleteComment);
-
         documentOutlineScrolling();
     });
 
@@ -202,35 +198,20 @@
             Ctl2.text(Size.toString() + " of " + serverVars.commentMaxLength + " characters");
         }
 
-        Proxy.FormatComment(Ctl.val(), function(result) {
-            if (result)
-                $("#divCommentPreview")
-                    .html(result).show();
+        ajaxJson("/comment/format", { commentText: Ctl.val() },
+            function (result) {
+                if (result)
+                    $("#divCommentPreview")
+                        .html(result).show();
 
-            setTimeout(function() {
-                $('pre code').each(function(i, block) {
-                    hljs.highlightBlock(block);
+                setTimeout(function () {
+                    $('pre code').each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
                 });
-            });
-        });
+            } );
     }
 
-    function DeleteComment() {
-        var $el = $(this);
-        var id = $el.data("id") * 1;        
-        Proxy.DeleteComment(id,
-            function(result) {
-                if (!result) {
-                    showStatus("Comment not deleted. Id is invalid or you're not logged in.");
-                    return;
-                }                
-                $el.parents(".comment").fadeOut("slow", function() { $(this).remove(); });
-            },
-            function(error) {
-                showStatus("Comment not deleted: " + error.message);
-            }
-        );
-    }
 
     function commentEdit(evt) {
         var jComment = $(this).parents(".comment-panel-right").find(".commentbody");

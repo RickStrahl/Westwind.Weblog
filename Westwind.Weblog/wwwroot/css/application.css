@@ -251,8 +251,12 @@ h1, h2, h3, h4, h5, .page-header {
     margin-bottom: 0.5em;
 }
 
+#ArticleBody > h2, #ArticleBody > h3, #ArticleBody > h4, #ArticleBody > h5, #ArticleBody > h6 {
+    cursor: pointer;
+}
+
 h1 {
-    font-size: 1.7em;    
+    font-size: 1.7em;
     padding-bottom: 0.2em;
     color: var(--heading-color);
     border-bottom: 1px solid var(--border);

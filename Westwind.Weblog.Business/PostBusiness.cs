@@ -302,5 +302,31 @@ namespace Westwind.Weblog.Business
 
             return postHtml;
         }
+
+        /// <summary>
+        /// Checks to see if a comment has basic values set.
+        /// 
+        /// Sets ValidationErrors if errors are found.
+        /// </summary>
+        /// <param name="comment"></param>
+        /// <returns></returns>
+        public bool ValidateComment(Comment comment)
+        {
+            if (string.IsNullOrEmpty(comment.Body) || (comment.Body.Length < 20))
+            {
+                ValidationErrors.Add("Body", "A reasonably long comment body is required.");
+            }
+            if (string.IsNullOrEmpty(comment.Author)) {
+                ValidationErrors.Add("Author", "Comment author is required.");
+            }
+            if (string.IsNullOrEmpty(comment.Email) ||  !comment.Email.Contains('@') || !comment.Email.Contains('.')) {
+                ValidationErrors.Add("Email", "A valid comment email is required.");
+            }
+
+            if (ValidationErrors.Count > 0)
+                return false;
+
+            return true;
+        }
     }
 }

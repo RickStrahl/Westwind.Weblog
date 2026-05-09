@@ -9,9 +9,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using BlazePostApi.Rss;
 using Westwind.AspNetCore.Extensions;
+using Westwind.AspNetCore.Markdown;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
+using Westwind.Webstore.Business.Utilities;
 
 
 namespace Westwind.Weblog.Views.Home
@@ -203,10 +205,10 @@ body {{ font-family: sans-serif }}
 
                 if (wlApp.Configuration.Email.SendAdminEmails)
                 {
-                    //AppWebUtils.SendEmail(wlApp.Configuration.Email.AdminSenderEmail,
-                    //    $"Web Store Error: {model.StatusCode} " + exceptionHandlerPath?.Path,
-                    //    Markdown.Parse(msg),
-                    //     out string error, noHtml: false);
+                    var emailer = new Emailer();
+                    emailer.SendEmail(wlApp.Configuration.Email.SenderEmail,
+                        $"Web Store Error: {model.StatusCode} " + exceptionHandlerPath?.Path,
+                        Markdown.Parse(msg), EmailModes.html);
                 }
             }
 

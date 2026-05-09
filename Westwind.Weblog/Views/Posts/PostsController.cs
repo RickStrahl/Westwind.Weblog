@@ -3,14 +3,18 @@ using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Markdown;
 using Westwind.AspNetCore.Messages;
+using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
+using Westwind.Webstore.Business.Utilities;
+using Westwind.AspNetCore.Utilities;
 
 namespace Westwind.Weblog
 {
@@ -59,7 +63,9 @@ namespace Westwind.Weblog
                 return Redirect("/");                
             }
 
-            
+            string message = TempData["CommentMessage"]?.ToString();
+
+
             // Markdown
             string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
             postHtml = PostRepo.EmbedAds(postHtml);
@@ -89,11 +95,26 @@ namespace Westwind.Weblog
             {
                 ErrorDisplay.ShowWarning(commentMessage);
             }
+            else if(!string.IsNullOrEmpty(message))
+            {
 
-            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages });
+                ErrorDisplay.ShowWarning(message,"Comment Moderation");
+            }
+
+            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages, ErrorDisplay = ErrorDisplay });
         }
 
 
+        /// <summary>
+        /// Post and Save Comment 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        /// <param name="slug"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
@@ -101,12 +122,12 @@ namespace Westwind.Weblog
         public async Task<IActionResult> ShowPostPost([FromForm] PostViewModel model, [FromRoute] int year, [FromRoute] string month, [FromRoute] int day, [FromRoute] string slug, [FromRoute] string id = null)
         {
 
-            Post post;           
-            if(!string.IsNullOrEmpty(id))
+            Post post;
+            if (!string.IsNullOrEmpty(id))
                 post = await PostRepo.GetPost(id);
             else
                 post = await PostRepo.GetPost(slug);
-            
+
             var page = Request.Query["page"].FirstOrDefault();
             int.TryParse(page, out int pageToDisplay);
             if (pageToDisplay < 1)
@@ -140,34 +161,41 @@ namespace Westwind.Weblog
 
 
             comment.IsCommentDialogVisible = true;
-            comment.Post= post;
+            comment.Post = post;
             comment.CommentErrorMessage = HttpContext.Items["CommentMessage"]?.ToString();
 
             InitializeViewModel(newModel);
-            
+
             // posting back
-          if (string.IsNullOrEmpty(comment.CommentAuthor))
+            if (string.IsNullOrEmpty(comment.CommentAuthor))
                 comment.CommentAuthor = Request.Cookies["CommentAuthor"];
-          if(string.IsNullOrEmpty(comment.CommentEmail))
+            if (string.IsNullOrEmpty(comment.CommentEmail))
                 comment.CommentEmail = Request.Cookies["CommentEmail"];
-          if(string.IsNullOrEmpty(comment.CommentWebSite))
-                comment.CommentWebSite = Request.Cookies["CommentWebSite"];            
-                    
-            if(!string.IsNullOrEmpty(comment.CommentText))
+            if (string.IsNullOrEmpty(comment.CommentWebSite))
+                comment.CommentWebSite = Request.Cookies["CommentWebSite"];
+
+            if (!string.IsNullOrEmpty(comment.CommentText))
             {
-                
+
                 var dataComment = PostRepo.Create<Comment>();
                 dataComment.Body = comment.CommentText;
                 dataComment.Title = "re: " + comment.Post.Title;
                 dataComment.Author = comment.CommentAuthor;
                 dataComment.Email = comment.CommentEmail;
-                
+
                 // TODO: Make this False and manually require enabling
                 dataComment.IsActive = false;
-                
+
                 post.Comments.Add(dataComment);
 
-                if (await PostRepo.SaveAsync(post))
+                var hasError = false;
+                if (!PostRepo.ValidateComment(dataComment))
+                {
+                    hasError = true;
+                    ErrorDisplay.ShowError(PostRepo.ValidationErrors.ToHtml(), "Please fix the following:");
+                }
+
+                if (!hasError && await PostRepo.SaveAsync(post))
                 {
                     ModelState.Clear();
                     HttpContext.Items["CommentMessage"] = "Comment has been saved, but comment moderation is enabled, so it won't display until approved. Please check back later.";
@@ -178,15 +206,45 @@ namespace Westwind.Weblog
                     Response.Cookies.Append("CommentEmail", comment.CommentEmail ?? string.Empty, options);
                     Response.Cookies.Append("CommentWebSite", comment.CommentWebSite ?? string.Empty, options);
 
-                    return Redirect(Request.Path.Value.Contains("#Comments") ? string.Empty : "#Comments");                    
+                    if (wlApp.Configuration.Email.SendEmails)
+                    {
+                        var siteUrl = wlApp.Configuration.ApplicationBasePath;
+
+
+                        string CommentBody = "<div style='font: normal normal 10pt Verdana'>" +
+                                             "Title: re: " + post.Title + "<br />" +
+                                             "From: " + comment.CommentAuthor + "<br />" +
+                                             "Url: " + HtmlUtils.Href(comment.CommentWebSite) + "<br />" +
+                                             "Email: " + comment.CommentEmail + "<br />" +
+                                             "IP: " + HttpContext.GetClientIpAddress() + "<br /><hr />" +
+                                             WebUtility.HtmlEncode(comment.CommentText);
+                        CommentBody += "<br /><br /><small>" +
+                                       HtmlUtils.Href("Show Comment",
+                                           post.GetPostUrl() + "#" + dataComment.Id) + " | " +
+                                       HtmlUtils.Href("Remove Comment", siteUrl.TrimEnd('/') + "/comments/" + dataComment.Id + "/remove") + " | " +
+                                   HtmlUtils.Href("Approve Comment", siteUrl.TrimEnd('/') + "/comments/" + dataComment.Id + "/approve") +
+                                   "</small></div>";
+
+                        var emailer = new Emailer();
+
+
+                        bool result = emailer.SendEmail(wlApp.Configuration.Email.SenderEmail,
+                                                        "Weblog Comment: " + post.Title,
+                                                        CommentBody, EmailModes.html);
+                    }
+
+                    comment.CommentText = null;
+                    var message = "Your comment has been saved, but comment moderation is enabled which may cause a delay until your comment is displayed.";
+                    TempData["CommentMessage"] = message;
+
+                    return Redirect(Request.Path.Value.Contains("#Comments") ? string.Empty : post.GetPostUrl() + "#Comments");
                 }
 
-                
-
-                comment.CommentErrorMessage = $"Failed to save comment: {PostRepo.ErrorMessage}";
+                ErrorDisplay.MessageAsRawHtml = true;
+                ErrorDisplay.ShowError($"{PostRepo.ErrorMessage}", "Couldn't save comment");
             }
-            
-            return View("ShowPost",newModel);
+                        
+            return View("ShowPost", newModel);
         }
 
         [Route("/comments")]
@@ -200,36 +258,56 @@ namespace Westwind.Weblog
 
         [Authorize]
         [Route("/comments/{commentId}/approve")]    
-        public ApiResponse<bool> ApproveComment(string commentId)
+        public IActionResult ApproveComment(string commentId)
         {
 
             var comment = PostRepo.Context.Comments.FirstOrDefault(c => c.Id == commentId);
             if (comment == null) 
-                return new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false };
+                return Json( new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false });
 
             var result = new ApiResponse<bool>();
             comment.IsActive = true;
-            result.Data = PostRepo.Save();
+            result.Data = PostRepo.Save(); // Context.SaveChanges() == 1;
 
-            return result;
+
+            if (!Request.Headers.Accept.Any(h => h.Contains("application/json")))
+            {
+                var post = PostRepo.Load(comment.PostId);
+                var url = post != null ? post.GetPostUrl() + "#Comments": "#Comments";
+                return Redirect(url);
+            }
+
+            return Json(result);
         }
 
+
+        /// <summary>
+        /// Returns ApiResponse bool, but redirects if accessed
+        /// without an accept header.
+        /// </summary>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("/comments/{commentId}/remove")]
-        public ApiResponse<bool> RemoveComment(string commentId)
+        public IActionResult RemoveComment(string commentId)
         {
             var comment = PostRepo.Context.Comments.FirstOrDefault(c => c.Id == commentId);
             if (comment == null)
-                return new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false };
+                return Json(new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false });
 
             PostRepo.Context.Remove<Comment>(comment);
 
             var res = PostRepo.Context.SaveChanges();
 
-            return new ApiResponse<bool> { Data = true };
+            if (!Request.Headers.Accept.Any(h => h.Contains("application/json")))
+            {
+                var post = PostRepo.Load(comment.PostId);
+                var url = post != null ? post.GetPostUrl() + "#Comments" : "#Comments";
+                return Redirect(url);
+            }
+
+            return Json(new ApiResponse<bool> { Data = true });
         }
-
-
 
 
     }

@@ -70,23 +70,14 @@
                 <textarea id="txtBody" class="comment-textbox" asp-for="ActiveComment.CommentText">
                 </textarea>
 
-                <div id="divCommentPreview" style="display:none">
-                </div>
+                <div id="lblCommentCharCount" style="font-size: 0.7em; text-align: right; float: right;  margin-top: 0;"></div>
 
+                <div id="divCommentPreview" style="display: none; clear: both">
+                </div>   
+
+                
                 <br />
 
-                <table style="width:100%">
-                    <tr>
-                        <td>
-                            <ww:wwCheckBox ID="chkRememberMe" runat="server" Text="Remember me?" />
-                        </td>
-                        <td style="text-align:right;" valign="top">
-                            <small>
-                                <span id="lblCommentCharCount"></span>
-                            </small>
-                        </td>
-                    </tr>
-                </table>
 
                 @* <ww:Captcha runat="server" ID="Captcha" CssClass="gridalternate"
                             Style="width: 330px; padding: 10px; margin: 5px; border-radius: 4px;" /> *@
@@ -115,6 +106,4 @@
 
         </div>
     </div>
-
-    <input type="" />
 </div>

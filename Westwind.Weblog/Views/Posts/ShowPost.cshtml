@@ -102,7 +102,10 @@
 
 <div class="clearfix"></div>
 
-<error-display error-display-model="Model.ErrorDisplay" />
+<div class="mt-2">
+    <error-display error-display-model="Model.ErrorDisplay"></error-display>
+</div>
+
 
 <div id="ArticleBody" class="postcontent" itemprop="articleBody">
     @*@if (!string.IsNullOrEmpty(App.SponsoredTopAd)) { 
@@ -336,8 +339,9 @@ else {
     </form>
 }
 
+<div class="mt-2 mb-2">
 <error-display error-display-model="Model.ErrorDisplay"></error-display>
-
+    </div>
 <br />
 
 </article>

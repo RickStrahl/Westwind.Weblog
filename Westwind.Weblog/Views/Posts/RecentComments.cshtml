@@ -20,60 +20,60 @@
                 if (!comment.IsActive && !isAdmin)
                      continue;
                      
-                <div id="@comment.Id" class="comment @(comment.IsActive ? string.Empty : "inactive")">
+                    <div id="@comment.Id" class="comment @(comment.IsActive ? string.Empty : "inactive")">
 
-                    <div class="comment-panel-left">
-                        @AppWebUtils.GravatarLink(comment)
+                        <div class="comment-panel-left">
+                            @AppWebUtils.GravatarLink(comment)
 
-                        <div>
-                            @if (string.IsNullOrEmpty(comment.Url))
+                            <div>
+                                @if (string.IsNullOrEmpty(comment.Url))
                             {
-                                <div style="font-size: 0.85em">@comment.Author</div>
+                                    <div style="font-size: 0.85em">@comment.Author</div>
                             }
                             else
                             {
-                                <div style="font-size: 0.85em">
-                                    <a href="@comment.Url" target="_WebLog">@comment.Author</a>
-                                </div>
+                                    <div style="font-size: 0.85em">
+                                        <a href="@comment.Url" target="_WebLog">@comment.Author</a>
+                                    </div>
                             }
-                            <small style="font-style: italic; font-size: 0.7em">
-                                <i class="far fa-clock"></i>
-                                @AppWebUtils.WebLogDateString(comment.Created, false)
-                            </small>
-                        </div>
-                    </div>
-
-                    <div class="comment-panel-right">
-                        <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">
-                            @if(comment.Post != null) {
-                                <a name="@comment.Id" href="@(comment.Post.GetPostUrl())#@comment.Id">@comment.Post.Title</a>
-                            }
-                        </h3>
-                        <div class="commentbody" style="padding-top: 0.7em;">                     
-                            @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body?.Trim())) : Html.Raw(comment.Body?.Trim()))
-                        </div>
-
-                        @if (isAdmin)
-                        {
-                            <div style="margin-top: 10px;">
-                                <a href='javascript:{}' data-id="@comment.Id"
-                                   class="hoverbutton remove-comment">
-                                    <i class="fa fa-circle-xmark text-error"></i>
-                                    Remove Comment
-                                </a>
-                                @if (!comment.IsActive)
-                                {
-                                    <a href='javascript:{}' data-id="@comment.Id"
-                                       class="hoverbutton activate-comment">
-                                        <i class="fa fa-circle-check text-success"></i>
-                                        Activate Comment
-                                    </a>
-                                }
+                                <small style="font-style: italic; font-size: 0.7em">
+                                    <i class="far fa-clock"></i>
+                                    @AppWebUtils.WebLogDateString(comment.Created, false)
+                                </small>
                             </div>
+                        </div>
+
+                        <div class="comment-panel-right">
+                            <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">
+                                @if(comment.Post != null) {
+                                    <a name="@comment.Id" href="@(comment.Post.GetPostUrl())#@comment.Id">@comment.Post.Title</a>
+                            }
+                            </h3>
+                            <div class="commentbody" style="padding-top: 0.7em;">                     
+                                @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body?.Trim())) : Html.Raw(comment.Body?.Trim()))
+                            </div>
+
+                            @if (isAdmin)
+                        {
+                                <div style="margin-top: 10px;">
+                                    <a href='#none' data-id="@comment.Id"
+                                       class="hoverbutton remove-comment">
+                                        <i class="fa fa-circle-xmark text-error"></i>
+                                        Remove Comment
+                                    </a>
+                                    @if (!comment.IsActive)
+                                {
+                                        <a href='#none' data-id="@comment.Id"
+                                           class="hoverbutton approve-comment">
+                                            <i class="fa fa-circle-check text-success"></i>
+                                            Approve Comment
+                                        </a>
+                                }
+                                </div>
                         }
+                        </div>
                     </div>
-                </div>
-                <div class="clearfix"></div>
+                    <div class="clearfix"></div>
             }
         }
     </div>
@@ -85,5 +85,13 @@
     $('pre code').each(function (i, block) {
         hljs.highlightBlock(block);
     });
+
 </script>
+
+@if(isAdmin) 
+	{
+		<script>
+			handleCommentClicks();
+		</script>
+	}
 }

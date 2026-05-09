@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Markdown;
+using Westwind.AspNetCore.Messages;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
@@ -195,6 +197,40 @@ namespace Westwind.Weblog
             InitializeViewModel(model);
             return View(model);
         }
-    
+
+        [Authorize]
+        [Route("/comments/{commentId}/approve")]    
+        public ApiResponse<bool> ApproveComment(string commentId)
+        {
+
+            var comment = PostRepo.Context.Comments.FirstOrDefault(c => c.Id == commentId);
+            if (comment == null) 
+                return new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false };
+
+            var result = new ApiResponse<bool>();
+            comment.IsActive = true;
+            result.Data = PostRepo.Save();
+
+            return result;
+        }
+
+        [Authorize]
+        [Route("/comments/{commentId}/remove")]
+        public ApiResponse<bool> RemoveComment(string commentId)
+        {
+            var comment = PostRepo.Context.Comments.FirstOrDefault(c => c.Id == commentId);
+            if (comment == null)
+                return new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false };
+
+            PostRepo.Context.Remove<Comment>(comment);
+
+            var res = PostRepo.Context.SaveChanges();
+
+            return new ApiResponse<bool> { Data = true };
+        }
+
+
+
+
     }
 }

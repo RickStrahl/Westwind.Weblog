@@ -11,6 +11,7 @@
     --text: #222;
     --text-muted: #555;
     --text-faint: #888;
+    --text-reverse: #eee;
     --accent: #4e92c9;
     --accent-2: #569ad4;
     --heading-color: steelblue;
@@ -42,12 +43,7 @@
     --borderbox-top: goldenrod;
     --dialog-header-from: steelblue;
     --dialog-header-fg: #383838;
-    --font: "Trebuchet MS", /* Windows */
-    "Lucida Grande", /* Older macOS */
-    "Helvetica Neue", /* Modern macOS fallback */
-    "Liberation Sans", /* Linux */
-    "Nimbus Sans", /* Linux fallback */
-    Arial, sans-serif;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     /* overrides*/
     /* overrides*/
     --bs-info-bg-subtle: #293954;
@@ -63,6 +59,7 @@
     --text: #d4d8df;
     --text-muted: #9aa0aa;
     --text-faint: #606060;
+    --text-reverse: #222;
     --accent: #6aaddf;
     --accent-2: #5a9dc9;
     --heading-color: #6aaddf;
@@ -94,12 +91,6 @@
     --borderbox-top: #274b69;
     --dialog-header-from: #1e3a52;
     --dialog-header-fg: #bbb;
-    --font: "Trebuchet MS", /* Windows */
-    "Lucida Grande", /* Older macOS */
-    "Helvetica Neue", /* Modern macOS fallback */
-    "Liberation Sans", /* Linux */
-    "Nimbus Sans", /* Linux fallback */
-    Arial, sans-serif;
     /* overrides*/
     --bs-info-bg-subtle: #293954;
     --bs-info-text-emphasis: cornsilk;
@@ -253,8 +244,8 @@ hr {
         color: var(--heading-color);
     }
 
-h1, h2, h3, h4, h5 {
-    /*font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;*/
+h1, h2, h3, h4, h5, .page-header {
+    font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: 600;
     margin-top: 1em;
     margin-bottom: 0.5em;
@@ -269,21 +260,27 @@ h1 {
 
 h2 {
     color: var(--heading-color);
-    font-size: 1.45em;
+    font-size: 1.4em;
 }
 
 h3 {
     color: var(--heading-color);
-    font-size: 1.3em;
+    font-size: 1.28em;
 }
 
 h4, h5, h6 {
-    color: var(--text);
-    font-size: 1.1em;
+    color: var(--text-muted);
+    font-size: 1.12em;
 }
 
 h5, h6 {
     font-size: 1em;
+}
+
+.page-header {
+    padding-bottom: 0.2em;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 1em;
 }
 
 table {
@@ -536,7 +533,8 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
 .marquee-bottom-menu {
     background: var(--menu-bg);
     background-image: url('../../images/FloralBackground_darkgrey.gif');
-    color: var(--text);
+    color: #eee;
+    font-weight: 500;
     padding: 7px;
     padding-left: 215px;
     transition: background-color 0.25s ease;
@@ -544,8 +542,11 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
 
 
     .marquee-bottom-menu a, .marquee-bottom-menu a:visited {
-        color: var(--text);
+        color: #dadada;
     }
+        .marquee-bottom-menu a:hover {
+            color: #50addf;
+        }
 @media(max-width: 760px) {
     .marquee-bottom-menu {
         padding-left: 1em !important;
@@ -812,8 +813,8 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
     display: inline;
     list-style: none;
     padding-right: 12px;
-    font-size: 45px;
-    margin-top: 0;
+    font-size: 35px;
+    margin-top: 0.15em;
     margin-bottom: 0;
     color: #258cdf;
     text-decoration: none;
@@ -923,9 +924,6 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
     line-height: 1.6;
 }
 
-.postcontent {
-    margin-top: 30px;
-}
 
 /* used on the category list as a standard link */
 .menucolumn {

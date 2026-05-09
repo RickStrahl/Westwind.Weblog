@@ -58,3 +58,33 @@ function relative_time(time_value) {
 	                            Math.round(delta / 3600).toString() + "h";
 }
 
+function handleCommentClicks() {
+    // auth required for these actions so we can use GET and not worry about CSRF tokens
+    $(document).on('click', '.approve-comment', function (e) {
+        e.preventDefault();
+
+        var id = $(this).data("id");
+        ajaxJson('/comments/' + id + '/approve', null,
+            (res) => {
+                $("#" + id).removeClass("inactive");
+                $(this).remove();
+            },
+            (err) => {
+                alert("couldn't approve comment" + err.message);
+            },
+            { method: "GET", accepts: "application/json" });
+    });
+
+    $(document).on('click', '.remove-comment', function (e) {
+        e.preventDefault();
+        var id = $(this).data("id");                
+        ajaxJson('/comments/' + id + '/remove', null,
+            (res) => {                           
+                $("#" + id).remove();			                                    
+            },
+            (err) => {
+                alert("couldn't remove comment" + err.message);
+            },
+            { method: "GET", accepts: "application/json" });
+    });
+}

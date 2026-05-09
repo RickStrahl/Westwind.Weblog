@@ -6,7 +6,7 @@
     var repo = Model.PostRepo;
 }
 
-<div style="margin: 0 1em 1em 1em; ">
+<div style="margin: 0 1em 1em 1em;">
     @{
         int counter = 0;
         foreach (var post in posts)
@@ -17,11 +17,10 @@
             {
                 <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
             }
-            <h2 class="margin-top">                
+            <h2 class="page-header mb-1">                
                 <a href="@post.GetPostUrl()"
                         style="text-decoration: none;">@post.Title</a>
             </h2>
-            <hr/>
             
 
             <div class="float-end">
@@ -42,16 +41,16 @@
                 @(string.IsNullOrEmpty(post.Location) ? "" : "- " + post.Location)
             </div>
 
+            
 
             @if (counter < 15 && !string.IsNullOrEmpty((string)post.FeaturedImageUrl))
             {
-                <div class="featured-image-wrapper">
+                <div class="featured-image-wrapper mt-2 mb-1">
                     <img class="featured-image" src="@post.FeaturedImageUrl" loading="lazy" />
                 </div>
-            }
+            }            
 
-
-            <div class="postcontent" style="margin-bottom: 20px">
+            <div class="postcontent mt-0" style="margin-bottom: 20px">
                 @post.Abstract.TrimEnd()  
                 
                 <p class="margin-top margin-bottom">

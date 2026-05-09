@@ -44,12 +44,11 @@
 
 
 <header>
-    <h2 itemprop="headline_name">
+    <h2 class="page-header mb-1" itemprop="headline_name">
         <a href='@repo.GetPostUrl(post)' style="text-decoration:none;">@post.Title</a>            
     </h2>
 </header>
     
-<hr />
 
 <div class="byline">
 
@@ -59,13 +58,13 @@
         <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet on Twitter">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                <i class="fab  fa-square-x-twitter fa-square-twitter fa-stack-1x" style=" color: black"></i>                
+                <i class="fab  fa-square-x-twitter fa-square-twitter fa-stack-1x" style="font-size: 0.98em; color: black"></i>                
             </span>
         </a>
         <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share on Facebook">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-square fa-stack-1x" style=" color: white; font-size: 0.9em "></i>
-                <i class="fab fa-facebook-square fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>                
+                <i class="fab fa-facebook-square fa-stack-1x" style="color: rgb(63, 96, 170); "></i>                
             </span>
         </a>
         
@@ -292,25 +291,21 @@ No guarantees that changes will be accepted."
                  @if (isAdmin)
                  {
                      <div style="margin-top: 10px;">
-
-                         <a href='javascript:{}' data-id="@post.Id"
-                            class="hoverbutton remove-comment">
-                             <i class="fa fa-circle-xmark text-danger"></i>
-                             Remove Comment
-                         </a>
-                         <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" 
-                                    class="hoverbutton commentedit"/>
-                     
+                                              
                          @if(!comment.IsActive)    {
-	                         <a href='javascript:{}' data-id="@post.Id"
+	                         <a href='#none' data-id="@comment.Id"
 	                            class="hoverbutton approve-comment">
 		                         <i class="fa fa-circle-check text-success"></i>
 		                         Approve Comment
 	                         </a>
-	                         <asp:Image runat="server" ImageUrl="~/images/EditWhite.gif" 
-	                                    class="hoverbutton commentedit"/>
-                     
+	                      
                          }
+                         <a href='#none' data-id="@comment.Id"
+                            class="hoverbutton remove-comment">
+	                         <i class="fa fa-circle-xmark text-danger"></i>
+	                         Remove Comment
+                         </a>
+                        
                      </div>
                      
 
@@ -341,14 +336,7 @@ else {
     </form>
 }
 
-@{
-    var commentErrorModel = new ErrorDisplayModel()
-    {
-        Message = null,
-        Icon = Model.ActiveComment.CommentErrorIcon
-    };
-}
-<error-display error-display-model="commentErrorModel"></error-display>
+<error-display error-display-model="Model.ErrorDisplay"></error-display>
 
 <br />
 
@@ -363,4 +351,11 @@ else {
             hljs.highlightBlock(block);
         });
     </script>
+
+	@if (isAdmin)
+    {
+        <script>
+            handleCommentClicks();
+        </script>
+    }
 }

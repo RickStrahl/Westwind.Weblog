@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Markdown;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
@@ -143,7 +144,14 @@ namespace Westwind.Weblog
             InitializeViewModel(newModel);
             
             // posting back
-            if (!string.IsNullOrEmpty(comment.CommentText))
+          if (string.IsNullOrEmpty(comment.CommentAuthor))
+                comment.CommentAuthor = Request.Cookies["CommentAuthor"];
+          if(string.IsNullOrEmpty(comment.CommentEmail))
+                comment.CommentEmail = Request.Cookies["CommentEmail"];
+          if(string.IsNullOrEmpty(comment.CommentWebSite))
+                comment.CommentWebSite = Request.Cookies["CommentWebSite"];            
+                    
+            if(!string.IsNullOrEmpty(comment.CommentText))
             {
                 
                 var dataComment = PostRepo.Create<Comment>();
@@ -156,15 +164,23 @@ namespace Westwind.Weblog
                 dataComment.IsActive = false;
                 
                 post.Comments.Add(dataComment);
-                
-                if(await PostRepo.SaveAsync(post))
+
+                if (await PostRepo.SaveAsync(post))
                 {
                     ModelState.Clear();
                     HttpContext.Items["CommentMessage"] = "Comment has been saved, but comment moderation is enabled, so it won't display until approved. Please check back later.";
+
+
+                    var options = new Microsoft.AspNetCore.Http.CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(7), Domain = Request.Host.Host, HttpOnly = true, Secure = true, Path = "/" };
+                    Response.Cookies.Append("CommentAuthor", comment.CommentAuthor ?? string.Empty, options);
+                    Response.Cookies.Append("CommentEmail", comment.CommentEmail ?? string.Empty, options);
+                    Response.Cookies.Append("CommentWebSite", comment.CommentWebSite ?? string.Empty, options);
+
                     return Redirect(Request.Path.Value.Contains("#Comments") ? string.Empty : "#Comments");                    
                 }
 
                 
+
                 comment.CommentErrorMessage = $"Failed to save comment: {PostRepo.ErrorMessage}";
             }
             

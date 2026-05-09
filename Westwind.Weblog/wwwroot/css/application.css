@@ -5,6 +5,7 @@
    ═══════════════════════════════════════════════════ */
 :root {
     --bg: #ffffff;
+    --bg-selected: #e8f0fe;
     --surface: #f5f8fa;
     --surface2: #f2f7fb;
     --text: #222;
@@ -14,7 +15,7 @@
     --accent-2: #569ad4;
     --heading-color: steelblue;
     --link: #4e92c9;
-    --link-visited: teal;
+    --link-visited: #6ea9d8;
     --link-hover: maroon;
     --border: #ddd;
     --border-light: lightgray;
@@ -42,15 +43,21 @@
     --dialog-header-from: steelblue;
     --dialog-header-fg: #383838;
     --font: "Trebuchet MS", /* Windows */
-               "Lucida Grande", /* Older macOS */
-               "Helvetica Neue", /* Modern macOS fallback */
-               "Liberation Sans", /* Linux */
-               "Nimbus Sans", /* Linux fallback */
-               Arial, sans-serif;
+    "Lucida Grande", /* Older macOS */
+    "Helvetica Neue", /* Modern macOS fallback */
+    "Liberation Sans", /* Linux */
+    "Nimbus Sans", /* Linux fallback */
+    Arial, sans-serif;
+    /* overrides*/
+    /* overrides*/
+    --bs-info-bg-subtle: #293954;
+    --bs-info-text-emphasis: cornsilk;
+    --bs-info-border-subtle: #2b4063;
 }
 
 [data-theme="dark"] {
     --bg: #1a1d23;
+    --bg-selected: #3a3a3a;
     --surface: #242830;
     --surface2: #1c2230;
     --text: #d4d8df;
@@ -60,7 +67,7 @@
     --accent-2: #5a9dc9;
     --heading-color: #6aaddf;
     --link: #6aaddf;
-    --link-visited: #93b3b2;
+    --link-visited: #618aa9;
     --link-hover: #f08080;
     --border: #3a3e47;
     --border-light: #3a3e47;
@@ -88,11 +95,15 @@
     --dialog-header-from: #1e3a52;
     --dialog-header-fg: #bbb;
     --font: "Trebuchet MS", /* Windows */
-               "Lucida Grande", /* Older macOS */
-               "Helvetica Neue", /* Modern macOS fallback */
-               "Liberation Sans", /* Linux */
-               "Nimbus Sans", /* Linux fallback */
-               Arial, sans-serif;
+    "Lucida Grande", /* Older macOS */
+    "Helvetica Neue", /* Modern macOS fallback */
+    "Liberation Sans", /* Linux */
+    "Nimbus Sans", /* Linux fallback */
+    Arial, sans-serif;
+    /* overrides*/
+    --bs-info-bg-subtle: #293954;
+    --bs-info-text-emphasis: cornsilk;
+    --bs-info-border-subtle: #2b4063;
 }
 
 
@@ -170,19 +181,11 @@ p {
 html, body {
     color: var(--text);
     font-family: var(--font);
+    font-size: 16px;
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
     height: 100%;
-}
-
-html, body {
-    font-size: 16px;
-    height: 100%;
     box-sizing: border-box;
-}
-
-html, body {
-    font-size: 15.5px;
 }
 
    /*::-webkit-scrollbar {
@@ -253,13 +256,13 @@ hr {
 h1, h2, h3, h4, h5 {
     /*font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;*/
     font-weight: 600;
-    margin-top: 1.2em;
+    margin-top: 1em;
     margin-bottom: 0.5em;
 }
 
 h1 {
-    font-size: 1.7em;
-    padding-bottom: 10px;
+    font-size: 1.7em;    
+    padding-bottom: 0.2em;
     color: var(--heading-color);
     border-bottom: 1px solid var(--border);
 }
@@ -400,6 +403,10 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
 
     input[type]::placeholder, textarea::placeholder {
         color: var(--text-faint); 
+    }
+    .form-control:focus {
+        color: var(--text) !important;
+        background: var(--bg-selected) !important;
     }
 
     
@@ -616,7 +623,7 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
     min-height: 500px;
     background: var(--bg);
     margin: 15px 0 20px 10px;
-    padding: 2em 0.7em 2em 1em;
+    padding: 0 0.7em 2em 1em;
     transition: margin-left 0.5s, background-color 0.25s ease;
     border-radius: 6px;
     border-top-right-radius: 0;
@@ -637,7 +644,7 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
     }
 
     .post-content h2 {
-        margin-top: 0;
+        margin-top: 0.8em;        
         padding-top: 0;
     }
 
@@ -832,6 +839,9 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
         background: var(--comment-inactive-bg);
     }
 
+.comment-textbox {
+    height: 16em;
+}
 .comment-panel-left {
     width: 120px;
     line-height: 1.4;
@@ -1555,6 +1565,9 @@ pre > code, pre.code, pre.csharpcode {
 
 
 @media(max-width: 767px) {
+    body {
+        font-size: 16px;
+    }
     .author-image {
         left: 0.5em;
         bottom: 0;
@@ -1590,14 +1603,7 @@ pre > code, pre.code, pre.csharpcode {
         display: none;
         width: 0;
     }
-
-    .post-content h2 {
-        margin-top: 1px;
-        padding-top: 0;
-    }
-
     
-
     #ArticleBody {
     }
 }

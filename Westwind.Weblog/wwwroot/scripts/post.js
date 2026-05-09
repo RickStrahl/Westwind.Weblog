@@ -10,7 +10,7 @@
         // force hash to reload        
         if (window.location.hash)
             window.location = window.location.hash;
-        const $txtBody = $$("txtBody");
+        const $txtBody = $$("txtBody");        
         if ($txtBody) {
             $txtBody.on("keydown", debounce(OnTextTyped, 1200));
             $txtBody

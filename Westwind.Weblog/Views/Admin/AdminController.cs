@@ -1,13 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Xml.Linq;
+using Westwind.AspNetCore.Extensions;
+using Westwind.AspNetCore.Utilities;
 using Westwind.Utilities;
+using Westwind.Utilities.Data;
 using Westwind.Web;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
@@ -82,6 +85,48 @@ namespace Westwind.Weblog
             else
                 model.Message = "Comment counts updated.";
 
+            return View("Index",model);
+        }
+
+        [Route("admin/backup")]
+        public IActionResult Backup()
+        {
+            var model = CreateViewModel<AdminViewModel>();
+
+            string basePath = HttpContext.MapPath("~/admin/temp/");
+            if (!Directory.Exists(basePath))
+                Directory.CreateDirectory(basePath);
+
+            var sql = new SqlDataAccess(wlApp.Configuration.ConnectionString);
+            sql.Timeout = 180;
+
+            var dirInfo = new DirectoryInfo(basePath);
+            foreach (var file in dirInfo.GetFiles("weblog-*.*"))
+            {
+                file.Delete();
+            }
+
+            string baseFileName = "weblog-backup-" + DateTime.Now.ToString("yyyy-MM-dd");
+            string backupFile = basePath + baseFileName + ".bak";
+            int res = sql.ExecuteNonQuery("backup database weblog to DISK = @0", backupFile);
+
+            if (res < 0)
+            {
+                ErrorDisplay.ShowError("Backup failed: " + sql.ErrorMessage);
+            }
+            else
+            {
+                string fullFile = basePath + "..\\" + baseFileName + ".zip";
+                string outputFile = basePath + baseFileName + ".zip";
+                System.IO.File.Delete(fullFile);
+                ZipFile.CreateFromDirectory(basePath, fullFile);
+                System.IO.File.Move(fullFile, outputFile);
+
+                //return File(outputFile, "application/zip", baseFileName + ".zip");
+                ErrorDisplay.MessageAsRawHtml = true;
+                ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + WebUtils.ResolveUrl("~/admin/temp/" + baseFileName + ".zip") + "'>Download</a>");
+            }
+            
             return View("Index",model);
         }
 

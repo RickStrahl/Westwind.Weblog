@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 using Westwind.Weblog.Business.Utilities;
 
 namespace Westwind.Weblog.Business.Test
@@ -10,24 +11,24 @@ namespace Westwind.Weblog.Business.Test
         public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;encrypt=false";
 
         [Test]
-        public void RequestLoggerTest()
+        public async Task RequestLoggerTest()
         {
 
             DbResult<bool> res = RequestLogger.EnsureTablesExist();
             Console.WriteLine(res.Message);
 
-            res = RequestLogger.LogRequest("testPostId", "testReferrer", "127.0.0.3");
+            res = await RequestLogger.LogRequest("testPostId", "testReferrer", "127.0.0.3");
             Console.WriteLine(res.Message);
-            res = RequestLogger.LogRequest("testPostId2", "testReferrer2", "127.0.0.1");
+            res = await RequestLogger.LogRequest("testPostId2", "testReferrer2", "127.0.0.1");
             Console.WriteLine(res.Message);
-            res = RequestLogger.LogRequest("testPostId", "testReferrer2", "127.0.0.1");
+            res = await RequestLogger.LogRequest("testPostId", "testReferrer2", "127.0.0.1");
             Console.WriteLine(res.Message);
-            res = RequestLogger.LogRequest("testPostId2", "testReferrer2", "127.0.0.2");
+            res = await RequestLogger.LogRequest("testPostId2", "testReferrer2", "127.0.0.2");
             Console.WriteLine(res.Message);
         }
 
         [Test]
-        public void RequestLoggerClearTest()
+        public async Task RequestLoggerClearTest()
         {
 
             DbResult<bool> res = RequestLogger.EnsureTablesExist();

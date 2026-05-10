@@ -30,6 +30,10 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var env = builder.Environment;
 
+wlApp.IsDevelopment = builder.Environment.IsDevelopment();
+wlApp.EnvironmentName = builder.Environment.EnvironmentName;
+wlApp.Constants.AppStartedOn = DateTime.Now;
+
 
 // constants            
 wlApp.StartupFolder = Environment.CurrentDirectory;

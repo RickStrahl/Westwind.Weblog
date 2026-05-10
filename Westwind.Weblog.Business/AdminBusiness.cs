@@ -1,3 +1,5 @@
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -5,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Westwind.Data.EfCore;
 using Westwind.Utilities;
 using Westwind.Utilities.Data;
@@ -132,6 +133,24 @@ namespace Westwind.Weblog.Business
             return true;
         }
 
+        public bool ShrinkDatabase(string databaseName = null)
+        {
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                var builder = new SqlConnectionStringBuilder(wlApp.Configuration.ConnectionString);
+                databaseName = builder.InitialCatalog;
+            }            
+            if (string.IsNullOrEmpty(databaseName))
+                databaseName = "WeblogCore";
 
+            string sql = $@"DBCC SHRINKDATABASE('{databaseName}');";
+            if (Db.ExecuteNonQuery(sql) < 0)
+            {
+                SetError(Db.ErrorMessage);
+                return false;
+            }
+
+            return true;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Westwind.Utilities.Data;
 using Westwind.Weblog.Business.Configuration;
 
@@ -14,7 +15,7 @@ namespace Westwind.Weblog.Business.Utilities
         /// <param name="referrer"></param>
         /// <param name="ipAddress"></param>
         /// <returns></returns>
-        public static DbResult<bool> LogRequest(string postId, string referrer = null, string ipAddress = null)
+        public static async Task<DbResult<bool>> LogRequest(string postId, string referrer = null, string ipAddress = null)
         {
             var sql = """
                 INSERT INTO PostHits
@@ -38,7 +39,7 @@ namespace Westwind.Weblog.Business.Utilities
                 """;
 
             using var db = new SqlDataAccess(wlApp.Configuration.ConnectionString);
-            int result = db.ExecuteNonQuery(sql,
+            int result = await db.ExecuteNonQueryAsync(sql,
                 db.CreateParameter("@PostId", postId),
                 db.CreateParameter("@Referrer", referrer),
                 db.CreateParameter("@IpAddress", ipAddress));
@@ -65,7 +66,7 @@ namespace Westwind.Weblog.Business.Utilities
             // in the db
             if (result == 1)
             {
-                db.ExecuteNonQuery("""
+                await db.ExecuteNonQueryAsync("""
                     update Posts set Hits = Hits + 1 where Id = @PostId;
                     """, db.CreateParameter("@PostId", postId));
             }

@@ -49,6 +49,7 @@
     --bs-info-bg-subtle: #293954;
     --bs-info-text-emphasis: cornsilk;
     --bs-info-border-subtle: #2b4063;
+    --bs-card-cap-bg: #2b4063;  
 }
 
 [data-theme="dark"] {
@@ -95,6 +96,7 @@
     --bs-info-bg-subtle: #293954;
     --bs-info-text-emphasis: cornsilk;
     --bs-info-border-subtle: #2b4063;
+    --bs-card-cap-bg: #2b4063;
 }
 
 
@@ -436,6 +438,44 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
         display: none !important;
     }
 }
+
+/* flows child elements evenly to fill 100%*/
+.responsive-container {
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+}
+
+.responsive-container > * {
+    margin-right: 0.5em;
+    width: 100%;
+}
+
+.responsive-container > *:last-child {
+    margin-right: 0;
+}
+
+.stackable {
+}
+
+@media(max-width: 767px) {
+    .responsive-container {
+        flex-direction: column;
+    }
+
+    .responsive-container > * {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        margin-top: 0.5em;
+        width: 100% !important;
+    }
+
+    .stackable {
+        display: block;
+        margin-top: 0.5em;
+    }
+}
+
 
 .shown {
     display: block;

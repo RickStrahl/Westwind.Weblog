@@ -31,6 +31,7 @@ namespace Westwind.Weblog.Business.Configuration
         /// </summary>
         public string ConnectionString { get; set; }
 
+        
         /// <summary>
         /// REMOVE after migration
         /// </summary>
@@ -85,6 +86,8 @@ namespace Westwind.Weblog.Business.Configuration
         /// Example: Rick Strahl
         /// </summary>
         public string CommentAutoApproveNamePart { get; set; }  // = "Henry Rollins";
+
+        
 
 
         protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)

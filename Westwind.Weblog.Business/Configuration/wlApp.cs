@@ -25,6 +25,8 @@ namespace Westwind.Weblog.Business.Configuration
 
         public static string StartupFolder { get; set; }
 
+        public static string EnvironmentName { get; set; }
+
         public static bool IsDevelopment { get; set; }
 
         public static DateTime AppStartedOn { get; set; }
@@ -37,6 +39,8 @@ namespace Westwind.Weblog.Business.Configuration
             
             WeblogConfiguration.Current = wlApp.Configuration;
         }
+
+        
 
         /// <summary>
         /// Generates a new Unique ID for posts and blogs etc.
@@ -51,5 +55,6 @@ namespace Westwind.Weblog.Business.Configuration
     public class WeblogConstants
     {
         public string DefaultConnectionString { get; set; } = "server=.;database=WeblogCore; integrated security=true;MultipleActiveResultSets=true;encrypt=false";
+        public DateTime AppStartedOn { get; set; }
     }
 }

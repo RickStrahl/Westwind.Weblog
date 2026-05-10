@@ -73,33 +73,6 @@ namespace Westwind.Weblog.Business.Test
         }
 
 
-        [Test]
-        public void RequestLoggerTest()
-        {
-
-            DbResult<bool> res = RequestLogger.EnsureTablesExist();
-            Console.WriteLine(res.Message);
-
-            res = RequestLogger.LogRequest("testPostId", "testReferrer", "127.0.0.3");
-            Console.WriteLine(res.Message);
-            res = RequestLogger.LogRequest("testPostId2", "testReferrer2", "127.0.0.1");
-            res = RequestLogger.LogRequest("testPostId", "testReferrer2", "127.0.0.1");
-            res = RequestLogger.LogRequest("testPostId2", "testReferrer2", "127.0.0.2");
-        }
-
-        [Test]
-        public void RequestLoggerClearTest()
-        {
-
-            DbResult<bool> res = RequestLogger.EnsureTablesExist();
-            Console.WriteLine(res.Message);
-
-            res = RequestLogger.ClearRequests(2);
-
-            Assert.IsTrue(res, "Failed to clear requests: " + res.Message);
-        }
-
-
         WeblogContext GetContext()
         {
             var options = new DbContextOptionsBuilder<WeblogContext>()

@@ -24,37 +24,39 @@ namespace Westwind.Weblog
         public IWebHostEnvironment Host { get; }
 
         AdminBusiness AdminRepo { get; }
-        
-        
-        
-        public AdminController(AdminBusiness repo, 
+
+
+
+        public AdminController(AdminBusiness repo,
                                WeblogConfiguration configuration,
                                IWebHostEnvironment host)
         {
             Configuration = configuration;
             Host = host;
             AdminRepo = repo;
-            
+
         }
 
         [Route("/admin")]
         [Route("/admin/index")]
-        [HttpGet]        
+        [HttpGet]
         public IActionResult Index()
         {
             var model = CreateViewModel<AdminViewModel>();
-            return View(model);
+            return View("index", model);
         }
+
+
 
         [HttpGet("/admin/import")]
         public IActionResult Import()
         {
             var model = CreateViewModel<AdminViewModel>();
-            model.Message = !AdminRepo.ImportOldWebLog(wlApp.Configuration.OldWeblogConnectionString) 
-                    ? AdminRepo.ErrorMessage 
+            model.Message = !AdminRepo.ImportOldWebLog(wlApp.Configuration.OldWeblogConnectionString)
+                    ? AdminRepo.ErrorMessage
                     : "Import completed.";
 
-            return View("Index",model);
+            return View("Index", model);
         }
 
         [Route("admin/deleteunusedimages")]
@@ -71,7 +73,7 @@ namespace Westwind.Weblog
                 model.Message = $"{StringUtils.CountLines(sb.ToString())} images deleted.\r\n<pre>{sb}</pre>";
             }
 
-            return View("Index",model);
+            return View("Index", model);
         }
 
         [Route("admin/updatecommentcounts")]
@@ -85,7 +87,23 @@ namespace Westwind.Weblog
             else
                 model.Message = "Comment counts updated.";
 
-            return View("Index",model);
+            return View("Index", model);
+        }
+
+        [Route("admin/cleanupdatabase")]
+        public IActionResult CleanupDatabase()
+        {
+            var model = CreateViewModel<AdminViewModel>();
+            if (!AdminRepo.ShrinkDatabase())
+            {
+                ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Database Cleanup failed");
+            }
+            else
+            {
+                ErrorDisplay.ShowSuccess("Database Cleanup Completed");
+            }
+
+            return View("Index", model);
         }
 
         [Route("admin/backup")]
@@ -126,9 +144,58 @@ namespace Westwind.Weblog
                 ErrorDisplay.MessageAsRawHtml = true;
                 ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + WebUtils.ResolveUrl("~/admin/temp/" + baseFileName + ".zip") + "'>Download</a>");
             }
-            
-            return View("Index",model);
+
+            return View("Index", model);
         }
+
+        [HttpGet]
+        [Route("/admin/configuration")]
+        public ActionResult ShowConfiguration()
+        {
+            var model = CreateViewModel<AdminViewModel>();
+            model.ConfigurationJson = JsonSerializationUtils.Serialize(model.Configuration, false, true, false);
+
+            return View("Configuration", model);
+        }
+
+
+        [HttpPost]
+        [Route("/admin/configuration")]
+        public ActionResult UpdateConfiguration(AdminViewModel model)
+        {
+            InitializeViewModel(model);
+
+            if (Request.IsFormVar("btnUpdateConfiguration"))
+            {
+                var config =
+                    JsonSerializationUtils.Deserialize(model.ConfigurationJson, typeof(WeblogConfiguration)) as
+                        WeblogConfiguration;
+
+                if (config != null)
+                {
+                    wlApp.Configuration = config;
+                    model.ErrorDisplay.ShowInfo("Running configuration has been updated.");
+                }
+                else
+                {
+                    model.ErrorDisplay.ShowError("Configuration could not be updated - invalid JSON.");
+                }
+
+                // see actual current values
+                ModelState.Clear();
+                model.ConfigurationJson = JsonSerializationUtils.Serialize(wlApp.Configuration, false, true, false);
+            }
+            else if (Request.IsFormVar("btnWriteConfiguration"))
+            {
+                if (wlApp.Configuration.Write())
+                    model.ErrorDisplay.ShowInfo($"Configuration has been written out.");
+                else
+                    model.ErrorDisplay.ShowError($"Configuration could not be written.");
+            }
+
+            return View("Configuration", model);
+        }
+
 
         [HttpGet("/admin/ads")]
         public IActionResult Ads()
@@ -173,8 +240,8 @@ namespace Westwind.Weblog
             if (root == null) return;
 
             model.BottomPostAd = root.Element("BottomPostAd")?.Value ?? string.Empty;
-            model.TopPostAd    = root.Element("TopPostAd")?.Value    ?? string.Empty;
-            model.TopPageAd    = root.Element("TopPageAd")?.Value    ?? string.Empty;
+            model.TopPostAd = root.Element("TopPostAd")?.Value ?? string.Empty;
+            model.TopPageAd = root.Element("TopPageAd")?.Value ?? string.Empty;
 
             model.SponsorBanners.AddRange(
                 root.Element("SponsorBanners")?
@@ -198,8 +265,8 @@ namespace Westwind.Weblog
                     new XDeclaration("1.0", "utf-8", null),
                     new XElement("Ads",
                         new XElement("BottomPostAd", model.BottomPostAd ?? string.Empty),
-                        new XElement("TopPostAd",    model.TopPostAd    ?? string.Empty),
-                        new XElement("TopPageAd",    model.TopPageAd    ?? string.Empty),
+                        new XElement("TopPostAd", model.TopPostAd ?? string.Empty),
+                        new XElement("TopPageAd", model.TopPageAd ?? string.Empty),
                         new XElement("SponsorBanners",
                             model.SponsorBanners.Select(b => new XElement("Banner", b))),
                         new XElement("ContentAds",
@@ -217,7 +284,14 @@ namespace Westwind.Weblog
     public class AdminViewModel : WeblogBaseViewModel
     {
         public string Message { get; set; }
+
+        public string ApplicationVersion { get; } = typeof(AdminController).Assembly.GetName().Version.ToString();
+        public string ApplicationDate { get; } =
+            TimeUtils.FriendlyDateString(new FileInfo(typeof(wlApp).Assembly.Location).LastWriteTime);
+
+        public string ConfigurationJson { get; set; }
     }
+
 
     public class AdsViewModel : WeblogBaseViewModel
     {

@@ -98,7 +98,7 @@ namespace Westwind.Weblog
             }
             else
             {
-                RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, HttpContext.GetClientIpAddress());
+                RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, HttpContext.GetClientIpAddress()).FireAndForget();
             }
 
             return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages, ErrorDisplay = ErrorDisplay });

@@ -26,10 +26,12 @@ $(document).ready(function () {
         function applyTheme(theme) {
             if (theme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.setAttribute('data-bs-theme', 'dark');   // bootstrap
                 icon.className = 'fas fa-sun';
                 btn.title = 'Switch to light mode';
             } else {
                 document.documentElement.removeAttribute('data-theme');
+                document.documentElement.removeAttribute('data-bs-theme');   // bootstrap
                 icon.className = 'fas fa-moon';
                 btn.title = 'Switch to dark mode';
             }

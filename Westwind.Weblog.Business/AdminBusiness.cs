@@ -42,7 +42,7 @@ namespace Westwind.Weblog.Business
             //    return false;
             //}
 
-            return WeblogDataImporter.EnsureWeblogData(Context, "server=.;database=weblog;integrated security=true");
+            return WeblogDataImporter.EnsureWeblogData(Context, wlApp.Configuration.OldWeblogConnectionString);
         }
 
         public StringBuilder DeleteOldImages(string imageFolder)

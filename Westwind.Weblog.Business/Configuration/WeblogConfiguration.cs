@@ -34,7 +34,7 @@ namespace Westwind.Weblog.Business.Configuration
         /// <summary>
         /// REMOVE after migration
         /// </summary>
-        public string OldWeblogConnectionString => "server=.;database=Weblog;integrated security=true;encrypt=true";
+        public string OldWeblogConnectionString { get; set; } = "server=.;database=Weblog;integrated security=true;encrypt=false";
 
         /// <summary>
         /// The server relative root path for this application
@@ -77,7 +77,14 @@ namespace Westwind.Weblog.Business.Configuration
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
 
         public SystemConfiguration System { get; set; } = new SystemConfiguration();
-
+        
+        /// <summary>
+        /// Optional full or partial name  part that is used to auto approve comments.
+        /// Leave empty for no auto-validation. Matches the email address entered.
+        /// 
+        /// Example: Rick Strahl
+        /// </summary>
+        public string CommentAutoApproveNamePart { get; set; }  // = "Henry Rollins";
 
 
         protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)

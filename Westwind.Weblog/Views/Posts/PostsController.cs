@@ -15,6 +15,7 @@ using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
 using Westwind.Webstore.Business.Utilities;
 using Westwind.AspNetCore.Utilities;
+using Westwind.Weblog.Business.Utilities;
 
 namespace Westwind.Weblog
 {
@@ -63,9 +64,6 @@ namespace Westwind.Weblog
                 return Redirect("/");                
             }
 
-            string message = TempData["CommentMessage"]?.ToString();
-
-
             // Markdown
             string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
             postHtml = PostRepo.EmbedAds(postHtml);
@@ -89,16 +87,18 @@ namespace Westwind.Weblog
                 post.Body = pages[pageToDisplay - 1];
             else
                 totalPages = 1;
-            
-            var commentMessage = HttpContext.Items["CommentMessage"] as string; 
-            if(!string.IsNullOrEmpty(commentMessage))
-            {
-                ErrorDisplay.ShowWarning(commentMessage);
-            }
-            else if(!string.IsNullOrEmpty(message))
+
+
+            // Message from previous Post request to display - comment moderation after approval
+            string commentMessage = TempData["CommentMessage"]?.ToString();
+            if (!string.IsNullOrEmpty(commentMessage))
             {
 
-                ErrorDisplay.ShowWarning(message,"Comment Moderation");
+                ErrorDisplay.ShowWarning(commentMessage,"Comment Moderation");
+            }
+            else
+            {
+                RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, HttpContext.GetClientIpAddress());
             }
 
             return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages, ErrorDisplay = ErrorDisplay });
@@ -121,7 +121,6 @@ namespace Westwind.Weblog
         [Route("showpost.aspx")]
         public async Task<IActionResult> ShowPostPost([FromForm] PostViewModel model, [FromRoute] int year, [FromRoute] string month, [FromRoute] int day, [FromRoute] string slug, [FromRoute] string id = null)
         {
-
             Post post;
             if (!string.IsNullOrEmpty(id))
                 post = await PostRepo.GetPost(id);
@@ -151,7 +150,6 @@ namespace Westwind.Weblog
             // Markdown
             string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
             postHtml = PostRepo.EmbedAds(postHtml);
-
 
             model.Post = post;
             model.PostRepo = PostRepo;
@@ -193,6 +191,11 @@ namespace Westwind.Weblog
                 {
                     hasError = true;
                     ErrorDisplay.ShowError(PostRepo.ValidationErrors.ToHtml(), "Please fix the following:");
+                }
+
+                if (comment.CommentEmail?.Contains(wlApp.Configuration.CommentAutoApproveNamePart) ?? false)
+                {
+                    dataComment.IsActive = true;  // Auto approve
                 }
 
                 if (!hasError && await PostRepo.SaveAsync(post))

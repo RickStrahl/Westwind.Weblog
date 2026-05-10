@@ -23,6 +23,7 @@ using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
 using Westwind.AspNetCore.Markdown;
 using Westwind.Utilities;
+using Westwind.Weblog.Business.Utilities;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -95,6 +96,9 @@ services.AddDbContext<WeblogContext>(builder =>
 services.AddScoped<PostBusiness>();
 services.AddScoped<AdminBusiness>();
 services.AddScoped<UserBusiness>();
+
+RequestLogger.EnsureTablesExist();
+
 
 services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

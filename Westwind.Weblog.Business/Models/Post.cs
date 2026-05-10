@@ -83,6 +83,7 @@ namespace Westwind.Weblog.Business.Models
 
         public bool IsArticle { get; set;  }
 
+        public int Hits { get; set; }
 
         public Post()
         {

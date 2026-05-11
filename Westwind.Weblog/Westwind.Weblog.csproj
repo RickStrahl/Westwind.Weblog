@@ -8,6 +8,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="pingo.exe" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="pingo.exe">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.7" />
 		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
@@ -27,6 +37,23 @@
 		<!-- Application -->
 		<!--<ProjectReference Include="..\Westwind.WeblogServices.Client\Westwind.WeblogServices.Client.csproj" />-->
 	</ItemGroup>
+
+
+	<ItemGroup>
+		<None Update="pingo.exe" CopyToOutputDirectory="PreserveNewest" />
+		<Content Update="_weblog-configuration.json;wwwroot\admin\applicationlog.txt" CopyToPublishDirectory="Never" />				
+		<Content Update="wwwroot\web.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+		<!-- Ignore Year Image folders but publish root folder -->
+		<Content Update="wwwroot\images\**\*" CopyToPublishDirectory="Never" />
+		<Content Update="wwwroot\images\*.*" CopyToPublishDirectory="Always" />
+		
+		<Content Update="wwwroot\admin\ads.xml" CopyToPublishDirectory="Never" />
+
+	</ItemGroup>
+
 
 
 </Project>

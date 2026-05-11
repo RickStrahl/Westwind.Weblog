@@ -41,15 +41,19 @@ namespace Westwind.Weblog.Business
             return GetFirstItem(SponsorBanners);
         }
 
-        public IReadOnlyList<string> GetShuffledContentAds()
+        public List<string> GetShuffledContentAds()
         {
-            return ShuffleAllButFirst(ContentAds);
+            // shuffle all but first ad
+            return Shuffle(ContentAds,1);
         }
 
-        public IReadOnlyList<string> GetShuffledSponsorBanners()
+        public string GetRandomSponsorBanner()
         {
-            return ShuffleAllButFirst(SponsorBanners);
+            var random = Random.Shared;
+            var i = random.Next(SponsorBanners.Count);          
+            return SponsorBanners[i];
         }
+
 
         private static AdManager LoadFromXml()
         {
@@ -73,26 +77,19 @@ namespace Westwind.Weblog.Business
                 TopPageAd = GetElementValue(root, nameof(TopPageAd))
             };
 
-            manager.SponsorBanners.AddRange(ReadCollection(root, "SponsorBanners", "Banner"));
-            if (manager.SponsorBanners.Count == 0)
-                manager.SponsorBanners.AddRange(ReadLegacyCollection(root, "SponsorBanner"));
-
+            manager.SponsorBanners.AddRange(ReadCollection(root, "SponsorBanners", "Banner"));            
             manager.ContentAds.AddRange(ReadCollection(root, "ContentAds", "Ad"));
-            if (manager.ContentAds.Count == 0)
-                manager.ContentAds.AddRange(ReadLegacyCollection(root, "ContentAd"));
-
-
+            
             return manager;
         }
 
         private static string ResolveAdsFile(string webRootFolder)
         {
-            var newAdsFile = Path.Combine(webRootFolder, "admin", "adsnew.xml");
+            var newAdsFile = Path.Combine(webRootFolder, "admin", "ads.xml");
             if (File.Exists(newAdsFile))
                 return newAdsFile;
 
-            var legacyAdsFile = Path.Combine(webRootFolder, "admin", "ads.xml");
-            return File.Exists(legacyAdsFile) ? legacyAdsFile : null;
+            return null;
         }
 
         private static string GetElementValue(XElement root, string elementName)
@@ -125,18 +122,22 @@ namespace Westwind.Weblog.Business
         }
 
 
-        private static string GetFirstItem(IReadOnlyList<string> items)
+        private static string GetFirstItem(List<string> items)
         {
             return items.FirstOrDefault(item => !string.IsNullOrWhiteSpace(item));
         }
 
-        private static IReadOnlyList<string> ShuffleAllButFirst(IReadOnlyList<string> items)
+        private static List<string> Shuffle(List<string> items, int skipFirstItemCount = 0)
         {
             var filteredItems = items.Where(item => !string.IsNullOrWhiteSpace(item)).ToList();
             if (filteredItems.Count <= 1)
                 return filteredItems;
 
-            var shuffledItems = filteredItems.Skip(1).ToList();
+            List<string> shuffledItems = items;
+
+            if (skipFirstItemCount > 0)
+                shuffledItems = filteredItems.Skip(1).ToList();
+            
             var random = Random.Shared;
 
             for (var index = shuffledItems.Count - 1; index > 0; index--)

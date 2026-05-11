@@ -2,7 +2,7 @@
 
 ## Must Haves
 * Click Statistics
-* 
+* Pingo Compression for Image Uploads
 
 ## Later
 

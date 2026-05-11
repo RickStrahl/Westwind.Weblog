@@ -5,6 +5,7 @@
     <Project Path="BlazePostApi/BlazePostApi.Test/BlazePostApi.Test.csproj" />
   </Folder>
   <Folder Name="/SupportFiles/">
+    <File Path=".gitignore" />
     <File Path="TODO.md" />
   </Folder>
   <Folder Name="/SupportLibraries/">

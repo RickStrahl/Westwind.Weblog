@@ -122,41 +122,9 @@
                 </div>
                 
    
-            @{
-                    string sponsorPanel;
+            
+                @Html.Raw(AdManager.Ads.GetRandomSponsorBanner())
 
-                    if (AdManager.Ads.SponsorBanners.Count > 1)
-                    {
-                        var random = new Random();
-                        sponsorPanel = AdManager.Ads.SponsorBanners[random.Next(AdManager.Ads.SponsorBanners.Count)];
-                    }
-                    else 
-				{
-					sponsorPanel = AdManager.Ads.SponsorBanners.Count == 1 ? AdManager.Ads.SponsorBanners[0] : string.Empty;
-				}
-            }
-                @Html.Raw(sponsorPanel)
-@* 
-                <div id="SponsorPanel"
-                     onclick="window.location.href='http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored'"
-                     style="cursor: pointer">
-
-                    <div class="ad-free-msg">
-                        Ad-free experience sponsored by:
-                    </div>
-                    <div style="flex: auto;">
-                        <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
-                           title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
-                            <img src="~/images/Sponsors/AspPoseLogoIconTransparent.png" style="height: 20px;  vertical-align:top" />
-                            <b>ASPOSE</b>
-                        </a>
-                        - the market leader of .NET and Java APIs for file formats – natively work with DOCX, XLSX, PPT, PDF, images and more
-                        <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
-                           title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
-                            <i class="fa fa-external-link" style="padding: 0 5px; font-weight: bold"></i>
-                        </a>
-                    </div>
-                </div> *@
                 <div class="clearfix"></div>
             
                 <div class="post-container">

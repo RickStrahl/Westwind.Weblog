@@ -81,6 +81,29 @@ namespace Westwind.Weblog.Business.Test
                 Console.WriteLine(comment.Title);
         }
 
+
+        [Test]
+        public async Task PostSearchTests()
+        {
+            var config = new Configuration.WeblogConfiguration()
+            {
+                PostPageSize = 10
+            };
+            var ctx = GetContext();
+            var postRepo = new PostBusiness(ctx, config);
+
+            var search = "Westwind.Scripting";
+
+            var posts = await postRepo.PostSearchAsync(search, 15);
+
+            
+
+            ClassicAssert.IsNotNull(posts);
+            ClassicAssert.IsTrue(posts.Count > 0 && posts.Count <= config.PostPageSize);
+            foreach (var post in posts)
+                Console.WriteLine(post.Title);
+        }
+
         WeblogContext GetContext()
         {
             var options = new DbContextOptionsBuilder<WeblogContext>()

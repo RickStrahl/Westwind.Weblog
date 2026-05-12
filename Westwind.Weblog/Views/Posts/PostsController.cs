@@ -342,6 +342,20 @@ namespace Westwind.Weblog
         }
 
 
+        /// <summary>
+        /// API endpoint for post search autocomplete
+        /// </summary>
+        [HttpGet]
+        [Route("api/posts/search")]
+        public async Task<IActionResult> PostSearch(string search, int count = 15)
+        {
+            if (string.IsNullOrWhiteSpace(search))
+                return Json(new List<object>());
+
+            var results = await PostRepo.PostSearchAsync(search, count);
+            return Json(results);
+        }
+
         private bool CanLogRequest()
         {
             var userAgent = Request.Headers.UserAgent.ToString();

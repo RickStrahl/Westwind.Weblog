@@ -28,8 +28,8 @@ namespace Westwind.Weblog.Business
         public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody = false)
         {
             return await Context.Posts
-                .Include("Comments")
-                .Where(p=> p.Active)
+                .Where(p => p.Active)
+                .Include("Comments")                
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new Post
@@ -52,6 +52,7 @@ namespace Westwind.Weblog.Business
         public List<Post> GetLastPosts(int postCount = 75, bool includeBody = false)
         {
             return Context.Posts
+                .Where(p => p.Active)
                 .Include("Comments")
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
@@ -72,11 +73,14 @@ namespace Westwind.Weblog.Business
         }
 
 
-        public List<PostListItem> PostSearch(string postSearch, int postCount = 15)
+        public async Task<List<PostListItem>> PostSearchAsync(string postSearch, int postCount = 15)
         {
-            return Context.Posts
-                .Where(p=> p.Title.Contains(postSearch, StringComparison.OrdinalIgnoreCase) || 
-                           p.Abstract.Contains(postSearch, StringComparison.OrdinalIgnoreCase) )                
+            postSearch = postSearch.ToLower();
+
+            return await Context.Posts
+                .Where(p=> p.Active && 
+                           (p.Title.ToLower().Contains(postSearch) || 
+                           p.Abstract.ToLower().Contains(postSearch)) )                
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new PostListItem
@@ -90,7 +94,7 @@ namespace Westwind.Weblog.Business
                     Created = p.Created,                    
                     FeaturedImageUrl = p.FeaturedImageUrl
                 })
-                .ToList();
+                .ToListAsync();
         }
         
 

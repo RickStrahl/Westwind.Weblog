@@ -11,6 +11,43 @@
     var repo = Model.PostRepo;
 }
 
+
+
+<div class="post-search-container" style="margin: 0 1em 1em 1em; position: relative;">
+  
+	<div class="input-group small" style="max-width: 100%; margin-top: -0.55em;">
+		<span class="input-group-text" style="background: var(--input-bg); border-color: var(--border); color: var(--text-muted);">
+			<i class="fas fa-search" style="font-size: 0.85em;"></i>
+		</span>
+		<input type="text" id="PostSearchInput"
+		       class="form-control form-control-sm"
+		       placeholder="Search weblog posts..."
+		       autocomplete="off"
+		       style="background: var(--input-bg); color: var(--input-color); border-color: var(--border);" />
+		<button type="button" class="btn btn-outline-secondary btn-sm" id="PostSearchClear"
+		        style="display:none; border-color: var(--border); color: var(--text-muted);">
+			<i class="fas fa-times" style="font-size: 0.8em;"></i>
+		</button>
+	</div>
+
+    <div id="PostSearchDropdown" style="
+        display: none;
+        position: absolute;
+        top: calc(100% + 3px);
+        left: 0;
+        width: 480px;
+        max-width: 95vw;
+        max-height: 400px;
+        overflow-y: auto;
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.25);
+        z-index: 1000;">
+    </div>
+</div>
+
 <div style="margin: 0 1em 1em 1em;">
     @{
         int counter = 0;
@@ -94,13 +131,11 @@
     <meta property="og:image" content="https://weblog.west-wind.com/images/HeroImages/RickHero13.jpg"/>
 
     <meta name="twitter:card" content="summary" />
+    <link href="~/css/postlist.css" rel="stylesheet" />
+}
 
+
+@section scripts {
+	<script src="~/scripts/post.js"></script>
     
-    <style>
-        .featured-image {               
-            width: 100%;
-            max-width: 600px !important;
-        }
-    </style>
-   
 }

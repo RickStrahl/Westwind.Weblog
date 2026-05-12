@@ -524,4 +524,136 @@
 
     
 
+
 })(jQuery);
+
+
+
+// Post Search 
+(function () {
+    var searchTimer = null;
+    var lastSearch = '';
+
+    function initPostSearch() {
+        var input = document.getElementById('PostSearchInput');
+        var dropdown = document.getElementById('PostSearchDropdown');
+        var clearBtn = document.getElementById('PostSearchClear');
+
+        if (!input) return;
+
+        input.addEventListener('input', function () {
+            var val = input.value.trim();
+            clearBtn.style.display = val ? '' : 'none';
+
+            clearTimeout(searchTimer);
+            if (val.length < 2) {
+                hideDropdown();
+                return;
+            }
+            if (val === lastSearch) return;
+
+            searchTimer = setTimeout(function () {
+                doSearch(val);
+            }, 280);
+        });
+
+        clearBtn.addEventListener('click', function () {
+            input.value = '';
+            clearBtn.style.display = 'none';
+            hideDropdown();
+            input.focus();
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.post-search-container'))
+                hideDropdown();
+        });
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                hideDropdown();
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                var items = dropdown.querySelectorAll('.post-search-item');
+                if (items.length) items[0].focus();
+            }
+        });
+
+        dropdown.addEventListener('keydown', function (e) {
+            var items = Array.from(dropdown.querySelectorAll('.post-search-item'));
+            var idx = items.indexOf(document.activeElement);
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (idx < items.length - 1) items[idx + 1].focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (idx > 0) items[idx - 1].focus();
+                else input.focus();
+            } else if (e.key === 'Escape') {
+                hideDropdown();
+                input.focus();
+            }
+        });
+    }
+
+    function doSearch(searchText) {
+        lastSearch = searchText;
+        ajaxJson('/api/posts/search?search=' + encodeURIComponent(searchText), null,
+            function (results) {
+                renderResults(results);
+            },
+            function () {
+                renderResults(null);
+            },
+            { method: 'GET' }
+        );
+    }
+
+    function renderResults(results) {
+        var dropdown = document.getElementById('PostSearchDropdown');
+        dropdown.innerHTML = '';
+
+        if (!results || results.length === 0) {
+            dropdown.innerHTML = '<div class="post-search-no-results">No posts found.</div>';
+            dropdown.style.display = '';
+            return;
+        }
+
+        results.forEach(function (post) {
+            var a = document.createElement('a');
+            a.href = post.url;
+            a.className = 'post-search-item';
+            a.tabIndex = 0;
+
+            var date = post.created ? new Date(post.created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+            var abstract = (post.abstract || '').trim();
+            if (abstract.length > 120) abstract = abstract.substring(0, 120) + '\u2026';
+
+            a.innerHTML =
+                '<div class="post-search-item-title">' + escHtml(post.title) + '</div>' +
+                (abstract ? '<div class="post-search-item-abstract">' + escHtml(abstract) + '</div>' : '') +
+                (date ? '<div class="post-search-item-meta">' + date + '</div>' : '');
+
+            dropdown.appendChild(a);
+        });
+
+        dropdown.style.display = '';
+    }
+
+    function hideDropdown() {
+        var dropdown = document.getElementById('PostSearchDropdown');
+        if (dropdown) dropdown.style.display = 'none';
+        lastSearch = '';
+    }
+
+    function escHtml(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    if (document.readyState === 'loading')
+        document.addEventListener('DOMContentLoaded', initPostSearch);
+    else
+        initPostSearch();
+})();

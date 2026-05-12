@@ -1,0 +1,48 @@
+/* Post search autocomplete styles */
+.post-search-item {
+     display: block;
+     padding: 6px 10px;
+     border-bottom: 1px solid var(--border);
+     text-decoration: none;
+     color: var(--text);
+     transition: background 0.12s;
+ }
+
+.post-search-item:last-child {
+    border-bottom: none;
+}
+
+.post-search-item:hover, .post-search-item:focus {
+    background: var(--bg-selected);
+    color: var(--text);
+    text-decoration: none;
+    outline: none;
+}
+
+.post-search-item-title {
+    font-weight: 600;
+    font-size: 0.82em;
+    color: var(--link);
+    margin-bottom: 1px;
+}
+
+.post-search-item-abstract {
+    font-size: 0.75em;
+    color: var(--text-muted);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.post-search-item-meta {
+    font-size: 0.7em;
+    color: var(--text-faint);
+    margin-top: 1px;
+}
+
+#PostSearchDropdown .post-search-no-results {
+    padding: 8px 10px;
+    color: var(--text-muted);
+    font-size: 0.82em;
+}

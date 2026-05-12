@@ -238,3 +238,10 @@ textarea.comment-textbox, textarea.comment-textbox:focus {
                 flex-direction: column;
             }
         }
+
+
+
+.featured-image {
+     width: 100%;
+     max-width: 600px !important;
+ }

@@ -283,15 +283,33 @@ namespace Westwind.Weblog
         {
             var model = CreateViewModel<AdminViewModel>();
 
-            var refs = AdminRepo.PostHits();
-            if (refs == null)
+            var summary = AdminRepo.PostHits();
+            if (summary == null)
             {
                 ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Post Hits Query failed");
                 return View("Index", model);
             }
 
+            var today = AdminRepo.PostHits(
+                DateTime.Now.Date.AddDays(-1),
+                DateTime.Now.Date.AddDays(1));
+            var yesterday = AdminRepo.PostHits(
+                DateTime.Now.Date.AddDays(-2),
+                DateTime.Now.Date);
+            var twodaysago = AdminRepo.PostHits(
+                DateTime.Now.Date.AddDays(-3),
+                DateTime.Now.Date.AddDays(-1));
+          
 
-            return Json(refs);
+            var result = new
+            {
+                summary,
+                today,
+                yesterday,
+                twodaysago
+            };
+
+            return Json(result);
         }
 
 

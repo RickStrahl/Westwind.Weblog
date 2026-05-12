@@ -56,14 +56,15 @@
         <span class="share-label hidable-xs">Share on:</span>
                             
         <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet on Twitter">
-            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+            <span class="fa-stack" style="line-height: 1em;width: 1em; height: 1em;">
                 <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                <i class="fab  fa-square-x-twitter fa-square-twitter fa-stack-1x" style="font-size: 1em; color: black"></i>                
+                <i class="fab  fa-square-x-twitter fa-square-twitter fa-stack-1x" 
+                   style="font-size: 1em; color: black"></i>                
             </span>
         </a>
         <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" 
             target="_blank" title="Share on Facebook">
-            <span class="fa-stack" style="line-height: 1em;width: 0.8em;height: 0.8em;">
+            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-square fa-stack-1x" style=" color: white; font-size: 0.88em "></i>
                 <i class="fab fa-facebook-square fa-stack-1x" style="color: rgb(63, 96, 170); "></i>                
             </span>
@@ -150,57 +151,43 @@ No guarantees that changes will be accepted."
 </div>
 
 
-<style>
-    .donate-buttons {
-        display: flex; flex-direction: row; justify-content:space-between;
-    }
-    .social-button-container {
-        margin-left: 45px;
-        flex: 200 200 auto;
-        display: flex; flex-direction: row; justify-content:space-around; margin-top: 3px;
-    }
-    @@media(max-width: 600px) {
-        .donate-buttons { flex-direction: column; }
-    }
 
-</style>
 <div class='borderbox'
      style='margin-top: 20px; min-height:30px;'>
  
 
-    <div class="donate-buttons">
-        
-        <div class="share-box" style="float:left;margin-top: -7px; ">
-            <span class="share-label hidable-xs">Share on:</span>
+	
+
+    <div class="donate-buttons float-end">
+            <div class="share-box small">
+            <span class="share-label hidable-xs">Share:</span>
 
             <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" 
-               title="Tweet Post on Twitter">
-                <span class="fa-stack" style="line-height: 1em;width: 1em; height: 1em;">
+               title="Share Post on X">
+                <span class="fa-stack" style="line-height: 1em;width: 1em; height: 1em; margin-top: 0.04em">
                     <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
                     <i class="fab fa-square-x-twitter fa-stack-1x" style=" color: black;"></i>
-
                 </span>
             </a>
             <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" 
                target="_blank" title="Share Post on Facebook">
-                <span class="fa-stack" style="line-height: 1em; width: 1em;height: 1em;">
+                <span class="fa-stack" style="line-height: 1em;width: 1em; height: 1em;">
                     <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.85em "></i>
-                    <i class="fab fa-square-facebook fa-stack-1x" style=" color: rgb(63, 96, 170); font-size: 1.01em"></i>
+                    <i class="fab fa-square-facebook fa-stack-1x" style=" color: rgb(63, 96, 170); font-size: 1em"></i>
                 </span>
             </a>
             
         </div>
 
-
-       
         
     </div>
     
+    <div class=small>
+	    @AppWebUtils.CategoryLinks(repo)
+    </div>
+
     
 
-    <div style="margin-top: 10px;">
-        @AppWebUtils.CategoryLinks(repo)
-    </div>
 
         
 

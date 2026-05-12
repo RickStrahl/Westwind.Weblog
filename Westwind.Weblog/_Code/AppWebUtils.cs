@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -80,7 +80,7 @@ namespace Westwind.Weblog
             string[] Categories = postRepo.Entity.Categories.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             if (Categories.Length > 0)
             {
-                sb.Append("<div>Posted in <b>");
+                sb.Append("<div>Posted in: <b>");
                 foreach (string Category in Categories)
                 {
                     sb.Append("<a href='" + postRepo.Configuration.ApplicationBasePath +

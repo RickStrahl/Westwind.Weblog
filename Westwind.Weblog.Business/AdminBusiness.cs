@@ -159,14 +159,20 @@ namespace Westwind.Weblog.Business
 
         #region Statistics
 
-        public List<PostHitResult> PostHits()
+        public List<PostHitResult> PostHits(
+            DateTime start = default,
+            DateTime end = default,
+            int minHits = 10)
         {
-            var sql =
-                $"""
-                DECLARE @StartDate DATE = '2026-01-01';     -- Change to your start date
-                DECLARE @EndDate DATE = '2026-05-31';       -- Change to your end date (inclusive)
 
-                select posts.Title,
+            if (end == default)
+                end = DateTime.Now.Date.AddDays(1);
+            if (start == default)
+                start = DateTime.Now.Date.AddDays(-7);
+
+            var sql =
+                $"""                
+                select top {minHits} posts.Title,
                 CONCAT(
                     '/posts/',
                     DATEPART(year, posts.Created), '/',
@@ -188,7 +194,9 @@ namespace Westwind.Weblog.Business
                     order by Hits Desc
                 """;
 
-            var data = Db.QueryList<PostHitResult>(sql);
+            var data = Db.QueryList<PostHitResult>(sql,
+                Db.CreateParameter("@StartDate", start),
+                Db.CreateParameter("@EndDate", end));
             if (data == null)
             {
                 SetError(Db.ErrorMessage);
@@ -200,8 +208,7 @@ namespace Westwind.Weblog.Business
                 item.Url = wlApp.Configuration.ApplicationBasePath.TrimEnd('/') + item.Url;
             }
 
-            return data;
-            
+            return data;            
         }
 
         public class PostHitResult

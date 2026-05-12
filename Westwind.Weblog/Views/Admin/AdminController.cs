@@ -262,6 +262,39 @@ namespace Westwind.Weblog
             return View(model);
         }
 
+        [HttpGet("/admin/referrers")]
+        public IActionResult Referrers()
+        {
+            var model = CreateViewModel<AdminViewModel>();
+
+            var refs = AdminRepo.Referrers();
+            if (refs == null)
+            {
+                ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Referrer Query failed");
+                return View("Index",model);
+            }
+
+
+            return Json(refs);
+        }
+
+        [Route("/admin/posthits")]
+        public IActionResult PostHits()
+        {
+            var model = CreateViewModel<AdminViewModel>();
+
+            var refs = AdminRepo.PostHits();
+            if (refs == null)
+            {
+                ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Post Hits Query failed");
+                return View("Index", model);
+            }
+
+
+            return Json(refs);
+        }
+
+
         private void LoadAdsFromXml(AdsViewModel model)
         {
             var path = Path.Combine(Host.WebRootPath, "admin", "ads.xml");

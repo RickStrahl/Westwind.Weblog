@@ -1,7 +1,9 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,17 +17,17 @@ using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog.Business
 {
-    public class AdminBusiness : EntityFrameworkBusinessObject<WeblogContext,Post>
+    public class AdminBusiness : EntityFrameworkBusinessObject<WeblogContext, Post>
     {
-        new WeblogContext Context { get; set; }        
+        new WeblogContext Context { get; set; }
         readonly WeblogConfiguration WeblogConfiguration;
-        
 
-        public AdminBusiness(WeblogContext context, 
+
+        public AdminBusiness(WeblogContext context,
                               WeblogConfiguration config) : base(context)
         {
             WeblogConfiguration = config;
-            Context = context;            
+            Context = context;
         }
 
         public bool ImportOldWebLog(string oldWeblogConnectionString)
@@ -49,7 +51,7 @@ namespace Westwind.Weblog.Business
         public StringBuilder DeleteOldImages(string imageFolder)
         {
             StringBuilder sb = new StringBuilder();
-            
+
             var posts = Context.Posts.Select(p => new Post
             {
                 Id = p.Id,
@@ -65,7 +67,7 @@ namespace Westwind.Weblog.Business
 
             string postList = sbContent.ToString().ToLower();
             sbContent.Clear();
-            
+
             foreach (var dir in Directory.GetDirectories(imageFolder))
             {
                 var dirName = Path.GetFileName(dir);
@@ -73,7 +75,7 @@ namespace Westwind.Weblog.Business
                 // only /image folders that start with a number
                 if (char.IsDigit(dirName[0]))
                     DeleteOldImagesInFolder(dir, sb, postList);
-            }            
+            }
 
             return sb;
         }
@@ -124,7 +126,7 @@ namespace Westwind.Weblog.Business
                 {
                     var sql = $"update Posts set CommentCount = @1 where Id =@0";
                     var result = Db.ExecuteNonQuery(sql, post.Id, commentCount);
-                    
+
                     //Context.Posts.Attach(post);
                     //post.CommentCount = commentCount;
                     //Context.SaveChanges();
@@ -140,7 +142,7 @@ namespace Westwind.Weblog.Business
             {
                 var builder = new SqlConnectionStringBuilder(wlApp.Configuration.ConnectionString);
                 databaseName = builder.InitialCatalog;
-            }            
+            }
             if (string.IsNullOrEmpty(databaseName))
                 databaseName = "WeblogCore";
 
@@ -153,5 +155,106 @@ namespace Westwind.Weblog.Business
 
             return true;
         }
+
+
+        #region Statistics
+
+        public List<PostHitResult> PostHits()
+        {
+            var sql =
+                $"""
+                DECLARE @StartDate DATE = '2026-01-01';     -- Change to your start date
+                DECLARE @EndDate DATE = '2026-05-31';       -- Change to your end date (inclusive)
+
+                select posts.Title,
+                CONCAT(
+                    '/posts/',
+                    DATEPART(year, posts.Created), '/',
+                    DATEName(month , posts.Created), '/',
+                    DATEPART(day, posts.Created), '/',
+                    posts.SafeTitle
+                    ) AS Url,
+                        count(*) as Hits
+                    from Posts, PostHits
+                    where Posts.Id = PostHits.PostId AND CAST(Timestamp AS DATE) BETWEEN @StartDate AND @EndDate
+                    Group by posts.Title, CONCAT(
+                    '/posts/',
+                    DATEPART(year, posts.Created), '/',
+                    DATEName(Month, posts.Created), '/',
+                    DATEPART(day, posts.Created), '/',
+                    posts.SafeTitle
+                    )
+                    having Count(*) > 1
+                    order by Hits Desc
+                """;
+
+            var data = Db.QueryList<PostHitResult>(sql);
+            if (data == null)
+            {
+                SetError(Db.ErrorMessage);
+                return null;
+            }
+
+            foreach(var item in data)
+            {
+                item.Url = wlApp.Configuration.ApplicationBasePath.TrimEnd('/') + item.Url;
+            }
+
+            return data;
+            
+        }
+
+        public class PostHitResult
+        {
+            // implement
+            public string Title { get; set; }
+            public string Url { get; set; } 
+
+            public int Hits { get; set; }
+        }
+
+        public List<ReferrerResult> Referrers()
+        {
+            var sql =
+        """
+        --Hit counts per referrer across all posts
+        select p.id as PostId,
+        count(*) as HitCount,
+        p.Title,
+        p.SafeTitle,
+        ph.Referrer as Referrer
+            from posts p
+        inner join postHits ph on p.id = ph.postId
+            group by p.id, p.Title, p.SafeTitle, ph.Referrer
+            having count(*) > 1
+        order by HitCount desc, p.id, ph.Referrer
+        """;
+
+            var data = Db.QueryList<ReferrerResult>(sql);
+            if (data == null)
+            {
+                SetError(Db.ErrorMessage);
+                return null;
+            }
+
+            return data;
+        }
+
+
+        #endregion
+
     }
+
+   
+
+
+    public class ReferrerResult
+    {
+        public string PostId { get; set; }
+        public int HitCount { get; set; }
+        public string Title { get; set; }
+        public string SafeTitle { get; set; }
+        public string Referrer { get; set; }
+    }
+
 }

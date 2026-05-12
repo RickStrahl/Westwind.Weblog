@@ -265,17 +265,16 @@ namespace Westwind.Weblog
         [HttpGet("/admin/referrers")]
         public IActionResult Referrers()
         {
-            var model = CreateViewModel<AdminViewModel>();
+            var model = CreateViewModel<ReferrersViewModel>();
 
-            var refs = AdminRepo.Referrers();
-            if (refs == null)
+            model.Referrers = AdminRepo.Referrers();
+            if (model.Referrers == null)
             {
                 ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Referrer Query failed");
-                return View("Index",model);
+                return View("Index", CreateViewModel<AdminViewModel>());
             }
 
-
-            return Json(refs);
+            return View(model);
         }
 
         [HttpGet("/admin/posthits")]
@@ -451,6 +450,11 @@ namespace Westwind.Weblog
     {
         public string Label { get; set; }
         public List<AdminBusiness.PostHitResult> Hits { get; set; } = new();
+    }
+
+    public class ReferrersViewModel : WeblogBaseViewModel
+    {
+        public List<ReferrerResult> Referrers { get; set; } = new();
     }
 
     public class AdsViewModel : WeblogBaseViewModel

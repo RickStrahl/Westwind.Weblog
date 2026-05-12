@@ -1761,6 +1761,11 @@ pre > code, pre.code, pre.csharpcode {
     font-size: 0.92rem;
 }
 
+.referrers-table td:nth-child(1),
+.referrers-table td:nth-child(2) {
+    min-width: 280px;
+}
+
 .posthits-hits-column {
     width: 120px;
     text-align: right;

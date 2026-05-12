@@ -120,12 +120,8 @@
 								<tr>
 									<td data-label="Url">
 										<a href="@hit.Url" target="_blank" rel="noopener noreferrer" class="posthits-link">
-											@hit.Url
-										</a>
-										@if (!string.IsNullOrWhiteSpace(hit.Title))
-										{
-											<div class="posthits-title">@hit.Title</div>
-										}
+												@hit.Title
+										</a>										
 									</td>
 									<td data-label="Hits" class="posthits-hits-column">
 										<span class="posthits-badge">@hit.Hits</span>

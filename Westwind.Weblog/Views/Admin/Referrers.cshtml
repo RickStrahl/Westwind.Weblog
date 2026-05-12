@@ -1,0 +1,98 @@
+@using Westwind.AspNetCore.Components
+@model ReferrersViewModel
+
+@{
+	ViewData["Title"] = "Referrers";
+}
+
+<div class="posthits-page referrers-page">
+	<div class="posthits-header card mb-4">
+		<div class="card-body">
+			<div class="posthits-header-top">
+				<div>
+					<h1 class="page-header-text mb-2">
+						<i class="fad fa-link"></i>
+						Referrers
+					</h1>
+					<div class="byline mb-0">
+						Referring links that send traffic to individual weblog posts.
+					</div>
+				</div>
+
+				<div class="posthits-actions">
+					<a asp-action="Index" class="btn btn-outline-secondary">
+						<i class="fa fa-arrow-left"></i>
+						Back to Admin
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<error-display class="mt-3 mb-4" error-display-model="@Model.ErrorDisplay">
+	</error-display>
+
+	<section class="card mb-4 posthits-card">
+		<div class="card-header d-flex justify-content-between align-items-center gap-2 flex-wrap">
+			<span>
+				<i class="fad fa-table-list"></i>
+				Referrer Links
+			</span>
+			<span class="posthits-section-count">
+				@Model.Referrers.Count entries
+			</span>
+		</div>
+		<div class="card-body p-0">
+			@if (Model.Referrers.Count == 0)
+			{
+				<div class="p-4 text-muted">No referrer entries were found.</div>
+			}
+			else
+			{
+				<div class="table-responsive posthits-table-wrap">
+					<table class="table table-hover posthits-table referrers-table mb-0">
+						<thead>
+						<tr>
+							<th scope="col">Target Url</th>
+							<th scope="col" class="posthits-hits-column">Hits</th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach (var item in Model.Referrers)
+						{
+							<tr>
+								<td data-label="Target Url">
+									<a href="@item.TargetUrl" target="_blank" 
+									   style="display: block"
+									   rel="noopener noreferrer" class="posthits-link">
+											@item.Title
+									</a>
+
+
+									@if (!string.IsNullOrWhiteSpace(item.Title))
+									{
+											@if (!string.IsNullOrWhiteSpace(item.Referrer))
+											{
+												<a class="posthits-title" href="@item.Referrer" target="_blank" rel="noopener noreferrer" class="posthits-link">
+													@item.Referrer
+												</a>
+											}
+											else
+											{
+												<span class="text-muted">No referrer URL</span>
+											}
+									}
+								
+								</td>
+								<td data-label="Hits" class="posthits-hits-column">
+									<span class="posthits-badge">@item.HitCount</span>
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>
+			}
+		</div>
+	</section>
+</div>

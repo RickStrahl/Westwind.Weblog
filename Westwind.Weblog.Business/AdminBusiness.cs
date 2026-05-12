@@ -245,11 +245,25 @@ namespace Westwind.Weblog.Business
         select p.id as PostId,
         count(*) as HitCount,
         p.Title,
-        p.SafeTitle,
+        CONCAT(
+            '/posts/',
+            DATEPART(year, p.Created), '/',
+            DATENAME(month, p.Created), '/',
+            DATEPART(day, p.Created), '/',
+            p.SafeTitle
+            ) as TargetUrl,
         ph.Referrer as Referrer
             from posts p
         inner join postHits ph on p.id = ph.postId
-            group by p.id, p.Title, p.SafeTitle, ph.Referrer
+            group by p.id, p.Title,
+            CONCAT(
+                '/posts/',
+                DATEPART(year, p.Created), '/',
+                DATENAME(month, p.Created), '/',
+                DATEPART(day, p.Created), '/',
+                p.SafeTitle
+            ),
+            ph.Referrer
             having count(*) > 1
         order by HitCount desc, p.id, ph.Referrer
         """;
@@ -259,6 +273,11 @@ namespace Westwind.Weblog.Business
             {
                 SetError(Db.ErrorMessage);
                 return null;
+            }
+
+            foreach (var item in data)
+            {
+                item.TargetUrl = wlApp.Configuration.ApplicationBasePath.TrimEnd('/') + item.TargetUrl;
             }
 
             return data;
@@ -277,7 +296,7 @@ namespace Westwind.Weblog.Business
         public string PostId { get; set; }
         public int HitCount { get; set; }
         public string Title { get; set; }
-        public string SafeTitle { get; set; }
+        public string TargetUrl { get; set; }
         public string Referrer { get; set; }
     }
 

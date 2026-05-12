@@ -300,7 +300,7 @@ namespace Westwind.Weblog
 
             model.DailySections =
             [
-                CreatePostHitsSection("Today", today, today.AddDays(1)),
+                CreatePostHitsSection("Today", today, today),
                 CreatePostHitsSection("Yesterday", today.AddDays(-1), today.AddDays(-1)),
                 CreatePostHitsSection("Two days ago", today.AddDays(-2), today.AddDays(-2))
             ];

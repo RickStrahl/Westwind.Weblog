@@ -29,6 +29,7 @@ namespace Westwind.Weblog.Business
         {
             return await Context.Posts
                 .Include("Comments")
+                .Where(p=> p.Active)
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new Post
@@ -42,6 +43,7 @@ namespace Westwind.Weblog.Business
                     CommentCount = p.CommentCount,
                     Created = p.Created,
                     Body = includeBody ? p.Body : null,
+                    Active = p.Active,
                     FeaturedImageUrl = p.FeaturedImageUrl
                 })
                 .ToListAsync();
@@ -69,9 +71,32 @@ namespace Westwind.Weblog.Business
                 .ToList();
         }
 
+
+        public List<PostListItem> PostSearch(string postSearch, int postCount = 15)
+        {
+            return Context.Posts
+                .Where(p=> p.Title.Contains(postSearch, StringComparison.OrdinalIgnoreCase) || 
+                           p.Abstract.Contains(postSearch, StringComparison.OrdinalIgnoreCase) )                
+                .OrderByDescending(p => p.Created)
+                .Take(postCount)
+                .Select(p => new PostListItem
+                {
+                    PostId = p.Id,                                      
+                    Abstract = p.Abstract,
+                    Title = p.Title,
+                    Url = p.GetPostUrl(),
+                    Location = p.Location,
+                    CommentCount = p.CommentCount,
+                    Created = p.Created,                    
+                    FeaturedImageUrl = p.FeaturedImageUrl
+                })
+                .ToList();
+        }
+        
+
         public async Task<List<Comment>> GetRecentCommentsAsync(int commentCount = 50)
         {
-            return await Context.Comments
+            return await Context.Comments                
                 .OrderByDescending(c => c.Created)
                 .Join(Context.Posts, c => c.PostId,
                                      p => p.Id,
@@ -328,5 +353,72 @@ namespace Westwind.Weblog.Business
 
             return true;
         }
+    }
+
+    /// <summary>
+    /// Result from a Post Listing which includes only 
+    /// a few fields from a post.
+    /// </summary>
+    public class PostListItem
+    {
+        /// <summary>
+        /// The Id of the post
+        /// </summary>
+        public string PostId { get; set; }
+
+
+        /// <summary>
+        /// Title for the post
+        /// </summary>
+        public string Title { get; set; }
+
+
+        /// <summary>
+        /// The short text abstract for the post
+        /// </summary>
+        public string Abstract { get; set; }
+
+        /// <summary>
+        /// Optional - and not included unless explicitly asked for
+        /// to reduce amount of data returned.
+        /// </summary>
+        public string Body { get; set; }
+
+        /// <summary>
+        /// Date the post was created
+        /// </summary>
+        public DateTime Created { get; set; }
+
+        /// <summary>
+        /// Optional location where the post was created
+        /// if set
+        /// </summary>
+        public string Location { get; set; }
+
+
+        /// <summary>
+        /// The fully qualified Url to the post
+        /// </summary>
+        public string Url { get; set; }
+
+
+        /// <summary>
+        /// The Featured Image Url
+        /// </summary>
+        public string FeaturedImageUrl { get; set; }
+
+
+        /// <summary>
+        /// A small image Url
+        /// </summary>
+        public string ThumbnailUrl { get; set; }
+
+
+        /// <summary>
+        /// Number of comments for this post. This is optional and not included unless explicitly asked for
+        /// in the filter
+        /// </summary>
+        public int CommentCount { get; set; }
+
     }
 }

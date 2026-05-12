@@ -2,6 +2,11 @@
 @{
     var config = Model.PostRepo.Configuration;
     ViewData["Title"] = config.ApplicationName;
+
+    
+    var appUser = User.GetAppUser();
+    bool isAdmin = appUser?.IsAdmin ?? false;
+
     var posts = Model.Posts;
     var repo = Model.PostRepo;
 }
@@ -13,50 +18,61 @@
         {
             counter++;
 
+            if (!post.Active)
+			{
+				continue;
+			}   
+
             if (post.IsFeatured)
             {
-                <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
+                                <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
             }
-            <h2 class="page-header mb-1">                
-                <a href="@post.GetPostUrl()"
-                        style="text-decoration: none;">@post.Title</a>
-            </h2>
-            
 
-            <div class="float-end">
-                
-                @if (post.CommentCount > 0)
+                   <div class="post-item-wrapper" id="@post.Id">
+
+                            <h2 class="page-header mb-1">                
+                                <a href="@post.GetPostUrl()"
+                                        style="text-decoration: none;">@post.Title</a>
+                            </h2>
+                            
+
+                            <div class="float-end">
+                                
+                                @if (post.CommentCount > 0)
                 {
-                    <a href="@(repo.GetPostUrl(post))#Comments">
-                        <i class="fa fa-comments-o"></i>
-                        @repo.ShowCommentCount(post)
-                    </a>
+                                    <a href="@(repo.GetPostUrl(post))#Comments">
+                                        <i class="fad fa-comments-alt" ></i>
+                                        @repo.ShowCommentCount(post)
+                                    </a>
+
                 }
-            </div>
+                            </div>
 
 
-            <div class="byline">
-                <i class="far fa-clock-rotate-left text-info"></i>
-                @AppWebUtils.WebLogDateString(post.Created,false )
-                @(string.IsNullOrEmpty(post.Location) ? "" : "- " + post.Location)
-            </div>
+                            <div class="byline">
+                                <i class="far fa-clock-rotate-left text-info"></i>
+                                @AppWebUtils.WebLogDateString(post.Created,false )
+                                @(string.IsNullOrEmpty(post.Location) ? "" : "- " + post.Location)
+                            </div>
 
-            
+                            
 
-            @if (counter < 15 && !string.IsNullOrEmpty((string)post.FeaturedImageUrl))
+                            @if (counter < 15 && !string.IsNullOrEmpty((string)post.FeaturedImageUrl))
             {
-                <div class="featured-image-wrapper mt-2 mb-1">
-                    <img class="featured-image" src="@post.FeaturedImageUrl" loading="lazy" />
-                </div>
+                                <div class="featured-image-wrapper mt-2 mb-1">
+                                    <img class="featured-image" src="@post.FeaturedImageUrl" loading="lazy" />
+                                </div>
             }            
 
-            <div class="postcontent mt-0" style="margin-bottom: 20px">
-                @post.Abstract.TrimEnd()  
-                
-                <p class="margin-top margin-bottom">
-                    <a href="@repo.GetPostUrl(post)">Read more...</a>
-                </p>
-            </div>
+                            <div class="postcontent mt-0" style="margin-bottom: 20px">
+                                @post.Abstract.TrimEnd()  
+                                
+                                <p class="margin-top margin-bottom">
+                                    <a href="@repo.GetPostUrl(post)">Read more...</a>
+                                </p>
+                            </div>
+
+                   </div>
         }
     }
 </div>

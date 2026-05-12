@@ -315,6 +315,31 @@ namespace Westwind.Weblog
             return Json(new ApiResponse<bool> { Data = true });
         }
 
+        /// <summary>
+        /// Returns ApiResponse bool, but redirects if accessed
+        /// without an accept header.
+        /// </summary>
+        /// <param name="commentId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [Route("/posts/{postId}/delete")]
+        public IActionResult DeletePost(string postId)
+        {
+            var post = PostRepo.Context.Posts.FirstOrDefault(c => c.Id == postId);
+            if (post == null)
+                return Json(new ApiResponse<bool> { IsError = true, Message = "Post not found", Data = false });
+
+            PostRepo.Context.Remove<Post>(post);
+            var res = PostRepo.Context.SaveChanges();          
+
+            if (!Request.Headers.Accept.Any(h => h.Contains("application/json")))
+            {
+                var url = "/";
+                return Redirect(url);
+            }
+
+            return Json(new ApiResponse<bool> { Data = true });
+        }
 
 
         private bool CanLogRequest()

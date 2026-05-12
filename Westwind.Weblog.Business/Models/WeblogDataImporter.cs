@@ -38,7 +38,11 @@ namespace Westwind.Weblog.Business.Models
             if (!hasData)
             {
                 context.Database.EnsureCreated(); // just create the schema - no migrations
-                hasData = ImportFromExistingDb(context,oldConnectionString) > 0;                
+                
+                if (!string.IsNullOrEmpty(oldConnectionString))
+                {
+                    hasData = ImportFromExistingDb(context, oldConnectionString) > 0;
+                }
             }
 
             if (!hasData)

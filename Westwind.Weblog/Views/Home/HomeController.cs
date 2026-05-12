@@ -117,6 +117,7 @@ namespace Westwind.Weblog.Views.Home
             return View(model);
         }
 
+        [Route("/home/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Error(Exception ex = null)
         {

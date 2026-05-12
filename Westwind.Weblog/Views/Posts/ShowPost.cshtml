@@ -86,18 +86,6 @@
     </div>
     
 
-
-    @*<div class="leftbox" id="ShareIconContainer" style="float: right;">
-        <div style="display:inline-block;width: 80px; overflow:hidden;">
-            @ShareButtons.ShareOnTwitter(post.Title, "RickStrahl", postUrl)
-        </div>
-        <div style="display:inline-block;width: 80px; overflow:hidden">
-            @ShareButtons.ShareOnFacebook(postUrl)
-        </div>
-        <div style="display:inline-block;width: 80px; overflow:hidden;">
-            @ShareButtons.GooglePlusPlusOneButton(postUrl)
-        </div>
-    </div>*@
 </div>
 
 <div class="clearfix"></div>
@@ -156,11 +144,6 @@ No guarantees that changes will be accepted."
 </div>
 
 
-
-@*<div class="advert">
-            <%= App.GoogleImageAd %>
-        </div>*@
-
 <style>
     .donate-buttons {
         display: flex; flex-direction: row; justify-content:space-between;
@@ -178,6 +161,13 @@ No guarantees that changes will be accepted."
 <div class='borderbox'
      style='margin-top: 20px; min-height:30px;'>
      
+	@if (post.Hits > 1)
+	{
+		<div class="float-end" 
+             style="color: var(--text-muted); font-size: 0.7em;">
+			@post.Hits views
+		</div>
+	}
 
     <div class="donate-buttons">
         
@@ -200,43 +190,17 @@ No guarantees that changes will be accepted."
         </div>
 
 
-        @if (!string.IsNullOrEmpty(config.PayPalEmail))
-        {
-
-        @*<div style="flex: none;">
-            <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg', 'PayPal');"
-                 title="Find this content useful? Consider making a small donation."
-                 alt="Make Donation"
-                 style="text-decoration: none;" src="~/images/donation.png" />
-        </div>
-        <div style="font-size: 0.8em; width: 233px" class="hidable-xs">
-            Find this content useful? <b>Consider making a small donation</b> to show your support.
-        </div>*@
-
-            <div class="donate-buttons">
-
-                @*<%--  <a class="coinbase-button" style="flex: none"
-                     href="https://www.coinbase.com/checkouts/397caa2a194b7538beba7250bec24915">                
-                <img src="https://www.coinbase.com/assets/buttons/donation_small-c2401ae30dd0ad6018deadfc4bb506bf56b5b7062738ee449bee97c4e80ec70c.png" />                
-            </a>--%>*@
-
-                <div style="flex: none;">
-                    <img onclick="window.open('https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=rstrahl@west-wind.com&amp;item_name=Rick+Strahl%27s+Web+Log&amp;no_shipping=0&amp;no_note=1&amp;tax=0&amp;currency_code=USD&amp;lc=US&amp;bn=PP%2dDonationsBF&amp;charset=UTF%2d8&amp;image_url=https://weblog.west-wind.com/images/WebLogBannerLogo.jpg','PayPal');"
-                         title="Find this content useful? Consider making a small donation."
-                         alt="Make Donation"                                              
-                         src="~/images/donation.png" />
-                </div>
-                <div style="font-size: 0.75em; width: 255px;margin-left: 10px" class="hidable-xs">
-                    Is this content useful to you? <b>Consider making a small donation</b> to show your support.               
-                </div>
-            </div>        
-        }
+       
         
     </div>
     
+    
+
     <div style="margin-top: 10px;">
         @AppWebUtils.CategoryLinks(repo)
     </div>
+
+        
 
 </div>
 

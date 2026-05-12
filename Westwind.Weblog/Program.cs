@@ -84,6 +84,8 @@ services.AddSerilog(Log.Logger);
 Log.Logger.Information("Application Started.");
 
 
+
+
 services.AddDbContext<WeblogContext>(builder =>
 {
     var connStr = config.ConnectionString;
@@ -101,8 +103,13 @@ services.AddScoped<PostBusiness>();
 services.AddScoped<AdminBusiness>();
 services.AddScoped<UserBusiness>();
 
-RequestLogger.EnsureTablesExist();
+if (Environment.CommandLine.Contains("-createdb",StringComparison.OrdinalIgnoreCase))
+{
+    CreateDb();
+    return;
+}
 
+RequestLogger.EnsureTablesExist();
 
 services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -153,13 +160,15 @@ wlApp.Cache = app.Services.GetService<IMemoryCache>();
 if (wlApp.Configuration.System.LiveReloadEnabled)
     app.UseLiveReload();
 
-if (env.IsDevelopment())
+if (config.System.ErrorDisplayMode == ErrorDisplayModes.Developer)
 {
-    app.UseDeveloperExceptionPage();    
+    app.UseDeveloperExceptionPage();
+    ApiExceptionFilterAttribute.ShowExceptionDetail = true;
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
+    ApiExceptionFilterAttribute.ShowExceptionDetail = config.System.ErrorDisplayMode != ErrorDisplayModes.Application;
 }
 
 
@@ -193,6 +202,7 @@ else
 //        return Task.FromResult(0);
 //    }
 //});
+
 
 app.UseAuthentication();
 
@@ -241,3 +251,40 @@ if (!File.Exists("_weblog-configuration.json"))
 wlApp.AppStartedOn = DateTime.Now;
 
 app.Run();
+
+
+void CreateDb()
+{
+    try
+    {
+        Console.WriteLine("Creating Db: " + wlApp.Configuration.ConnectionString + " user: " + Environment.UserName);
+
+        var wlContext = WeblogContext.CreateContext(wlApp.Configuration.ConnectionString);
+
+        try
+        {
+            if (wlContext.Posts.Any())
+            {
+                Console.WriteLine("Database already has data - skipping creation");
+                return;
+            }
+            
+        }
+        catch { }
+
+        if(WeblogDataImporter.EnsureWeblogData(wlContext, wlApp.Configuration.OldWeblogConnectionString))
+        {
+            Console.WriteLine("Database created and data imported successfully.");
+        }
+        else
+        {
+            Console.WriteLine("Database import failed.");
+        }        
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error: " + ex.Message + "\n" + ex.GetBaseException().Message);
+    }
+
+    return;
+}

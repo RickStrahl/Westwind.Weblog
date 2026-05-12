@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +22,9 @@ namespace Westwind.Weblog
     public class AdminController : WeblogBaseController
     {
         WeblogConfiguration Configuration { get; }
-        public IWebHostEnvironment Host { get; }
+        private IWebHostEnvironment Host { get; }
+
+        private IHostApplicationLifetime AppLifeTime { get; }
 
         AdminBusiness AdminRepo { get; }
 
@@ -29,12 +32,13 @@ namespace Westwind.Weblog
 
         public AdminController(AdminBusiness repo,
                                WeblogConfiguration configuration,
-                               IWebHostEnvironment host)
+                               IWebHostEnvironment host,
+                               IHostApplicationLifetime appLifeTime)
         {
             Configuration = configuration;
             Host = host;
             AdminRepo = repo;
-
+            AppLifeTime = appLifeTime;
         }
 
         [Route("/admin")]
@@ -47,7 +51,7 @@ namespace Westwind.Weblog
         }
 
 
-
+        [AllowAnonymous]
         [HttpGet("/admin/import")]
         public IActionResult Import()
         {
@@ -59,6 +63,7 @@ namespace Westwind.Weblog
             return View("Index", model);
         }
 
+
         [Route("admin/deleteunusedimages")]
         public IActionResult DeleteUnusedImages()
         {
@@ -67,10 +72,11 @@ namespace Westwind.Weblog
 
             var sb = AdminRepo.DeleteOldImages(Path.Combine(Host.WebRootPath, "images"));
             if (sb == null)
-                model.Message = "Image deletion failed: " + AdminRepo.ErrorMessage;
+                model.ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Image deletion failed");
             else
             {
-                model.Message = $"{StringUtils.CountLines(sb.ToString())} images deleted.\r\n<pre>{sb}</pre>";
+                model.ErrorDisplay.MessageAsRawHtml = true;
+                model.ErrorDisplay.ShowSuccess($"{StringUtils.CountLines(sb.ToString())} images deleted.\n" + (sb.Length > 0 ? "<pre>{sb}</pre>" : null), "Image Deletion Completed");
             }
 
             return View("Index", model);
@@ -143,6 +149,31 @@ namespace Westwind.Weblog
                 //return File(outputFile, "application/zip", baseFileName + ".zip");
                 ErrorDisplay.MessageAsRawHtml = true;
                 ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + WebUtils.ResolveUrl("~/admin/temp/" + baseFileName + ".zip") + "'>Download</a>");
+            }
+
+            return View("Index", model);
+        }
+
+
+        [Route("/admin/reloadapp")]
+        public IActionResult ReloadApp()
+        {
+            var model = CreateViewModel<AdminViewModel>();
+
+            // touch web.config - pending permissions
+            var webconfig = Path.Combine(wlApp.StartupFolder, "web.config");
+
+            try
+            {
+                AppLifeTime.StopApplication();
+                // var fi = new FileInfo(webconfig);
+                // fi.LastWriteTime = DateTime.Now;
+                ErrorDisplay.ShowSuccess("IIS Application Pool has been reloaded.");
+                Response.AddMetaRefreshTagHeader("/admin", 2);
+            }
+            catch (Exception ex)
+            {
+                ErrorDisplay.ShowError(ex.Message, "IIS App reloading failed");
             }
 
             return View("Index", model);

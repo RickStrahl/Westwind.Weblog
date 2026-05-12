@@ -1,16 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using BlazePostApi;
 using BlazePostApi.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Westwind.AspNetCore.Errors;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
-using BlazePostApi;
 
 namespace Westwind.AspNetCore.Controllers
 {
@@ -181,6 +183,9 @@ namespace Westwind.AspNetCore.Controllers
 
                 // TODO: Validate Image by loading into Image Class
                 System.IO.File.WriteAllBytes(ImagePhysicalPath, weblogMedia.Data);
+
+                // attempt to optimize the image with Pingo
+                OptimizeImage(ImagePhysicalPath);                                
             }
 
             var url = ImageWebPath + "/" + weblogMedia.Name;
@@ -281,6 +286,25 @@ namespace Westwind.AspNetCore.Controllers
         }
 
 
+        /// <summary>
+        /// Runs Pingo.exe in the background silently to compress PNG or jpg
+        /// images in place.
+        /// </summary>
+        /// <param name="pngFilename">filename to compress</param>        
+        public static void OptimizeImage(string pngFilename)
+        {
+            try
+            {
+                var pi = new ProcessStartInfo(Path.Combine(wlApp.StartupFolder, "pingo.exe"),
+                    "-auto \"" + pngFilename + "\"");
+
+                pi.WindowStyle = ProcessWindowStyle.Hidden;
+                pi.WorkingDirectory = wlApp.StartupFolder;
+                Process.Start(pi);
+            }
+            catch
+            { }
+        }
     }
 
     public static class BlazeApiExtensions

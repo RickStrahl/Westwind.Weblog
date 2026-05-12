@@ -1,8 +1,13 @@
 # Web Log Todo
 
+
+
 ## Must Haves
-* Click Statistics
 * Pingo Compression for Image Uploads
+* Click Statistics
+* Related Posts
+* Clear PostHits
+
 
 ## Later
 

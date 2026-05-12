@@ -94,13 +94,16 @@ namespace Westwind.Weblog
             if (!string.IsNullOrEmpty(commentMessage))
             {
 
-                ErrorDisplay.ShowWarning(commentMessage,"Comment Moderation");
+                ErrorDisplay.ShowWarning(commentMessage, "Comment Moderation");
             }
             else
             {
-                RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, HttpContext.GetClientIpAddress()).FireAndForget();
+                if (CanLogRequest())
+                {
+                    RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, HttpContext.GetClientIpAddress()).FireAndForget();
+                }
             }
-
+               
             return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages, ErrorDisplay = ErrorDisplay });
         }
 
@@ -313,5 +316,68 @@ namespace Westwind.Weblog
         }
 
 
+
+        private bool CanLogRequest()
+        {
+            var userAgent = Request.Headers.UserAgent.ToString();
+            if (string.IsNullOrEmpty(userAgent) || !userAgent.Contains("Mozilla/"))
+                return false;
+
+            foreach (var bot in KnownBotUserAgents)
+            {
+                if (userAgent.Contains(bot, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            string referer = Request.Headers.Referer.FirstOrDefault();
+            if (string.IsNullOrEmpty(referer))
+                return false;
+
+            string accept = Request.Headers.Accept.FirstOrDefault();
+            if (!accept?.Contains("text/html") ?? true)
+                return false;
+
+            return true;
+        }
+
+        private static readonly string[] KnownBotUserAgents =
+        {
+            "bot",
+            "crawler",
+            "spider",
+            "slurp",
+            "bingpreview",
+            "facebookexternalhit",
+            "facebot",
+            "ia_archiver",
+            "duckduckbot",
+            "baiduspider",
+            "yandex",
+            "sogou",
+            "exabot",
+
+            // SEO / scraping bots
+            "ahrefs",
+            "semrush",
+            "mj12bot",
+            "dotbot",
+            "petalbot",
+            "bytespider",
+            "amazonbot",
+            "ccbot",
+
+            // tools / libraries
+            "curl",
+            "wget",
+            "python-requests",
+            "httpclient",
+            "go-http-client",
+            "java/",
+            "okhttp",
+            "scrapy",
+            "headless",
+            "phantomjs",
+            "selenium"
+        };
     }
 }

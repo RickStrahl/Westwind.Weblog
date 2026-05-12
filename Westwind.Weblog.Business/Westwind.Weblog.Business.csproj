@@ -8,19 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="_weblog-configuration.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="_weblog-configuration.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
@@ -28,13 +15,14 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
 		<PackageReference Include="MailKitLite" Version="4.16.0" />
-		<!--<PackageReference Include="Westwind.Data.EfCore" Version="10.1.0" />-->
+		<PackageReference Include="Westwind.Data.EfCore" Version="10.1.1" />
 		<PackageReference Include="Markdig" Version="1.1.3" />
+		<PackageReference Include="Westwind.Utilities" Version="5.3.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Westwind.Utilities\Westwind.Utilities\Westwind.Utilities.csproj" />
-		<ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />
+		<!--<ProjectReference Include="..\..\Westwind.Utilities\Westwind.Utilities\Westwind.Utilities.csproj" />
+		<ProjectReference Include="..\..\Westwind.Data.EfCore\Westwind.Data.EfCore\Westwind.Data.EfCore.csproj" />-->
 	</ItemGroup>
 
 	<ItemGroup>

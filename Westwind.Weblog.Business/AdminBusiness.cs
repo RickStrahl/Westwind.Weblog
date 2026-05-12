@@ -85,12 +85,13 @@ namespace Westwind.Weblog.Business
                 DeleteOldImagesInFolder(dir, sb, postList);
             }
 
-            foreach (var file in Directory.GetFiles(imagePath))
+            var files = Directory.GetFiles(imagePath);
+            foreach (var file in files)
             {
                 var ext = Path.GetExtension(file);
                 if (ext != null)
                     ext = ext.ToLower();
-                if (ext != ".png" && ext != ".gif" && ext != "jpg" && ext != "jpeg")
+                if (ext != ".png" && ext != ".gif" && ext != ".jpg" && ext != ".jpeg")
                     continue;
 
                 var filename = Path.GetFileName(file);

@@ -12,8 +12,8 @@ namespace Westwind.Weblog.Business.Test
     [TestFixture]
     public class AdminTests
     {
-        public string ConnectionString = "server=.;database=WeblogCore;integrated security=true;encrypt=false";
-        public string OldConnectionString = "server=.;database=Weblog;integrated security=true;encrypt=false";
+        public string ConnectionString = "server=west-wind.com;database=WeblogCore;integrated security=true;encrypt=false";
+        public string OldConnectionString = "server=west-wind.com;database=Weblog;integrated security=true;encrypt=false";
 
         [Test]
         public void DeleteOldImages()
@@ -56,7 +56,7 @@ namespace Westwind.Weblog.Business.Test
             //    return false;
             //}
 
-            Assert.IsTrue(WeblogDataImporter.EnsureWeblogData(ctx, "server=.;database=weblog;integrated security=true;encrypt=false;"), "Failed to import weblog data");
+            Assert.IsTrue(WeblogDataImporter.EnsureWeblogData(ctx, OldConnectionString), "Failed to import weblog data");
         }
 
         [Test]

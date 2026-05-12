@@ -278,40 +278,105 @@ namespace Westwind.Weblog
             return Json(refs);
         }
 
-        [Route("/admin/posthits")]
+        [HttpGet("/admin/posthits")]
         public IActionResult PostHits()
         {
-            var model = CreateViewModel<AdminViewModel>();
+            var model = CreateViewModel<PostHitsViewModel>();
+            LoadPostHitsMessage(model);
+            var today = DateTime.Now.Date;
 
-            var summary = AdminRepo.PostHits();
-            if (summary == null)
+            model.SummaryRows =
+            [
+                CreatePostHitsSummaryRow("Last 7 days", today.AddDays(-7), today.AddDays(1), 50),
+                CreatePostHitsSummaryRow("Today", today, today.AddDays(1), 50),
+                CreatePostHitsSummaryRow("Yesterday", today.AddDays(-1), today, 50),
+                CreatePostHitsSummaryRow("Two days ago", today.AddDays(-2), today.AddDays(-1), 50)
+            ];
+
+            if (model.SummaryRows.Any(row => row == null))
             {
                 ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Post Hits Query failed");
-                return View("Index", model);
+                return View("Index", CreateViewModel<AdminViewModel>());
             }
 
-            var today = AdminRepo.PostHits(
-                DateTime.Now.Date.AddDays(-1),
-                DateTime.Now.Date.AddDays(1));
-            var yesterday = AdminRepo.PostHits(
-                DateTime.Now.Date.AddDays(-2),
-                DateTime.Now.Date);
-            var twodaysago = AdminRepo.PostHits(
-                DateTime.Now.Date.AddDays(-3),
-                DateTime.Now.Date.AddDays(-1));
-          
+            model.DailySections =
+            [
+                CreatePostHitsSection("Today", today, today.AddDays(1)),
+                CreatePostHitsSection("Yesterday", today.AddDays(-1), today),
+                CreatePostHitsSection("Two days ago", today.AddDays(-2), today.AddDays(-1))
+            ];
 
-            var result = new
+            if (model.DailySections.Any(section => section == null))
             {
-                summary,
-                today,
-                yesterday,
-                twodaysago
-            };
+                ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Post Hits Query failed");
+                return View("Index", CreateViewModel<AdminViewModel>());
+            }
 
-            return Json(result);
+            return View(model);
         }
 
+        [HttpGet("/admin/posthits/deleteold")]
+        public IActionResult DeleteOldPostHits()
+        {
+            var deleted = AdminRepo.DeletePostHitsOlderThan(7);
+            if (deleted < 0)
+            {
+                TempData["PostHitsMessage"] = null;
+                TempData["PostHitsIsError"] = true;
+                TempData["PostHitsError"] = AdminRepo.ErrorMessage;
+            }
+            else
+            {
+                TempData["PostHitsError"] = null;
+                TempData["PostHitsIsError"] = false;
+                TempData["PostHitsMessage"] = $"Deleted {deleted} hit entr{(deleted == 1 ? "y" : "ies")} older than 7 days.";
+            }
+
+            return RedirectToAction(nameof(PostHits));
+        }
+
+
+        private PostHitsSummaryRow CreatePostHitsSummaryRow(string label, DateTime start, DateTime end, int maxRows = 25)
+        {
+            var hits = AdminRepo.PostHits(start, end, maxRows);
+            if (hits == null)
+                return null;
+
+            return new PostHitsSummaryRow
+            {
+                Label = label,
+                TotalHits = hits.Sum(hit => hit.Hits),
+                UrlCount = hits.Count,
+                TopPostTitle = hits.FirstOrDefault()?.Title,
+                TopPostUrl = hits.FirstOrDefault()?.Url,
+                TopPostHits = hits.FirstOrDefault()?.Hits ?? 0
+            };
+        }
+
+        private PostHitsSection CreatePostHitsSection(string label, DateTime start, DateTime end, int maxRows = 25)
+        {
+            var hits = AdminRepo.PostHits(start, end, maxRows);
+            if (hits == null)
+                return null;
+
+            return new PostHitsSection
+            {
+                Label = label,
+                Hits = hits
+            };
+        }
+
+        private void LoadPostHitsMessage(PostHitsViewModel model)
+        {
+            var isError = TempData["PostHitsIsError"] as bool?;
+            var message = TempData["PostHitsMessage"]?.ToString();
+            var error = TempData["PostHitsError"]?.ToString();
+
+            if (isError == true && !string.IsNullOrWhiteSpace(error))
+                model.ErrorDisplay.ShowError(error, "Post hit cleanup failed");
+            else if (!string.IsNullOrWhiteSpace(message))
+                model.ErrorDisplay.ShowSuccess(message, "Post hits updated");
+        }
 
         private void LoadAdsFromXml(AdsViewModel model)
         {
@@ -365,6 +430,28 @@ namespace Westwind.Weblog
         public string ConfigurationJson { get; set; }
     }
 
+
+    public class PostHitsViewModel : WeblogBaseViewModel
+    {
+        public List<PostHitsSummaryRow> SummaryRows { get; set; } = new();
+        public List<PostHitsSection> DailySections { get; set; } = new();
+    }
+
+    public class PostHitsSummaryRow
+    {
+        public string Label { get; set; }
+        public int TotalHits { get; set; }
+        public int UrlCount { get; set; }
+        public string TopPostTitle { get; set; }
+        public string TopPostUrl { get; set; }
+        public int TopPostHits { get; set; }
+    }
+
+    public class PostHitsSection
+    {
+        public string Label { get; set; }
+        public List<AdminBusiness.PostHitResult> Hits { get; set; } = new();
+    }
 
     public class AdsViewModel : WeblogBaseViewModel
     {

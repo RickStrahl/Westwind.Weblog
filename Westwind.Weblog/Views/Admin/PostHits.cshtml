@@ -1,0 +1,142 @@
+@using Westwind.AspNetCore.Components
+@model PostHitsViewModel
+
+@{
+	ViewData["Title"] = "Post Hits";
+}
+
+<div class="posthits-page">
+	<div class="posthits-header card mb-4">
+		<div class="card-body">
+			<div class="posthits-header-top">
+				<div>
+					<h1 class="page-header-text mb-2">
+						<i class="fad fa-chart-line"></i>
+						Post Hits
+					</h1>
+					<div class="byline mb-0">
+						Traffic snapshot for the last few days with quick cleanup for stale hit log entries.
+					</div>
+				</div>
+
+				<div class="posthits-actions">
+					<a asp-action="Index" class="btn btn-outline-secondary">
+						<i class="fa fa-arrow-left"></i>
+						Back to Admin
+					</a>
+					<a asp-action="DeleteOldPostHits"
+					   class="btn btn-outline-danger"
+					   onclick="return confirm('Delete post hit entries older than 7 days?');">
+						<i class="fa fa-trash"></i>
+						Delete Older Than 7 Days
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<error-display class="mt-3 mb-4" error-display-model="@Model.ErrorDisplay">
+	</error-display>
+
+	<section class="card mb-4 posthits-card">
+		<div class="card-header">
+			<i class="fad fa-table-list"></i>
+			Summary
+		</div>
+		<div class="card-body p-0">
+			<div class="table-responsive posthits-table-wrap">
+				<table class="table table-hover posthits-table posthits-summary-table mb-0">
+					<thead>
+					<tr>
+						<th scope="col">Period</th>
+						<th scope="col">Total Hits</th>
+						<th scope="col">Tracked Urls</th>
+						<th scope="col">Top Post</th>
+						<th scope="col">Top Hits</th>
+					</tr>
+					</thead>
+					<tbody>
+					@foreach (var row in Model.SummaryRows)
+					{
+						<tr>
+							<td data-label="Period">
+								<span class="posthits-period">@row.Label</span>
+							</td>
+							<td data-label="Total Hits">
+								<span class="posthits-number">@row.TotalHits</span>
+							</td>
+							<td data-label="Tracked Urls">@row.UrlCount</td>
+							<td data-label="Top Post">
+								@if (!string.IsNullOrWhiteSpace(row.TopPostUrl))
+								{
+									<a href="@row.TopPostUrl" target="_blank" rel="noopener noreferrer" class="posthits-link">
+										@row.TopPostTitle
+									</a>
+								}
+								else
+								{
+									<span class="text-muted">No post hits recorded</span>
+								}
+							</td>
+							<td data-label="Top Hits">@row.TopPostHits</td>
+						</tr>
+					}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</section>
+
+	@foreach (var sec in Model.DailySections)
+	{
+		<section class="card mb-4 posthits-card">
+			<div class="card-header d-flex justify-content-between align-items-center gap-2 flex-wrap">
+				<span>
+					<i class="fad fa-calendar-day"></i>
+					@sec.Label
+				</span>
+				<span class="posthits-section-count">
+					@sec.Hits.Sum(hit => hit.Hits) total hits
+				</span>
+			</div>
+			<div class="card-body p-0">
+				@if (sec.Hits.Count == 0)
+				{
+					<div class="p-4 text-muted">No hits were recorded for this day.</div>
+				}
+				else
+				{
+					<div class="table-responsive posthits-table-wrap">
+						<table class="table table-hover posthits-table mb-0">
+							<thead>
+							<tr>
+								<th scope="col">Url</th>
+								<th scope="col" class="posthits-hits-column">Hits</th>
+							</tr>
+							</thead>
+							<tbody>
+							@foreach (var hit in sec.Hits)
+							{
+								<tr>
+									<td data-label="Url">
+										<a href="@hit.Url" target="_blank" rel="noopener noreferrer" class="posthits-link">
+											@hit.Url
+										</a>
+										@if (!string.IsNullOrWhiteSpace(hit.Title))
+										{
+											<div class="posthits-title">@hit.Title</div>
+										}
+									</td>
+									<td data-label="Hits" class="posthits-hits-column">
+										<span class="posthits-badge">@hit.Hits</span>
+									</td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+				}
+			</div>
+		</section>
+	}
+</div>

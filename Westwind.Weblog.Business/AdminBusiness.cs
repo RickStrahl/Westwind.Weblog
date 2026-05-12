@@ -162,7 +162,7 @@ namespace Westwind.Weblog.Business
         public List<PostHitResult> PostHits(
             DateTime start = default,
             DateTime end = default,
-            int minHits = 10)
+            int maxRows = 10)
         {
 
             if (end == default)
@@ -171,8 +171,8 @@ namespace Westwind.Weblog.Business
                 start = DateTime.Now.Date.AddDays(-7);
 
             var sql =
-                $"""                
-                select top {minHits} posts.Title,
+                $"""
+                select top {maxRows} posts.Title,
                 CONCAT(
                     '/posts/',
                     DATEPART(year, posts.Created), '/',
@@ -208,7 +208,24 @@ namespace Westwind.Weblog.Business
                 item.Url = wlApp.Configuration.ApplicationBasePath.TrimEnd('/') + item.Url;
             }
 
-            return data;            
+            return data;
+        }
+
+        public int DeletePostHitsOlderThan(int days)
+        {
+            var cutoffDate = DateTime.Now.Date.AddDays(-days);
+            var sql = "delete from PostHits where CAST(Timestamp as DATE) < @CutoffDate";
+
+            var result = Db.ExecuteNonQuery(sql,
+                Db.CreateParameter("@CutoffDate", cutoffDate));
+
+            if (result < 0)
+            {
+                SetError(Db.ErrorMessage);
+                return -1;
+            }
+
+            return result;
         }
 
         public class PostHitResult

@@ -58,12 +58,13 @@
         <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet on Twitter">
             <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
                 <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                <i class="fab  fa-square-x-twitter fa-square-twitter fa-stack-1x" style="font-size: 0.98em; color: black"></i>                
+                <i class="fab  fa-square-x-twitter fa-square-twitter fa-stack-1x" style="font-size: 1em; color: black"></i>                
             </span>
         </a>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share on Facebook">
-            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                <i class="fa fa-square fa-stack-1x" style=" color: white; font-size: 0.9em "></i>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" 
+            target="_blank" title="Share on Facebook">
+            <span class="fa-stack" style="line-height: 1em;width: 0.8em;height: 0.8em;">
+                <i class="fa fa-square fa-stack-1x" style=" color: white; font-size: 0.88em "></i>
                 <i class="fab fa-facebook-square fa-stack-1x" style="color: rgb(63, 96, 170); "></i>                
             </span>
         </a>
@@ -74,14 +75,19 @@
         <i class="far fa-clock-rotate-left text-info"></i>
         @(AppWebUtils.WebLogDateString(post.Created, false))
             @(string.IsNullOrEmpty(post.Location) ? "" : " • from " + post.Location)
-            @if (post.CommentCount > 0) {
-            
+            @if (post.CommentCount > 0) {            
             <span>
 	            • <i class="far fa-comment-lines"></i>
 	            <a href="@(repo.GetPostUrl(post))#Comments">
                 @repo.ShowCommentCount(post)
                 </a>
             </span>
+            }                
+            @if (post.Hits > 1 && post.Created > new DateTime(2026,3,1))
+            { 
+	            <span style="color: var(--text-muted); font-size: 0.7em;">
+		        • @post.Hits.ToString("n0") views
+	            </span>
             }
     </div>
     
@@ -160,30 +166,26 @@ No guarantees that changes will be accepted."
 </style>
 <div class='borderbox'
      style='margin-top: 20px; min-height:30px;'>
-     
-	@if (post.Hits > 1)
-	{
-		<div class="float-end" 
-             style="color: var(--text-muted); font-size: 0.7em;">
-			@post.Hits views
-		</div>
-	}
+ 
 
     <div class="donate-buttons">
         
         <div class="share-box" style="float:left;margin-top: -7px; ">
             <span class="share-label hidable-xs">Share on:</span>
 
-            <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" title="Tweet Post on Twitter">
-                <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
+            <a href="https://twitter.com/intent/tweet?url=@pageUrl&amp;text=@Model.Post.Title&amp;via=RickStrahl" target="_blank" 
+               title="Tweet Post on Twitter">
+                <span class="fa-stack" style="line-height: 1em;width: 1em; height: 1em;">
                     <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.7em "></i>
-                    <i class="fab fa-square-twitter fa-stack-1x" style=" color: rgb(51, 132, 217); "></i>
+                    <i class="fab fa-square-x-twitter fa-stack-1x" style=" color: black;"></i>
+
                 </span>
             </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" target="_blank" title="Share Post on Facebook">
-                <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;">
-                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.87em "></i>
-                    <i class="fab fa-square-facebook fa-stack-1x" style=" color: rgb(63, 96, 170); "></i>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=@pageUrl&amp;t=@Model.Post.Title" 
+               target="_blank" title="Share Post on Facebook">
+                <span class="fa-stack" style="line-height: 1em; width: 1em;height: 1em;">
+                    <i class="fa fa-circle fa-stack-1x" style=" color: white; font-size: 0.85em "></i>
+                    <i class="fab fa-square-facebook fa-stack-1x" style=" color: rgb(63, 96, 170); font-size: 1.01em"></i>
                 </span>
             </a>
             

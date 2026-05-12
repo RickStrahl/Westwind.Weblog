@@ -289,26 +289,17 @@ namespace Westwind.Weblog
 
         private bool SaveAdsToXml(AdsViewModel model)
         {
-            try
+            var ads = new AdManager
             {
-                var path = Path.Combine(Host.WebRootPath, "admin", "adsnew.xml");
-                var doc = new XDocument(
-                    new XDeclaration("1.0", "utf-8", null),
-                    new XElement("Ads",
-                        new XElement("BottomPostAd", model.BottomPostAd ?? string.Empty),
-                        new XElement("TopPostAd", model.TopPostAd ?? string.Empty),
-                        new XElement("TopPageAd", model.TopPageAd ?? string.Empty),
-                        new XElement("SponsorBanners",
-                            model.SponsorBanners.Select(b => new XElement("Banner", b))),
-                        new XElement("ContentAds",
-                            model.ContentAds.Select(a => new XElement("Ad", a)))));
-                doc.Save(path);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+                BottomPostAd = model.BottomPostAd,
+                TopPostAd = model.TopPostAd,
+                TopPageAd = model.TopPageAd
+            };
+            ads.SponsorBanners.AddRange(model.SponsorBanners);
+            ads.ContentAds.AddRange(model.ContentAds);
+
+            var path = Path.Combine(Host.WebRootPath, "admin", "ads.xml");
+            return ads.SaveToXml(path);
         }
     }
 

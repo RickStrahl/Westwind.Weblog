@@ -1,95 +1,95 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Ads>
-  <BottomPostAd></BottomPostAd>
-  <TopPostAd></TopPostAd>
-  <TopPageAd></TopPageAd>
+  <BottomPostAd><![CDATA[]]></BottomPostAd>
+  <TopPostAd><![CDATA[]]></TopPostAd>
+  <TopPageAd><![CDATA[]]></TopPageAd>
   <SponsorBanners>
-    <Banner>&lt;div id="SponsorPanel"
+    <Banner><![CDATA[<div id="SponsorPanel"
      onclick="window.location.href='https://websurge.west-wind.com?utm_campaign=westwind-weblog-sponsored'"
-     title="Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship."
-     style="cursor: pointer"&gt;
+     title="Please stop by our friends at West Wind Technologies who are graciously&#010providing sponsorship."
+     style="cursor: pointer">
     
-    &lt;div class="ad-free-msg"&gt;
+    <div class="ad-free-msg">
         Sponsored by:
-    &lt;/div&gt; 
-    &lt;div style="flex: auto;"&gt;
-        &lt;a href="https://websurge.west-wind.com?utm_campaign=westwind-weblog-sponsored"
-           title="Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship to remove all other ads on this site."&gt;
-            &lt;img src="https://websurge.west-wind.com/images/WebSurgeLogo.png"
-                 style="height: 1.3em;  vertical-align: top" /&gt;
-            &lt;b&gt;&lt;span class="hidable-xs"&gt;West Wind &lt;/span&gt;WebSurge&lt;/b&gt;
-        &lt;/a&gt;
+    </div> 
+    <div style="flex: auto;">
+        <a href="https://websurge.west-wind.com?utm_campaign=westwind-weblog-sponsored"
+           title="Please stop by our friends at West Wind Technologies who are graciously&#010providing sponsorship to remove all other ads on this site.">
+            <img src="https://websurge.west-wind.com/images/WebSurgeLogo.png"
+                 style="height: 1.3em;  vertical-align: top" />
+            <b><span class="hidable-xs">West Wind </span>WebSurge</b>
+        </a>
         - Rest Client and Http Load Testing for Windows
-        &lt;a href="https://websurge.west-wind.com?utm_campaign=westwind-weblog-sponsored"
-           title="Please stop by the WebSurge site to Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship to remove all other ads on this site."&gt;
-            &lt;i class="fa fa-external-link" style="color: var(--text-faint); padding: 0 5px; font-weight: bold"&gt;&lt;/i&gt;
-        &lt;/a&gt;
-    &lt;/div&gt;    
-    &lt;div class="right"&gt;
-        &lt;a href="/advertise" &gt;&lt;span style="font-size: 0.7em"&gt;advertise here&lt;/span&gt;&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</Banner>
-    <Banner>&lt;div id="SponsorPanel"
+        <a href="https://websurge.west-wind.com?utm_campaign=westwind-weblog-sponsored"
+           title="Please stop by the WebSurge site to Please stop by our friends at West Wind Technologies who are graciously&#010providing sponsorship to remove all other ads on this site.">
+            <i class="fa fa-external-link" style="color: var(--text-faint); padding: 0 5px; font-weight: bold"></i>
+        </a>
+    </div>    
+    <div class="right">
+        <a href="/advertise" ><span style="font-size: 0.7em">advertise here</span></a>
+    </div>
+</div>]]></Banner>
+    <Banner><![CDATA[<div id="SponsorPanel"
      onclick="window.location.href='https://markdownmonster.west-wind.com?utm_campaign=westwind-weblog-sponsored'"
-     title="Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship to remove all other ads on this site."
-     style="cursor: pointer"&gt;
+     title="Please stop by our friends at West Wind Technologies who are graciously&#010providing sponsorship to remove all other ads on this site."
+     style="cursor: pointer">
     
-    &lt;div class="ad-free-msg"&gt;
+    <div class="ad-free-msg">
         Sponsored by:
-    &lt;/div&gt; 
-    &lt;div style="flex: auto;"&gt;
-        &lt;a href="https://markdownmonster.west-wind.com?utm_campaign=westwind-weblog-sponsored"
-           title="Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship."&gt;
-            &lt;img src="https://markdownmonster.west-wind.com/Images/MarkdownMonster_Icon_256.png"
-                 style="height: 1.3em;  vertical-align: top" /&gt;
-            &lt;b&gt;Markdown Monster&lt;/b&gt;
-        &lt;/a&gt;
+    </div> 
+    <div style="flex: auto;">
+        <a href="https://markdownmonster.west-wind.com?utm_campaign=westwind-weblog-sponsored"
+           title="Please stop by our friends at West Wind Technologies who are graciously&#010providing sponsorship.">
+            <img src="https://markdownmonster.west-wind.com/Images/MarkdownMonster_Icon_256.png"
+                 style="height: 1.3em;  vertical-align: top" />
+            <b>Markdown Monster</b>
+        </a>
         - The Markdown Editor for Windows
-        &lt;a href="https://markdownmonster.west-wind.com?utm_campaign=westwind-weblog-sponsored"
-           title="Please stop by our friends at West Wind Technologies who are graciously&amp;#010providing sponsorship to remove all other ads on this site."&gt;
-            &lt;i class="fa fa-external-link" style="color:  var(--text-faint);; padding: 0 5px; font-weight: bold"&gt;&lt;/i&gt;
-        &lt;/a&gt;
-    &lt;/div&gt;    
-    &lt;div class="right"&gt;
-        &lt;a href="/advertise" &gt;&lt;span style="font-size: 0.7em"&gt;advertise here&lt;/span&gt;&lt;/a&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</Banner>
+        <a href="https://markdownmonster.west-wind.com?utm_campaign=westwind-weblog-sponsored"
+           title="Please stop by our friends at West Wind Technologies who are graciously&#010providing sponsorship to remove all other ads on this site.">
+            <i class="fa fa-external-link" style="color:  var(--text-faint);; padding: 0 5px; font-weight: bold"></i>
+        </a>
+    </div>    
+    <div class="right">
+        <a href="/advertise" ><span style="font-size: 0.7em">advertise here</span></a>
+    </div>
+</div>]]></Banner>
   </SponsorBanners>
   <ContentAds>
-    <Ad>&lt;a href="https://markdownmonster.west-wind.com?ut=weblog"  target="_blank"
-	  title="Markdown Monster - Easy to use, yet powerfully productive Markdown Editing for Windows"&gt;
-&lt;img src="/images/sponsors/banner-example.png?v=1.2" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://websurge.west-wind.com?ut=weblog"  target="_blank"
-	  title="West Wind WebSurge - A powerful, yet easy to use REST Client and HTTP Load Testing tool for Windows"&gt;
-&lt;img src="/images/Sponsors/Websurge-Display.png" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://amzn.to/3XmyPE0"  target="_blank"
-	  title="Needs More Bass Bear T-Shirt"&gt;
-&lt;img src="/images/Sponsors/NeedsMoreBassTShirt-Display.png" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://open.spotify.com/track/174gSk2IavDs7h8d715468" target="top"
-		  title="Anti-Trust - The Masters of Disaster"&gt;
-&lt;img src="/images/sponsors/TheMastersOfDisaster-Display.png" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://goldenbeartshirts.com"  target="_blank"
-	  title="Bears and Beer"&gt;
-&lt;img src="/images/Sponsors/BearsBeer-Display.jpg" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://goldenbeartshirts.com" target="_blank"&gt;
-&lt;img src="/images/sponsors/BearingDownTheMountain-DisplayAd.jpg" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://www.linqpad.net/?affiliate=4n4zaa6t"  target="_blank"
-		  title="LinqPad - The Scratchpad for .NET Developers"&gt;
-&lt;img src="/images/sponsors/LinqPad-DisplayAd.jpg" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://amzn.to/3EaiBqi"  target="_blank"
-		  title="Broken Money - A Comprehensive Overview of the Past, Present, and Future of Money"&gt;
-&lt;img src="/images/sponsors/BrokenMoney-Display.jpg" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
-    <Ad>&lt;a href="https://www.amazon.com/dp/BT00LN946S?externalReferenceId=fdeaac92-deca-4ea5-92c1-442cdc15a646"  target="_blank"
-		  title="Sign up for an Amazon Visa - 5% cash back for Amazon and Whole Food Purchases"&gt;
-&lt;img src="/images/sponsors/AmazonPrimeVisa-Display.jpg" class="da-content-image" /&gt;
-&lt;/a&gt;</Ad>
+    <Ad><![CDATA[<a href="https://markdownmonster.west-wind.com?ut=weblog"  target="_blank"
+	  title="Markdown Monster - Easy to use, yet powerfully productive Markdown Editing for Windows">
+<img src="/images/sponsors/banner-example.png?v=1.2" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://websurge.west-wind.com?ut=weblog"  target="_blank"
+	  title="West Wind WebSurge - A powerful, yet easy to use REST Client and HTTP Load Testing tool for Windows">
+<img src="/images/Sponsors/Websurge-Display.png" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://amzn.to/3XmyPE0"  target="_blank"
+	  title="Needs More Bass Bear T-Shirt">
+<img src="/images/Sponsors/NeedsMoreBassTShirt-Display.png" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://open.spotify.com/track/174gSk2IavDs7h8d715468" target="top"
+		  title="Anti-Trust - The Masters of Disaster">
+<img src="/images/sponsors/TheMastersOfDisaster-Display.png" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://goldenbeartshirts.com"  target="_blank"
+	  title="Bears and Beer">
+<img src="/images/Sponsors/BearsBeer-Display.jpg" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://goldenbeartshirts.com" target="_blank">
+<img src="/images/sponsors/BearingDownTheMountain-DisplayAd.jpg" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://www.linqpad.net/?affiliate=4n4zaa6t"  target="_blank"
+		  title="LinqPad - The Scratchpad for .NET Developers">
+<img src="/images/sponsors/LinqPad-DisplayAd.jpg" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://amzn.to/3EaiBqi"  target="_blank"
+		  title="Broken Money - A Comprehensive Overview of the Past, Present, and Future of Money">
+<img src="/images/sponsors/BrokenMoney-Display.jpg" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://www.amazon.com/dp/BT00LN946S?externalReferenceId=fdeaac92-deca-4ea5-92c1-442cdc15a646"  target="_blank"
+		  title="Sign up for an Amazon Visa - 5% cash back for Amazon and Whole Food Purchases">
+<img src="/images/sponsors/AmazonPrimeVisa-Display.jpg" class="da-content-image" />
+</a>]]></Ad>
   </ContentAds>
 </Ads>

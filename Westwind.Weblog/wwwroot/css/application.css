@@ -834,13 +834,10 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
 }
 
 
-.share-box {
-    flex: none;
+.share-box {    
     line-height: 0;
     margin: 0;
     padding: 0;
-    margin-left: 15px;
-    display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-content: center;
@@ -852,11 +849,10 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
     margin: 0;
 }
 
-.share-box a {
-    flex: auto;
+.share-box a {    
     display: inline;
     list-style: none;
-    padding-right: 12px;
+    padding-right: 0;
     font-size: 35px;
     margin-top: 0.15em;
     margin-bottom: 0;

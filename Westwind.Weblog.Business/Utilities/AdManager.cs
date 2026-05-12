@@ -83,6 +83,33 @@ namespace Westwind.Weblog.Business
             return manager;
         }
 
+        /// <summary>
+        /// Saves the current ad configuration to the specified file.
+        /// </summary>
+        public bool SaveToXml(string saveFilename)
+        {
+            try
+            {
+                var path = Path.GetFullPath(saveFilename);
+                var doc = new XDocument(
+                    new XDeclaration("1.0", "utf-8", null),
+                    new XElement("Ads",
+                        new XElement("BottomPostAd", new XCData(BottomPostAd ?? string.Empty)),
+                        new XElement("TopPostAd", new XCData(TopPostAd ?? string.Empty)),
+                        new XElement("TopPageAd", new XCData(TopPageAd ?? string.Empty)),
+                        new XElement("SponsorBanners",
+                            SponsorBanners.Select(b => new XElement("Banner", new XCData(b ?? string.Empty)))),
+                        new XElement("ContentAds",
+                            ContentAds.Select(a => new XElement("Ad", new XCData(a ?? string.Empty))))));
+                doc.Save(path);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static string ResolveAdsFile(string webRootFolder)
         {
             var newAdsFile = Path.Combine(webRootFolder, "admin", "ads.xml");

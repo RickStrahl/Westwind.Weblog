@@ -82,6 +82,10 @@
                 <div class="card-body">
                     <textarea name="SponsorBanners" class="form-control" rows="4">@Model.SponsorBanners[i]</textarea>
                 </div>
+
+				<div>
+					@Html.Raw(Model.SponsorBanners[i])  
+                </div>
             </div>
         }
     </div>

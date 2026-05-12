@@ -264,7 +264,7 @@ namespace Westwind.Weblog
 
         private void LoadAdsFromXml(AdsViewModel model)
         {
-            var path = Path.Combine(Host.WebRootPath, "admin", "adsnew.xml");
+            var path = Path.Combine(Host.WebRootPath, "admin", "ads.xml");
             if (!System.IO.File.Exists(path)) return;
 
             var root = XDocument.Load(path, LoadOptions.PreserveWhitespace).Root;

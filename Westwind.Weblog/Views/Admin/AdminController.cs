@@ -286,10 +286,10 @@ namespace Westwind.Weblog
 
             model.SummaryRows =
             [
-                CreatePostHitsSummaryRow("Last 7 days", today.AddDays(-7), today.AddDays(1), 50),
-                CreatePostHitsSummaryRow("Today", today, today.AddDays(1), 50),
-                CreatePostHitsSummaryRow("Yesterday", today.AddDays(-1), today, 50),
-                CreatePostHitsSummaryRow("Two days ago", today.AddDays(-2), today.AddDays(-1), 50)
+                CreatePostHitsSummaryRow("Last 7 days", today.AddDays(-7), today, 50),
+                CreatePostHitsSummaryRow("Today", today, today, 50),
+                CreatePostHitsSummaryRow("Yesterday", today.AddDays(-1), today.AddDays(-1), 50),
+                CreatePostHitsSummaryRow("Two days ago", today.AddDays(-2), today.AddDays(-2), 50)
             ];
 
             if (model.SummaryRows.Any(row => row == null))
@@ -301,8 +301,8 @@ namespace Westwind.Weblog
             model.DailySections =
             [
                 CreatePostHitsSection("Today", today, today.AddDays(1)),
-                CreatePostHitsSection("Yesterday", today.AddDays(-1), today),
-                CreatePostHitsSection("Two days ago", today.AddDays(-2), today.AddDays(-1))
+                CreatePostHitsSection("Yesterday", today.AddDays(-1), today.AddDays(-1)),
+                CreatePostHitsSection("Two days ago", today.AddDays(-2), today.AddDays(-2))
             ];
 
             if (model.DailySections.Any(section => section == null))
@@ -335,7 +335,7 @@ namespace Westwind.Weblog
         }
 
 
-        private PostHitsSummaryRow CreatePostHitsSummaryRow(string label, DateTime start, DateTime end, int maxRows = 25)
+        private PostHitsSummaryRow CreatePostHitsSummaryRow(string label, DateTime start, DateTime end, int maxRows = 50)
         {
             var hits = AdminRepo.PostHits(start, end, maxRows);
             if (hits == null)

@@ -162,7 +162,7 @@ namespace Westwind.Weblog.Business
         public List<PostHitResult> PostHits(
             DateTime start = default,
             DateTime end = default,
-            int maxRows = 10)
+            int maxRows = 50)
         {
 
             if (end == default)
@@ -189,8 +189,7 @@ namespace Westwind.Weblog.Business
                     DATEName(Month, posts.Created), '/',
                     DATEPART(day, posts.Created), '/',
                     posts.SafeTitle
-                    )
-                    having Count(*) > 1
+                    )                    
                     order by Hits Desc
                 """;
 

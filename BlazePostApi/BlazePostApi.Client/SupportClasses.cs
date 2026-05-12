@@ -92,14 +92,6 @@ namespace BlazePostApi.Client
         
     }
 
-
-    public class GetPostRequest
-    {
-        public string BlogId { get; set; }
-        public string PostId { get; set; }
-    }
-
-
     /// <summary>
     /// Input for the Authenticate method.
     /// </summary>

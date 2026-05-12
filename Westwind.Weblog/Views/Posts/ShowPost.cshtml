@@ -84,8 +84,9 @@
                 </a>
             </span>
             }                
-            @if (post.Hits > 1 && post.Created > new DateTime(2026,3,1))
-            { 
+            @if ((post.Hits > 1 && post.Created > new DateTime(2026,3,1)) ||
+                 post.Hits > 500 )
+            {
 	            <span style="color: var(--text-muted); font-size: 0.7em;">
 		        • @post.Hits.ToString("n0") views
 	            </span>
@@ -178,8 +179,6 @@ No guarantees that changes will be accepted."
             </a>
             
         </div>
-
-        
     </div>
     
     <div class=small>

@@ -300,10 +300,13 @@ namespace Westwind.Weblog
 
             model.DailySections =
             [
+                CreatePostHitsSection("Summary of Last 7 Days", today.AddDays(-7), today),
                 CreatePostHitsSection("Today", today, today),
                 CreatePostHitsSection("Yesterday", today.AddDays(-1), today.AddDays(-1)),
                 CreatePostHitsSection("Two days ago", today.AddDays(-2), today.AddDays(-2))
             ];
+
+            
 
             if (model.DailySections.Any(section => section == null))
             {
@@ -337,7 +340,7 @@ namespace Westwind.Weblog
 
         private PostHitsSummaryRow CreatePostHitsSummaryRow(string label, DateTime start, DateTime end, int maxRows = 50)
         {
-            var hits = AdminRepo.PostHits(start, end, maxRows);
+            var hits = AdminRepo.PostHits(start, end, 9_999_999);
             if (hits == null)
                 return null;
 
@@ -434,6 +437,7 @@ namespace Westwind.Weblog
     {
         public List<PostHitsSummaryRow> SummaryRows { get; set; } = new();
         public List<PostHitsSection> DailySections { get; set; } = new();
+        public PostHitsSection SummaryHits { get; set; }
     }
 
     public class PostHitsSummaryRow

@@ -95,12 +95,12 @@ namespace Westwind.Weblog.Business.Models
             return "Post: " + Title;
         }
 
-        public string GetPostUrl(bool fullyQualified = false)
+        public string GetPostUrl(bool relativeUrl = false)
         {
             DateTime date = Created;
-            string url = $"{wlApp.Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{SafeTitle}";
+            string url = $"posts/{date.Year}/{date:MMM}/{date:dd}/{SafeTitle}";
 
-            if (!fullyQualified)
+            if (relativeUrl)
                 return url;
 
             return wlApp.Configuration.WeblogHomeUrl + url;            

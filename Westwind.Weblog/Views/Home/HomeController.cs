@@ -66,8 +66,8 @@ namespace Westwind.Weblog.Views.Home
                 {
                     Title = post.Title,
                     CommentCount = post.CommentCount,
-                    Link = postBusiness.GetPostUrl(post, fullyQualified: true),
-                    Permalink = postBusiness.GetPostUrl(post),
+                    Link = post.GetPostUrl(),
+                    Permalink = post.GetPostUrl(),
                     PublishDate = post.Created,
                     Guid = post.Id.ToString()
                 };

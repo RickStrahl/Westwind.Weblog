@@ -58,7 +58,7 @@
     <link rel="search" type="application/opensearchdescription+xml" href="~/opensearch.xml" title="Search Rick Strahl's Blog">
     <link rel="EditURI" type="application/rsd+xml" title="RSD" href="~/rsd.xml" />
     
-    @RenderSection("headers",false)
+    @await RenderSectionAsync("headers",false)
 </head>
 <body>
 
@@ -280,7 +280,7 @@
     <script src="~/scripts/ww.jquery.min.js"></script>    
     <script src="~/scripts/weblog.js"></script>
 
-    @RenderSectionAsync("scripts",false)
+    @await RenderSectionAsync("scripts",false)
 
     <script>
         (function (i, s, o, g, r, a, m) {

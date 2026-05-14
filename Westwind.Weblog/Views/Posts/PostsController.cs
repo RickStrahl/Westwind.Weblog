@@ -1,21 +1,22 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Markdown;
 using Westwind.AspNetCore.Messages;
+using Westwind.AspNetCore.Utilities;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Weblog.Business.Models;
-using Westwind.Webstore.Business.Utilities;
-using Westwind.AspNetCore.Utilities;
 using Westwind.Weblog.Business.Utilities;
+using Westwind.Webstore.Business.Utilities;
 
 namespace Westwind.Weblog
 {
@@ -103,7 +104,8 @@ namespace Westwind.Weblog
                     RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, Request.GetClientIpAddress()).FireAndForget();
                 }
             }
-               
+
+        
             return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages, ErrorDisplay = ErrorDisplay });
         }
 
@@ -129,6 +131,7 @@ namespace Westwind.Weblog
                 post = await PostRepo.GetPost(id);
             else
                 post = await PostRepo.GetPost(slug);
+
 
             var page = Request.Query["page"].FirstOrDefault();
             int.TryParse(page, out int pageToDisplay);
@@ -158,14 +161,28 @@ namespace Westwind.Weblog
             model.PostRepo = PostRepo;
 
             var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages };
-            var comment = newModel.ActiveComment;
+            InitializeViewModel(newModel);
 
+            
+            
+            var actionResult = await HandleComment(newModel, post);
+            if (actionResult != null)
+                return actionResult;
+
+            return View("ShowPost", newModel);
+                                    
+        }
+
+        public async Task<IActionResult> HandleComment(PostViewModel newModel, Post post)
+        {
+            var comment = newModel.ActiveComment;
+         
 
             comment.IsCommentDialogVisible = true;
             comment.Post = post;
             comment.CommentErrorMessage = HttpContext.Items["CommentMessage"]?.ToString();
 
-            InitializeViewModel(newModel);
+
 
             // posting back
             if (string.IsNullOrEmpty(comment.CommentAuthor))
@@ -183,6 +200,7 @@ namespace Westwind.Weblog
                 dataComment.Title = "re: " + comment.Post.Title;
                 dataComment.Author = comment.CommentAuthor;
                 dataComment.Email = comment.CommentEmail;
+                dataComment.Url = comment.CommentWebSite;
 
                 // TODO: Make this False and manually require enabling
                 dataComment.IsActive = false;
@@ -196,7 +214,8 @@ namespace Westwind.Weblog
                     ErrorDisplay.ShowError(PostRepo.ValidationErrors.ToHtml(), "Please fix the following:");
                 }
 
-                if (comment.CommentEmail?.Contains(wlApp.Configuration.CommentAutoApproveNamePart) ?? false)
+                if (!string.IsNullOrEmpty(wlApp.Configuration.CommentAutoApproveNamePart) &&
+                   (comment.CommentEmail?.Contains(wlApp.Configuration.CommentAutoApproveNamePart) ?? false))
                 {
                     dataComment.IsActive = true;  // Auto approve
                 }
@@ -231,26 +250,30 @@ namespace Westwind.Weblog
                                    HtmlUtils.Href("Approve Comment", siteUrl.TrimEnd('/') + "/comments/" + dataComment.Id + "/approve") +
                                    "</small></div>";
 
-                        var emailer = new Emailer();
+                        
 
-
-                        bool result = emailer.SendEmail(wlApp.Configuration.Email.SenderEmail,
-                                                        "Weblog Comment: " + post.Title,
-                                                        CommentBody, EmailModes.html);
+                        Task.Run(() =>
+                        {
+                            // Send admin a notification
+                            var emailer = new Emailer();                           
+                            bool result = emailer.SendEmail(wlApp.Configuration.Email.SenderEmail,
+                                                            "Weblog Comment: " + post.Title,
+                                                            CommentBody, EmailModes.html);
+                        }).FireAndForget();
                     }
 
                     comment.CommentText = null;
                     var message = "Your comment has been saved, but comment moderation is enabled which may cause a delay until your comment is displayed.";
                     TempData["CommentMessage"] = message;
 
-                    return Redirect(Request.Path.Value.Contains("#Comments") ? string.Empty : post.GetPostUrl() + "#Comments");
+                    return Redirect(post.GetPostUrl() + "#Comments");
                 }
 
                 ErrorDisplay.MessageAsRawHtml = true;
                 ErrorDisplay.ShowError($"{PostRepo.ErrorMessage}", "Couldn't save comment");
             }
-                        
-            return View("ShowPost", newModel);
+
+            return null;
         }
 
         [Route("/comments")]

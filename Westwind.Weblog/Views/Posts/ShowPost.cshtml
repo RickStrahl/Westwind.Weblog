@@ -222,6 +222,13 @@ No guarantees that changes will be accepted."
 @if (post.Comments.Count > 0) 
 { 
 <h2 id="Comments">The Voices of Reason</h2>
+
+
+        <div class="mt-2 mb-2">
+            <error-display error-display-model="Model.ErrorDisplay" dismissible="true"></error-display>
+        </div>
+
+
 <hr style="margin-bottom: 30px;" />
 
 
@@ -316,9 +323,7 @@ else {
     </form>
 }
 
-<div class="mt-2 mb-2">
-<error-display error-display-model="Model.ErrorDisplay"></error-display>
-    </div>
+
 <br />
 
 </article>

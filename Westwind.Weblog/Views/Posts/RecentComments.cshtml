@@ -5,8 +5,7 @@
     var comments = Model.Comments;
     var repo = Model.PostRepo;
     var config = Model.PostRepo.Configuration;
-
-    bool isAdmin = Model.IdentityUser.Identity.IsAuthenticated;
+    bool isAdmin = User.GetAppUser()?.IsAdmin ?? false;
 }
     
     <h2>Recent Comments</h2>

@@ -34,7 +34,7 @@ namespace Westwind.Weblog.Business.Models
         [MaxLength(256)]
         public string Email { get; set; }
 
-        public int BodyMode { get; set; }
+        public int BodyMode { get; set; } = 2; // Markdown
 
         public string Url { get; set; }
 

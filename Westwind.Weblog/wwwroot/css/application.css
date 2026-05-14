@@ -252,7 +252,7 @@ hr {
 h1, h2, h3, h4, h5, .page-header {
     font-family: Trebuchet,'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: 600;
-    margin-top: 1em;
+    margin-top: 0.5em;
     margin-bottom: 0.5em;
 }
 
@@ -1135,6 +1135,10 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
 
 .errordisplay hr {
     background: maroon;
+}
+
+.alert h3 {
+    margin-top: 0
 }
 
 .errorhighlight {

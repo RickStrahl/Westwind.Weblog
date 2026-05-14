@@ -1,7 +1,7 @@
 {
   "ApplicationName": "Rick Strahl's Weblog (Custom)",
   "ApplicationByLineHtml": "Wind, waves, code and everything in between...<br />\r\n.NET • C# • Markdown • WPF • All things Web",
-  "ConnectionString": "server=west-wind.com;database=WebLogCore;integrated security=true;encrypt=false",
+  "ConnectionString": "server=.;database=WebLogCore;integrated security=true;encrypt=false",
   "OldWeblogConnectionString": "server=.;database=Weblog;integrated security=true;encrypt=false",
   "ApplicationBasePath": "https://localhost:5001/",
   "PostPageSize": 7600,
@@ -9,7 +9,7 @@
   "HeroImageCount": 16,
   "PayPalEmail": null,
   "WeblogAuthor": "Rick Strahl",
-  "WeblogHomeUrl": "https://weblog.west-wind.com/",
+  "WeblogHomeUrl": "https://localhost:5001/",
   "WeblogImageUrl": "http://www.west-wind.com/images/WebLogBannerLogo.jpg",
   "Email": {
     "MailServer": "127.0.0.1",
@@ -26,5 +26,5 @@
     "ShowConsoleDbCommands": false,
     "ErrorDisplayMode": "Application"
   },
-  "CommentAutoApproveNamePart": null
+  "CommentAutoApproveNamePart": "rstrahl@west-wind.com"
 }

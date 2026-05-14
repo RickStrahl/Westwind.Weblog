@@ -59,12 +59,6 @@
 			{
 				continue;
 			}   
-
-            if (post.IsFeatured)
-            {
-                                <img src="~/images/featured.png" style="float: left; margin-right: 5px;"/>
-            }
-
                    <div class="post-item-wrapper" id="@post.Id">
 
                             <h2 class="page-header mb-1">                
@@ -72,7 +66,6 @@
                                         style="text-decoration: none;">@post.Title</a>
                             </h2>
                             
-
                             <div class="float-end">
                                 
                                 @if (post.CommentCount > 0)
@@ -84,7 +77,6 @@
 
                 }
                             </div>
-
 
                             <div class="byline">
                                 <i class="far fa-clock-rotate-left text-info"></i>

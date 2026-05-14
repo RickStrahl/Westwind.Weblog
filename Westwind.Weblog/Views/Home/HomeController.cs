@@ -34,8 +34,9 @@ namespace Westwind.Weblog.Views.Home
 
 
         [HttpGet]
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
         [Route("/rss")]
-        public async Task<ActionResult> RssFeed(bool force, [FromServices] PostBusiness postBusiness)
+        public async Task<ActionResult> RssFeed([FromQuery] bool force, [FromServices] PostBusiness postBusiness)
         {
             var config = postBusiness.Configuration;
 
@@ -94,11 +95,7 @@ namespace Westwind.Weblog.Views.Home
                 rssItem.Body = body;
 
 
-                rssFeed.Items.Add(rssItem);
-
-
-
-
+                rssFeed.Items.Add(rssItem);               
             }
 
             return Content(rssFeed.SerializeToString(), "text/xml"); // new MediaTypeHeaderValue("text/xml"));

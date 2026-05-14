@@ -132,7 +132,7 @@ namespace Westwind.Weblog
 
             string baseFileName = "weblog-backup-" + DateTime.Now.ToString("yyyy-MM-dd");
             string backupFile = basePath + baseFileName + ".bak";
-            int res = sql.ExecuteNonQuery("backup database weblog to DISK = @0", backupFile);
+            int res = sql.ExecuteNonQuery("backup database weblogCore to DISK = @0", backupFile);
 
             if (res < 0)
             {
@@ -263,7 +263,7 @@ namespace Westwind.Weblog
         }
 
         [HttpGet("/admin/referrers")]
-        public IActionResult Referrers()
+        public IActionResult Referrers([FromQuery] bool json = false)
         {
             var model = CreateViewModel<ReferrersViewModel>();
 
@@ -274,6 +274,9 @@ namespace Westwind.Weblog
                 return View("Index", CreateViewModel<AdminViewModel>());
             }
 
+            if (json)
+                return Json(model);
+            
             return View(model);
         }
 
@@ -340,7 +343,7 @@ namespace Westwind.Weblog
 
         private PostHitsSummaryRow CreatePostHitsSummaryRow(string label, DateTime start, DateTime end, int maxRows = 50)
         {
-            var hits = AdminRepo.PostHits(start, end, 9_999_999);
+            var hits = AdminRepo.PostHits(start, end, 99_999_999); // retrieve all for the range!
             if (hits == null)
                 return null;
 
@@ -349,10 +352,13 @@ namespace Westwind.Weblog
                 Label = label,
                 TotalHits = hits.Sum(hit => hit.Hits),
                 UrlCount = hits.Count,
+                Hits = hits,
                 TopPostTitle = hits.FirstOrDefault()?.Title,
                 TopPostUrl = hits.FirstOrDefault()?.Url,
                 TopPostHits = hits.FirstOrDefault()?.Hits ?? 0
             };
+
+
         }
 
         private PostHitsSection CreatePostHitsSection(string label, DateTime start, DateTime end, int maxRows = 25)
@@ -448,12 +454,13 @@ namespace Westwind.Weblog
         public string TopPostTitle { get; set; }
         public string TopPostUrl { get; set; }
         public int TopPostHits { get; set; }
+        public List<PostHitResult> Hits { get; set; }
     }
 
     public class PostHitsSection
     {
         public string Label { get; set; }
-        public List<AdminBusiness.PostHitResult> Hits { get; set; } = new();
+        public List<PostHitResult> Hits { get; set; } = new();
     }
 
     public class ReferrersViewModel : WeblogBaseViewModel

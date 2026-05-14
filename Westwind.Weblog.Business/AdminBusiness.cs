@@ -227,45 +227,37 @@ namespace Westwind.Weblog.Business
             return result;
         }
 
-        public class PostHitResult
-        {
-            // implement
-            public string Title { get; set; }
-            public string Url { get; set; } 
-
-            public int Hits { get; set; }
-        }
 
         public List<ReferrerResult> Referrers()
         {
             var sql =
-        """
-        --Hit counts per referrer across all posts
-        select p.id as PostId,
-        count(*) as HitCount,
-        p.Title,
-        CONCAT(
-            '/posts/',
-            DATEPART(year, p.Created), '/',
-            DATENAME(month, p.Created), '/',
-            DATEPART(day, p.Created), '/',
-            p.SafeTitle
-            ) as TargetUrl,
-        ph.Referrer as Referrer
-            from posts p
-        inner join postHits ph on p.id = ph.postId
-            group by p.id, p.Title,
-            CONCAT(
-                '/posts/',
-                DATEPART(year, p.Created), '/',
-                DATENAME(month, p.Created), '/',
-                DATEPART(day, p.Created), '/',
-                p.SafeTitle
-            ),
-            ph.Referrer
-            having count(*) > 1
-        order by HitCount desc, p.id, ph.Referrer
-        """;
+                """
+                --Hit counts per referrer across all posts
+                select p.id as PostId,
+                count(*) as HitCount,
+                p.Title,
+                CONCAT(
+                    '/posts/',
+                    DATEPART(year, p.Created), '/',
+                    DATENAME(month, p.Created), '/',
+                    DATEPART(day, p.Created), '/',
+                    p.SafeTitle
+                    ) as TargetUrl,
+                ph.Referrer as Referrer
+                    from posts p
+                inner join postHits ph on p.id = ph.postId
+                    group by p.id, p.Title,
+                    CONCAT(
+                        '/posts/',
+                        DATEPART(year, p.Created), '/',
+                        DATENAME(month, p.Created), '/',
+                        DATEPART(day, p.Created), '/',
+                        p.SafeTitle
+                    ),
+                    ph.Referrer
+                    having count(*) > 1
+                order by HitCount desc, p.id, ph.Referrer
+                """;
 
             var data = Db.QueryList<ReferrerResult>(sql);
             if (data == null)
@@ -274,21 +266,38 @@ namespace Westwind.Weblog.Business
                 return null;
             }
 
-            foreach (var item in data)
+            data = data.Where(l =>
             {
-                item.TargetUrl = wlApp.Configuration.ApplicationBasePath.TrimEnd('/') + item.TargetUrl;
-            }
+                if (string.IsNullOrEmpty(l.Referrer)) return false;
+
+                if (
+                    l.Referrer.Contains("google.com/") ||
+                        l.Referrer.Contains("duckduckgo.com/") ||
+                        l.Referrer.Contains("bing.com/") ||
+                        l.Referrer.Contains("/weblog.west-wind.com/")
+                    )
+                    return false;
+                l.TargetUrl = wlApp.Configuration.ApplicationBasePath.TrimEnd('/') +l.TargetUrl;
+                return true;
+            }).ToList();
 
             return data;
         }
-
 
         #endregion
 
     }
 
-   
 
+
+    public class PostHitResult
+    {
+        // implement
+        public string Title { get; set; }
+        public string Url { get; set; }
+
+        public int Hits { get; set; }
+    }
 
     public class ReferrerResult
     {

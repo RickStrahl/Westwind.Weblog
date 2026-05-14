@@ -100,7 +100,7 @@ namespace Westwind.Weblog
             {
                 if (CanLogRequest())
                 {
-                    RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, HttpContext.GetClientIpAddress()).FireAndForget();
+                    RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, Request.GetClientIpAddress()).FireAndForget();
                 }
             }
                
@@ -222,7 +222,7 @@ namespace Westwind.Weblog
                                              "From: " + comment.CommentAuthor + "<br />" +
                                              "Url: " + HtmlUtils.Href(comment.CommentWebSite) + "<br />" +
                                              "Email: " + comment.CommentEmail + "<br />" +
-                                             "IP: " + HttpContext.GetClientIpAddress() + "<br /><hr />" +
+                                             "IP: " + Request.GetClientIpAddress() + "<br /><hr />" +
                                              WebUtility.HtmlEncode(comment.CommentText);
                         CommentBody += "<br /><br /><small>" +
                                        HtmlUtils.Href("Show Comment",

@@ -5,12 +5,12 @@
 	ViewData["Title"] = "Post Hits";
 }
 
-<div class="posthits-page">
+<div class="posthits-page" style="font-size: 0.8em">
 	<div class="posthits-header card mb-4">
 		<div class="card-body">
 			<div class="posthits-header-top">
 				<div>
-					<h1 class="page-header-text mb-2">
+					<h1 class="page-header-text mb-2 mt-0">
 						<i class="fad fa-chart-line"></i>
 						Post Hits
 					</h1>
@@ -38,7 +38,7 @@
 	<error-display class="mt-3 mb-4" error-display-model="@Model.ErrorDisplay">
 	</error-display>
 
-	<section class="card mb-4 posthits-card">
+	<section class="card mb-4 posthits-card" >
 		<div class="card-header">
 			<span>
 			<i class="fad fa-table-list"></i>
@@ -54,13 +54,12 @@
 					<thead>
 					<tr>
 						<th scope="col">Period</th>
-						<th scope="col">Total Hits</th>
-						<th scope="col">Tracked Urls</th>
-						<th scope="col">Top Post</th>
-						<th scope="col">Top Hits</th>
+						<th scope="col">Total Hits</th>						
+						<th scope="col">Top Post</th>						
 					</tr>
 					</thead>
 					<tbody>
+
 					@foreach (var row in Model.SummaryRows)
 					{
 						<tr>
@@ -70,20 +69,22 @@
 							<td data-label="Total Hits">
 								<span class="posthits-number">@row.TotalHits</span>
 							</td>
-							<td data-label="Tracked Urls">@row.UrlCount</td>
+							@* <td data-label="Tracked Urls">@row.UrlCount</td> *@
 							<td data-label="Top Post">
-								@if (!string.IsNullOrWhiteSpace(row.TopPostUrl))
+									@{
+										var hitList = row.Hits.Take(3).ToList();
+									}
+								<small>
+								@for(int i = 0; i < hitList.Count; i++)
 								{
-									<a href="@row.TopPostUrl" target="_blank" rel="noopener noreferrer" class="posthits-link">
-										@row.TopPostTitle
+									var hit = hitList[i];
+									<a href="@hit.Url"  class="d-block" style="border-bottom: 1px #555 solid; padding-bottom: 0.2em"
+									   target="_blank" rel="noopener noreferrer">
+											@(i + 1). @hit.Title  <small><i> &bull; @hit.Hits hits</i></small>
 									</a>
 								}
-								else
-								{
-									<span class="text-muted">No post hits recorded</span>
-								}
-							</td>
-							<td data-label="Top Hits">@row.TopPostHits</td>
+								</small>
+							</td>							
 						</tr>
 					}
 					</tbody>
@@ -102,7 +103,7 @@
 					@sec.Label
 				</span>
 				<span class="posthits-section-count">
-					@sec.Hits.Sum(hit => hit.Hits) total hits
+					@* @sec.Hits.Sum(hit => hit.Hits) total hits *@
 				</span>
 			</div>
 			<div class="card-body p-0">
@@ -142,3 +143,177 @@
 		</section>
 	}
 </div>
+
+@section headers {
+	<style>
+		.posthits-page {
+			margin-top: 1rem;
+		}
+
+		.posthits-header,
+		.posthits-card {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+		}
+
+		.posthits-header-top {
+			display: flex;
+			gap: 1.5rem;
+			justify-content: space-between;
+			align-items: flex-start;
+			flex-wrap: wrap;
+		}
+
+		.posthits-actions {
+			display: flex;
+			gap: 0.75rem;
+			flex-wrap: wrap;
+		}
+
+			.posthits-actions .btn {
+				white-space: nowrap;
+			}
+
+		.posthits-card .card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.75rem;
+			font-weight: 600;
+		}
+
+		.posthits-section-count {
+			font-size: 0.9rem;
+			color: var(--text-muted);
+		}
+
+		.posthits-table-wrap {
+			overflow-x: auto;
+		}
+
+		.posthits-table {
+			width: 100%;
+			margin-bottom: 0;
+		}
+
+			.posthits-table thead th {
+				background: var(--surface2);
+				color: var(--text);
+				border-bottom: 1px solid var(--border);
+				font-weight: 600;
+				white-space: nowrap;
+			}
+
+			.posthits-table tbody td {
+				vertical-align: top;
+				border-color: var(--border);
+				padding: 0.2rem 1rem;
+			}
+
+			.posthits-table tbody tr:nth-child(even) {
+				background: color-mix(in srgb, var(--surface2) 75%, transparent);
+			}
+
+		.posthits-period {
+			font-weight: 600;
+		}
+
+		.posthits-number {
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: var(--heading-color);
+		}
+
+		.posthits-link {
+			color: var(--link);
+			font-weight: 600;
+			max-width: 600px;
+			overflow-wrap: anywhere;
+		}
+
+			.posthits-link:hover {
+				color: var(--link-hover);
+			}
+
+		.posthits-title {
+			margin-top: 0.35rem;
+			color: var(--text-muted); 
+			overflow-wrap: anywhere !important;
+			font-size: 0.92rem;
+		}
+
+		.referrers-table td:nth-child(1),
+		.referrers-table td:nth-child(2) {
+			min-width: 280px;
+		}
+
+		.posthits-hits-column {
+			width: 120px;
+			text-align: right;
+			white-space: nowrap;
+		}
+
+		.posthits-badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 3.25rem;
+			padding: 0.3rem 0.7rem;
+			border-radius: 999px;
+			background: color-mix(in srgb, var(--accent) 18%, transparent);
+			color: var(--heading-color);
+			font-weight: 700;
+		}
+
+		@@media (max-width: 767.98px) {
+			.posthits-actions {
+				width: 100%;
+				flex-direction: column;
+			}
+
+				.posthits-actions .btn {
+					width: 100%;
+				}
+
+			.posthits-table thead {
+				display: none;
+			}
+
+			.posthits-table,
+			.posthits-table tbody,
+			.posthits-table tr,
+			.posthits-table td {
+				display: block;
+				width: 100%;
+			}
+
+				.posthits-table tbody tr {
+					padding: 0.85rem 1rem;
+					border-bottom: 1px solid var(--border);
+				}
+
+				.posthits-table tbody td {
+					padding: 0.35rem 0;
+					border: 0;
+				}
+
+					.posthits-table tbody td::before {
+						content: attr(data-label);
+						display: block;
+						margin-bottom: 0.15rem;
+						color: var(--text-muted);
+						font-size: 0.82rem;
+						font-weight: 600;
+						text-transform: uppercase;
+						letter-spacing: 0.03em;
+					}
+
+			.posthits-hits-column {
+				width: auto;
+				text-align: left;
+			}
+		}
+
+	</style>
+}

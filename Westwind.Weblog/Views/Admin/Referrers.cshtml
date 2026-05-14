@@ -1,4 +1,6 @@
 @using Westwind.AspNetCore.Components
+@using Westwind.Utilities
+
 @model ReferrersViewModel
 
 @{
@@ -10,7 +12,7 @@
 		<div class="card-body">
 			<div class="posthits-header-top">
 				<div>
-					<h1 class="page-header-text mb-2">
+					<h1 class="page-header-text mb-2 mt-0">
 						<i class="fad fa-link"></i>
 						Referrers
 					</h1>
@@ -61,7 +63,7 @@
 						@foreach (var item in Model.Referrers)
 						{
 							<tr>
-								<td data-label="Target Url">
+								<td data-label="Target Url"  >
 									<a href="@item.TargetUrl" target="_blank" 
 									   style="display: block"
 									   rel="noopener noreferrer" class="posthits-link">
@@ -73,7 +75,9 @@
 									{
 											@if (!string.IsNullOrWhiteSpace(item.Referrer))
 											{
-												<a class="posthits-title" href="@item.Referrer" target="_blank" rel="noopener noreferrer" class="posthits-link">
+												<a class="posthits-url" href="@item.Referrer"											
+												   target="_blank" rel="noopener noreferrer" 
+												   class="posthits-link">												  
 													@item.Referrer
 												</a>
 											}
@@ -96,3 +100,15 @@
 		</div>
 	</section>
 </div>
+
+@section headers {
+	<style>
+		.posthits-url {
+			margin-top: 0.35rem;
+			color: var(--text-muted);
+			overflow-wrap: anywhere ;
+			font-size: 0.92rem;
+		}
+
+</style>
+}

@@ -152,6 +152,50 @@ namespace Westwind.Weblog.Business
 
 
 
+        public List<PopularPost> GetRelatedPosts(IList<string> categories, string tableName, int maxItems = 5, int excludedPk = -1)
+        {
+            string cats = string.Empty;
+            foreach (string cat in categories)
+            {
+                cats += (string.IsNullOrEmpty(cats) ? "" : " OR ") + "Categories like '%" + cat + "%'";
+            }
+            if (!string.IsNullOrEmpty(cats))
+                cats = " AND (" + cats + ")";
+
+            string sql = 
+                """
+                select top @0 CONVERT(DATETIME, Max(FLOOR(CONVERT(FLOAT, TimeStamp)))) as DateSum,
+                                      max(e.created) as Created,
+                                      Max(Id) as PostId, Max(e.Title) as Title,  
+                                      max(e.SafeTitle) as SafeTitle,
+                                     count(Id) as Hits
+                                from posthits as h
+                	            inner join posts  as e on h.PostId = e.id
+                       where  id != @1
+                       @2
+                    group by h.PostId
+                    having Count(Id) > 0
+                    order by DateSum Desc, Hits desc
+                """;
+
+            var list = Db.QueryList<PopularPost>(sql , maxItems, excludedPk, cats);
+            foreach(var pp in list)
+            {
+                pp.SafeTitle = GetPostUrl(pp.SafeTitle, pp.Created, true);
+            }
+
+            return list;
+        }
+
+        public class PopularPost
+        {
+            public string PostId { get; set; }
+            public string Title { get; set; }
+
+            public string SafeTitle { get; set; }
+            public DateTime Created { get; set; }
+        }
+
         #endregion 
 
         #region Comments

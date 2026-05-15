@@ -24,7 +24,7 @@
   "System": {
     "LiveReloadEnabled": true,
     "ShowConsoleDbCommands": false,
-    "ErrorDisplayMode": "Application"
+    "ErrorDisplayMode": "Developer"
   },
   "CommentAutoApproveNamePart": "rstrahl@west-wind.com"
 }

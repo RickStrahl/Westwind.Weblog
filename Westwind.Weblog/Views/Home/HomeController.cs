@@ -213,7 +213,7 @@ body {{ font-family: sans-serif }}
 
             InitializeViewModel(model);
 
-            return View(model);
+            return View("Error", model);
         }
     }
 }

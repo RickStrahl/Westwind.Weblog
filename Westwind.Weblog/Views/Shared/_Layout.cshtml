@@ -19,7 +19,7 @@
 <!DOCTYPE HTML>
 <html>
 <head runat="server">
-    <title>@ViewBag.Title</title>
+    <title>@(ViewBag.Title ??  wlApp.Configuration.ApplicationName)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
 
     <script>

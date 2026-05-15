@@ -106,6 +106,7 @@ services.AddScoped<UserBusiness>();
 if (Environment.CommandLine.Contains("-createdb",StringComparison.OrdinalIgnoreCase))
 {
     CreateDb();
+    RequestLogger.EnsureTablesExist();
     return;
 }
 
@@ -121,8 +122,18 @@ services
         o.ExpireTimeSpan = new TimeSpan(30, 0, 0, 0);
         o.Cookie.Name = "ww_wl";
     });
+
 // disable user state authentication - just use plain cookie Auth
 UserStateWebSettings.Current.IsUserStateEnabled = false;
+
+
+//UserStateWebSettings.Current = new UserStateWebSettings()
+//{
+//    IsUserStateEnabled = true,
+//    PersistanceMode = UserStatePersistanceModes.IdentityClaims,
+//    CookieEncryptionKey = "wljad3ad4ad9Qd4W3td#2pI0o@--",
+//    CookieTimeoutDays = 5
+//};
 
 services.AddControllersWithViews()
     .AddNewtonsoftJson(opt =>

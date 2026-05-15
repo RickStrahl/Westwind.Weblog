@@ -65,7 +65,11 @@ namespace Westwind.Weblog.Views.Account
 
             // Set cookie and attach claims
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity), null);
+                new ClaimsPrincipal(identity), model.RememberMe ? new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddDays(7)
+                } : null);
 
             if (!string.IsNullOrEmpty(model.RedirectUrl))            
                 return Redirect(model.RedirectUrl);

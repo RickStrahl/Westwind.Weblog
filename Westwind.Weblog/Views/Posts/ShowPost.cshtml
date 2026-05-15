@@ -8,6 +8,8 @@
     var repo = Model.PostRepo;
     var config = wlApp.Configuration;
 
+	ViewBag.Title = post.Title + " - " + config.ApplicationName;
+
     string postUrl = repo.GetPostUrl(post);
 
     var appUser = User.GetAppUser();
@@ -70,7 +72,7 @@
 		</script>
 	}
     <h2 class="page-header mb-1" itemprop="headline_name">
-        <a href='@repo.GetPostUrl(post)' style="text-decoration:none;">@post.Title</a>            
+        @post.Title            
     </h2>
 </header>
     
@@ -153,10 +155,24 @@ No guarantees that changes will be accepted."
 	    }
     </div>
 
-
-
     @Html.Raw(Model.PostHtml)
 
+
+    @if(Model.RelatedPosts != null &&Model.RelatedPosts.Count > 0)
+        {
+	        <div style="margin: 30px 0">
+		        <h3 style="margin-top: 30px">
+			        Other Posts you might also like
+		        </h3>
+
+		        <ul>
+			      @foreach(var related in Model.RelatedPosts)
+                    {
+                        <li><a href="@related.SafeTitle">@related.Title</a></li>
+                    }
+		        </ul>
+	        </div>
+        }
 
     @*<% if (RelatedPosts != null && RelatedPosts.Rows.Count > 0)
             { %>

@@ -1,4 +1,4 @@
-﻿@model ErrorViewModel
+@model Westwind.Weblog.Views.Home.ErrorViewModel
 
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.Extensions.Hosting
@@ -55,7 +55,7 @@
             <div>
                 <p>
                     Uh oh! An unexpected error occurred, and we've ended up
-                    in a dead-end alley of the Web Store. The error has been
+                    in a dead-end alley of the Weblog. The error has been
                     recorded and the authorities have been notified, but don't
                     fret we're on the case.
                 </p>
@@ -77,7 +77,7 @@
                 More information
             </h2>
 
-            <error-display alert-class="warning" message="@Model.Error.Message" icon="warning"></error-display>
+            @* <error-display alert-class="warning" message="@Model.Error.Message" icon="warning"></error-display> *@
         }
 
         @if (env.IsDevelopment() || wlApp.Configuration.System.ErrorDisplayMode == ErrorDisplayModes.ApplicationPlusDetail)

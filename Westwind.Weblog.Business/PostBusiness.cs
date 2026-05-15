@@ -118,7 +118,7 @@ namespace Westwind.Weblog.Business
                     Created = c.Comment.Created,
                     PostId = c.Comment.PostId,
                     IsActive = c.Comment.IsActive,
-                    Post = c.Post,
+                    PostUrl = c.Post.GetPostUrl()                    
                 }).ToListAsync();
         }
 
@@ -152,33 +152,41 @@ namespace Westwind.Weblog.Business
 
 
 
-        public List<PopularPost> GetRelatedPosts(IList<string> categories, string tableName, int maxItems = 5, int excludedPk = -1)
+        public List<PopularPost> GetRelatedPosts(IList<string> categories,  int maxItems = 5, string excludedPk = null)
         {
-            string cats = string.Empty;
+            var categoryClauses = new List<string>();
             foreach (string cat in categories)
             {
-                cats += (string.IsNullOrEmpty(cats) ? "" : " OR ") + "Categories like '%" + cat + "%'";
+                if (string.IsNullOrWhiteSpace(cat))
+                    continue;
+
+                categoryClauses.Add($"e.Categories LIKE '%{cat.Replace("'", "''")}%'");
             }
-            if (!string.IsNullOrEmpty(cats))
-                cats = " AND (" + cats + ")";
+
+            var cats = categoryClauses.Count > 0
+                ? $" AND ({string.Join(" OR ", categoryClauses)})"
+                : string.Empty;
 
             string sql = 
-                """
-                select top @0 CONVERT(DATETIME, Max(FLOOR(CONVERT(FLOAT, TimeStamp)))) as DateSum,
-                                      max(e.created) as Created,
-                                      Max(Id) as PostId, Max(e.Title) as Title,  
-                                      max(e.SafeTitle) as SafeTitle,
-                                     count(Id) as Hits
-                                from posthits as h
-                	            inner join posts  as e on h.PostId = e.id
-                       where  id != @1
-                       @2
-                    group by h.PostId
-                    having Count(Id) > 0
-                    order by DateSum Desc, Hits desc
+                $"""
+                select top {maxItems} max(e.Created) as Created,
+                              max(e.Id) as PostId,
+                              max(e.Title) as Title,
+                              max(e.SafeTitle) as SafeTitle,
+                              count(h.PostId) as Hits
+                         from PostHits as h
+                 inner join Posts as e on h.PostId = e.Id
+                        where (@0 = '' or e.Id != @0)
+                    {cats}
+                     group by h.PostId
+                    having count(h.PostId) > 0
+                     order by max(cast(h.TimeStamp as date)) desc, count(h.PostId) desc
                 """;
 
-            var list = Db.QueryList<PopularPost>(sql , maxItems, excludedPk, cats);
+            var list = Db.QueryList<PopularPost>(sql, excludedPk ?? string.Empty);
+            if (list == null)
+                return new List<PopularPost>();
+
             foreach(var pp in list)
             {
                 pp.SafeTitle = GetPostUrl(pp.SafeTitle, pp.Created, true);

@@ -1,7 +1,7 @@
 @using Westwind.AspNetCore.Markdown
 @model Westwind.Weblog.PostViewModel
 @{
-    ViewData["Title"] = Model.PostRepo.Configuration.ApplicationName;
+    ViewBag.Title = "Comments - " + wlApp.Configuration.ApplicationName;
     var comments = Model.Comments;
     var repo = Model.PostRepo;
     var config = Model.PostRepo.Configuration;
@@ -43,11 +43,12 @@
                         </div>
 
                         <div class="comment-panel-right">
-                            <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">
-                                @if(comment.Post != null) {
-                                    <a name="@comment.Id" href="@(comment.Post.GetPostUrl())#@comment.Id">@comment.Post.Title</a>
-                            }
+                            <h3 style="margin-top: 0; font-size: 1.2em; margin-bottom: 0">                                
+                                @if (comment.PostUrl != null) {
+                                    <a name="@comment.Id" href="@(comment.PostUrl)#@comment.Id">@comment.Title</a>
+                                }                                                            
                             </h3>
+                    
                             <div class="commentbody" style="padding-top: 0.7em;">                     
                                 @(comment.BodyMode == 2 ? Html.Raw(Markdown.Parse(comment.Body?.Trim())) : Html.Raw(comment.Body?.Trim()))
                             </div>

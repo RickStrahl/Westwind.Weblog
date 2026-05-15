@@ -21,7 +21,9 @@ namespace Westwind.Weblog
 
         public int TotalPages { get; set; } = 1;
 
-        public CommentViewModel ActiveComment { get; set; } 
+        public CommentViewModel ActiveComment { get; set; }
+
+        public List<PostBusiness.PopularPost> RelatedPosts { get; set; }
 
         public PostViewModel()
         {

@@ -105,8 +105,15 @@ namespace Westwind.Weblog
                 }
             }
 
-        
-            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages, ErrorDisplay = ErrorDisplay });
+            var cats = post.Categories?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray() ?? [];
+            var relatedPosts = PostRepo.GetRelatedPosts(cats, 5, post.Id) ?? [];
+
+
+            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, 
+                                            RelatedPosts = relatedPosts,
+                                            PageToDisplay = pageToDisplay, 
+                                            TotalPages = totalPages, 
+                                            ErrorDisplay = ErrorDisplay });
         }
 
 

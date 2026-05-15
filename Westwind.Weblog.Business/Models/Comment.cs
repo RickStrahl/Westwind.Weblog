@@ -38,9 +38,14 @@ namespace Westwind.Weblog.Business.Models
 
         public string Url { get; set; }
 
-        public virtual Post Post { get; set; }
         
         public bool IsActive { get; set; }
+
+
+        //public virtual Post Post { get; set; }
+
+        [NotMapped]
+        public string PostUrl { get; set; }
 
         public Comment()
         {

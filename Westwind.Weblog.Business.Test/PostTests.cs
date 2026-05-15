@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using Westwind.Weblog.Business.Models;
@@ -102,6 +103,26 @@ namespace Westwind.Weblog.Business.Test
             ClassicAssert.IsTrue(posts.Count > 0 && posts.Count <= config.PostPageSize);
             foreach (var post in posts)
                 Console.WriteLine(post.Title);
+        }
+
+        [Test]
+        public void GetRelatedPostsTest()
+        {
+            var config = new Configuration.WeblogConfiguration()
+            {
+                PostPageSize = 10
+            };
+            var ctx = GetContext();
+            var postRepo = new PostBusiness(ctx, config);
+
+            var pl = postRepo.GetRelatedPosts(["ASP.NET",".NET"], 5, "asddas");
+
+            ClassicAssert.IsNotNull(pl);
+
+            foreach(var p in pl)
+            {
+                Console.WriteLine(p.PostId + " " + p.Title + "\n\t" + p.SafeTitle);
+            }
         }
 
         WeblogContext GetContext()

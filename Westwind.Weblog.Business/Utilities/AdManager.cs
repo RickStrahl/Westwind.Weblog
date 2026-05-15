@@ -132,15 +132,7 @@ namespace Westwind.Weblog.Business
                        .Where(value => !string.IsNullOrWhiteSpace(value))
                    ?? Enumerable.Empty<string>();
         }
-
-        private static IEnumerable<string> ReadLegacyCollection(XElement root, string elementPrefix)
-        {
-            return root.Elements()
-                       .Where(element => element.Name.LocalName.StartsWith(elementPrefix, StringComparison.Ordinal))
-                       .OrderBy(element => GetNumericSuffix(element.Name.LocalName, elementPrefix))
-                       .Select(element => element.Value)
-                       .Where(value => !string.IsNullOrWhiteSpace(value));
-        }
+       
 
         private static int GetNumericSuffix(string elementName, string elementPrefix)
         {

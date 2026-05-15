@@ -338,6 +338,12 @@ namespace Westwind.Weblog
             return Json(new ApiResponse<bool> { Data = true });
         }
 
+        [Route("/comments/format")]
+        public string FormatComment(string commentText)
+        {
+            return Markdown.Parse(commentText);            
+        }
+
         /// <summary>
         /// Returns ApiResponse bool, but redirects if accessed
         /// without an accept header.

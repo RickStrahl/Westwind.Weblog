@@ -2,7 +2,7 @@
 
 ## Must Haves
 * Related Posts
-
+* Comment Formatting Callback
 
 ## Later
 

@@ -131,9 +131,10 @@ namespace Westwind.Weblog.Business
         public async Task<Post> GetPost(string slug)
         {
             Entity = await Context.Posts
-                .Include("Comments")
+                .Include(p=> p.Comments.OrderBy(c=> c.Created))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.SafeTitle == slug);
+
             return Entity;
         }
 
@@ -143,6 +144,7 @@ namespace Westwind.Weblog.Business
         public Post LoadLastPost()
         {
             Entity = Context.Posts.AsNoTracking()
+                                  .Include(p => p.Comments.OrderBy(c => c.Created))
                                   .OrderByDescending(p => p.Created)
                                   .FirstOrDefault();
             return Entity;

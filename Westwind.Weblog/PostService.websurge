@@ -125,8 +125,9 @@ Authorization: Bearer peucqep08vafjjcz
 ----- Start WebSurge Options -----
 
 {
-  "SiteBaseUrl": "https://localhost:5001/blazepostapi/",
+  "SiteBaseUrl": "https://weblog.west-wind.com/",
   "RecentSiteBaseUrlList": [
+    "https://weblog.west-wind.com/",
     "https://localhost:5001/blazepostapi/",
     "https://localhost:5001/"
   ],

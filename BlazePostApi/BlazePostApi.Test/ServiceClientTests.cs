@@ -52,7 +52,7 @@ namespace Westwind.Weblog.PostServiceTests
         [Test]
         public async Task GetPostTest()
         {
-            string postId = "dc52mpticdz4";
+            string postId = "5314605";
 
             var client = new BlazePostApiClient()
             {

@@ -94,7 +94,7 @@
             }            
 
                             <div class="postcontent mt-0" style="margin-bottom: 20px">
-                                @post.Abstract.TrimEnd()  
+                                @(string.IsNullOrEmpty(post.Abstract) ? StringUtils.TextAbstract(post.Abstract, 500) : post.Abstract.TrimEnd())
                                 
                                 <p class="margin-top margin-bottom">
                                     <a href="@repo.GetPostUrl(post)">Read more...</a>

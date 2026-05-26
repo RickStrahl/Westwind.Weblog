@@ -126,14 +126,17 @@ namespace Westwind.Weblog.Business
         /// <summary>
         /// Retrieves a post by its title slug
         /// </summary>
-        /// <param name="slug">Post title created with GetSlug() and held in SafeTitle</param>
+        /// <param name="slugOrId">Post title created with GetSlug() and held in SafeTitle</param>
         /// <returns></returns>
-        public async Task<Post> GetPost(string slug)
+        public async Task<Post> GetPost(string slugOrId)
         {
+            if (string.IsNullOrEmpty(slugOrId))
+                return null;
+
             Entity = await Context.Posts
                 .Include(p=> p.Comments.OrderBy(c=> c.Created))
                 .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.SafeTitle == slug);
+                .FirstOrDefaultAsync(p => p.SafeTitle == slugOrId || p.Id == slugOrId);
 
             return Entity;
         }
@@ -330,6 +333,36 @@ namespace Westwind.Weblog.Business
             return sb.ToString();
         }
 
+        public static string GetSafeTitleStatic(string title)
+        {            
+            if (string.IsNullOrEmpty(title))
+                return null;
+
+            title = WebUtility.HtmlDecode(title);
+
+            title = title
+                .Replace("c#", "csharp")
+                .Replace("C#", "csharp")
+                .Replace(" .net", " dotnet")
+                .Replace(" .NET", " Dotnet");
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (char ch in title.ToCharArray())
+            {
+                if (ch == 32)
+                    sb.Append("-");
+                else if (char.IsLetterOrDigit(ch))
+                    sb.Append(ch);                
+            }
+
+            //Fix multiple dashes
+            sb.Replace("---", "-");
+            sb.Replace("--", "-");
+
+            return sb.ToString();
+        }
+
         #endregion
 
         #region Stats
@@ -355,12 +388,14 @@ namespace Westwind.Weblog.Business
         /// via shuffling from adsnew.xml
         /// </summary>
         /// <param name="postHtml">Html or Markdown to replace ##AD## values with</param>
+        /// <param name="siteBasePath">The base path of the Web site</param>
         /// <returns>Html or Markdown with ads replaced</returns>
         public string EmbedAds(string postHtml)
         {
             if (string.IsNullOrEmpty(postHtml))
                 return postHtml;
-
+            
+            
 
             var adMan = AdManager.Ads;
 
@@ -378,10 +413,16 @@ namespace Westwind.Weblog.Business
                     if (!postHtml.Contains("##AD##", StringComparison.Ordinal))
                         break;
 
-                    ad = restAds[i];
+                    ad = restAds.Count < i - 1 ?
+                        string.Empty : // too many ads in content
+                        restAds[i];
+
                     postHtml = StringUtils.ReplaceStringInstance(postHtml, "##AD##", ad, 1, true);
                 }
             }
+
+            var siteBasePath = Configuration.ApplicationBasePath;
+            postHtml = postHtml.Replace("=\"/", $"=\"{siteBasePath}").Replace("=\"~/", $"=\"{siteBasePath}");
 
             return postHtml;
         }

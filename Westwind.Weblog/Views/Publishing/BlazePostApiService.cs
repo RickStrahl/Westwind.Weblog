@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Westwind.AspNetCore.Errors;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
@@ -20,7 +21,7 @@ namespace Westwind.AspNetCore.Controllers
     /// <summary>
     /// Handles upload and download of posts, media objects and categories.
     /// </summary>    
-    [Route("/blazepostapi/")]
+    [Route("/blazepostapi")]
     public class BlazePostApiService : BlazePostApiBase
     {
         private readonly PostBusiness PostBusiness;
@@ -75,10 +76,11 @@ namespace Westwind.AspNetCore.Controllers
             {
                 newPost = PostBusiness.Create();
                 lastPost = PostBusiness.LoadLastPost();
-                newPost.Location = lastPost.Location;
+                newPost.Location = lastPost?.Location;
                 isNewPost = true;
             }
 
+            newPost.BlogId = post.BlogId;
             newPost.Title = post.Title;
             newPost.Body = post.Body;
             newPost.Abstract = post.Abstract;
@@ -86,6 +88,7 @@ namespace Westwind.AspNetCore.Controllers
             newPost.Author = post.Author;
             newPost.Active = post.PostStatus == PostStatuses.Published;
             newPost.FeaturedImageUrl = post.FeaturedImageUrl;
+                        
 
             if (string.IsNullOrEmpty(newPost.SafeTitle))
                 newPost.SafeTitle = PostBusiness.GetSafeTitle(newPost.Title);
@@ -97,8 +100,10 @@ namespace Westwind.AspNetCore.Controllers
             if (!string.IsNullOrEmpty(newPost.Author))
                 newPost.Author = UserBusiness.Configuration.WeblogAuthor;
 
-            newPost.Keywords = string.Join(',', post.Keywords);
-            newPost.Categories = string.Join(',', post.Categories);            
+            if (post.Keywords != null)
+                newPost.Keywords = string.Join(',', post.Keywords);
+            if(post.Categories != null)
+                newPost.Categories = string.Join(',', post.Categories);            
 
             if (newPost.Created.Year < 2000)
                 newPost.Created = post.DateCreated;
@@ -161,34 +166,55 @@ namespace Westwind.AspNetCore.Controllers
             return post;
         }
 
+        /// <summary>
+        /// This custom installation writes out media objects to a local
+        /// folder called imageContent.
+        /// 
+        /// It breaks out image by year (based on current year) and post title to avoid too
+        /// many files in a single folder and to make easier to track
+        /// images.        
+        /// </summary>
+        /// <param name="weblogMedia"></param>
+        /// <returns></returns>
+        /// <exception cref="ApiException"></exception>
         [HttpPost]
         [Route("media")]
         public override string UploadMediaObject([FromBody] WeblogMediaObject weblogMedia)
         {
-            var imagePath = Url.Content("~/images/") + DateTime.Now.Year;
+
+            string postYear = DateTime.Now.Year.ToString();
+
+            // ExtraData sends the year for now
+            if(weblogMedia.PostDate > new DateTime(2010, 1, 1)) 
+            { 
+                postYear = weblogMedia.PostDate.Year.ToString();
+            }
+            // var id = weblogMedia.PostId;
+
+            var imagePath = Url.Content("~/imageContent/") + postYear;
             var rootPath = Host.WebRootPath;
 
-            string ImagePhysicalPath = Path.Combine(rootPath, "images", DateTime.Now.Year.ToString()) + Path.DirectorySeparatorChar;
-            string ImageWebPath = Request.Scheme + "://" + Request.Host + imagePath;
+            string imagePhysicalPath = Path.Combine(rootPath, "imageContent", postYear) + Path.DirectorySeparatorChar;
+            string imageWebPath = Request.Scheme + "://" + Request.Host + imagePath;
 
             if (weblogMedia.Data != null)
             {
                 if (!ImageUtils.IsImage(weblogMedia.Data))
                     throw new ApiException("Only image uploads are allowed.", 401);
 
-                ImagePhysicalPath = Path.Combine(ImagePhysicalPath, weblogMedia.Name);
-                string PathOnly = Path.GetDirectoryName(ImagePhysicalPath);
-                if (!Directory.Exists(PathOnly))
-                    Directory.CreateDirectory(PathOnly);
+                imagePhysicalPath = Path.Combine(imagePhysicalPath, weblogMedia.Name);
+                string directoryName = Path.GetDirectoryName(imagePhysicalPath);
+                if (!Directory.Exists(directoryName))
+                    Directory.CreateDirectory(directoryName);
 
                 // TODO: Validate Image by loading into Image Class
-                System.IO.File.WriteAllBytes(ImagePhysicalPath, weblogMedia.Data);
+                System.IO.File.WriteAllBytes(imagePhysicalPath, weblogMedia.Data);
 
                 // attempt to optimize the image with Pingo
-                OptimizeImage(ImagePhysicalPath);                                
+                OptimizeImage(imagePhysicalPath);
             }
 
-            var url = ImageWebPath + "/" + weblogMedia.Name;
+            var url = imageWebPath + "/" + weblogMedia.Name;
             url = url.Replace(" ", "%20");
 
             return url;
@@ -285,6 +311,11 @@ namespace Westwind.AspNetCore.Controllers
             return postList;
         }
 
+        [HttpGet("ping")]
+        public IActionResult Ping()
+        {
+            return Content("Pong");
+        }
 
         /// <summary>
         /// Runs Pingo.exe in the background silently to compress PNG or jpg

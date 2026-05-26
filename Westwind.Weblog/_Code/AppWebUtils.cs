@@ -77,7 +77,7 @@ namespace Westwind.Weblog
             StringBuilder sb = new StringBuilder("");
             string Url = HttpUtility.UrlEncode(postRepo.GetPostUrl(postRepo.Entity));
 
-            string[] Categories = postRepo.Entity.Categories.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] Categories = postRepo.Entity.Categories?.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? [];
             if (Categories.Length > 0)
             {
                 sb.Append("<div>Posted in: <b>");

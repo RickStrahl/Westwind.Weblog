@@ -160,6 +160,10 @@ blockquote, q {
     margin: 15px;
 }
 
+    blockquote > h4, blockquote > h5, blockquote > h6 {
+        font-size: 1.11em;
+    }
+
 input, select, textarea {
     font-size: inherit;
     font-weight: inherit;

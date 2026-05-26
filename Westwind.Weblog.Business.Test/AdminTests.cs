@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,8 +13,9 @@ namespace Westwind.Weblog.Business.Test
     [TestFixture]
     public class AdminTests
     {
-        public string ConnectionString = "server=west-wind.com;database=WeblogCore;integrated security=true;encrypt=false";
-        public string OldConnectionString = "server=west-wind.com;database=Weblog;integrated security=true;encrypt=false";
+        public string ConnectionString = "server=west-wind.com;database=WeblogCore-MarkdownMonster;integrated security=true;encrypt=false";
+        //public string ConnectionString = "server=west-wind.com;database=WeblogCore-WebConnection;integrated security=true;encrypt=false";
+        public string OldConnectionString = "";// "server=.;database=Weblog;integrated security=true;encrypt=false";
 
         [Test]
         public void DeleteOldImages()
@@ -65,6 +67,22 @@ namespace Westwind.Weblog.Business.Test
             GetContext();
         }
 
+
+        [Test]
+        public void ImportFromWebConnectionBlogTest()
+        {
+            var cs = "server=west-wind.com;database=WeblogCore-WebConnection;integrated security=true;encrypt=false";
+            var ctx = GetContext(cs);
+            Console.WriteLine(ctx.Database.GetConnectionString());
+            
+            int result = ctx.Database.ExecuteSql($"delete from Comments;delete from Posts");   
+            int count = WeblogDataImporter.ImportFromWebConnectionOleDb(ctx);
+            ClassicAssert.IsTrue(count > 0, "No records imported");
+        }
+
+
+
+
         [Test]
         public void DeletePostsAndCommentsTest()
         {
@@ -72,11 +90,13 @@ namespace Westwind.Weblog.Business.Test
             //int result = context.Database.ExecuteSql($"delete from Comments;delete from Posts");                        
         }
 
-
-        WeblogContext GetContext()
+        WeblogContext GetContext(string connectionString=null)
         {
+            if (string.IsNullOrEmpty(connectionString))
+                connectionString = ConnectionString;
+
             var options = new DbContextOptionsBuilder<WeblogContext>()
-                .UseSqlServer(ConnectionString)
+                .UseSqlServer(connectionString) 
                 .Options;
 
             var ctx = new WeblogContext(options);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
+using Westwind.Utilities;
 using Westwind.Utilities.Data.Security;
 
 
@@ -42,7 +43,8 @@ namespace BlazePostApi
                 throw new ApiException("Invalid publish url");
             }
            
-            if (!descriptor.ActionName.Equals("authenticate", StringComparison.OrdinalIgnoreCase))
+            var action = descriptor.ActionName;
+            if (!action.ContainsAny(StringComparison.OrdinalIgnoreCase, ["authenticate","ping"]))                               
             {
                 if (string.IsNullOrEmpty(UserToken))
                 {

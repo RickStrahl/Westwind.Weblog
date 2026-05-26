@@ -27,6 +27,11 @@ namespace Westwind.Weblog.Business.Configuration
             """;
 
         /// <summary>
+        /// Cookie name used for authentication.
+        /// </summary>
+        public string CookieName { get; set; } = "ww_wl";
+
+        /// <summary>
         /// Sql Server ConnectionString for this application
         /// </summary>
         public string ConnectionString { get; set; }
@@ -38,7 +43,14 @@ namespace Westwind.Weblog.Business.Configuration
         public string OldWeblogConnectionString { get; set; } = "server=.;database=Weblog;integrated security=true;encrypt=false";
 
         /// <summary>
-        /// The server relative root path for this application
+        /// The server relative root path for this application.
+        /// 
+        /// This should include a fully qualified root for the
+        /// application, including a virtual folder if specified.
+        /// 
+        /// Examples:
+        /// * https://weblog.west-wind.com/
+        /// * https://weblog.west-wind.com/blog/
         /// </summary>
         public string ApplicationBasePath
         {
@@ -51,6 +63,24 @@ namespace Westwind.Weblog.Business.Configuration
                 return StringUtils.TerminateString(field, "/");
             }
             set;
+        }
+
+
+        /// <summary>
+        /// If the Application Path includes a virtual path
+        /// segment (ie. `/blog/` or `/weblog/`) specify here
+        ///
+        /// Stored without leading and trailing slashes.         
+        /// </summary>
+        public string VirtualPath {
+            get
+            {
+                if (string.IsNullOrEmpty(field))
+                    return field;
+
+                return field.Trim();
+            }
+            set; 
         }
 
         /// <summary>
@@ -86,7 +116,6 @@ namespace Westwind.Weblog.Business.Configuration
         /// Example: Rick Strahl
         /// </summary>
         public string CommentAutoApproveNamePart { get; set; }  // = "Henry Rollins";
-
         
 
 

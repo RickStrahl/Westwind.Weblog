@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 
 
@@ -232,16 +233,7 @@ namespace BlazePostApi.Client
         /// for uniqueness of the media object.
         /// </summary>
         public string BlogId { get; set; }
-
-
-        /// <summary>
-        /// Optional PostId to which this media object is attached.
-        /// 
-        /// If passed the PostId can be an additional identifier
-        /// for uniqueness of the media object.
-        /// </summary>
-        public string PostId { get; set; }
-
+        
         /// <summary>
         /// The name of the Media Object. Can optionally include a path
         /// prefix that can be used to construct a save path on disk or
@@ -263,11 +255,33 @@ namespace BlazePostApi.Client
         public string ContentType { get; set; }
 
         /// <summary>
+        /// Optional - PostId to which this media object is attached.
+        /// 
+        /// If passed the PostId can be an additional identifier
+        /// for uniqueness of the media object.
+        /// </summary>
+        public string PostId { get; set; }
+
+        /// <summary>
+        /// Optional - The date the media object was created or attached to a post.
+        /// </summary>
+        public DateTime PostDate { get; set; }
+
+        /// <summary>
         /// The byte array of the Media Object itself.
         /// 
         /// </summary>
         public byte[] Data { get; set; }
 
+
+        /// <summary>
+        /// An optional field that can be used to store
+        /// additional data about the media object.
+        /// 
+        /// This is and application specific value, 
+        /// and is not used by the framework internally.
+        /// </summary>
+        public Dictionary<string,string> ExtraData { get; set; } = [];
 
         public bool LoadDataFromFile(string file)
         {

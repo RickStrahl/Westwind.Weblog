@@ -22,18 +22,21 @@
     <title>@(ViewBag.Title ??  wlApp.Configuration.ApplicationName)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
 
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta content="favicon_128.png" itemprop="image">
     <script>
         (function(){
-            var t=localStorage.getItem('ww-theme');            				
+            var t=localStorage.getItem('ww-theme');
             if(!t || t==='dark') {
                   document.documentElement.setAttribute('data-theme', 'dark');
-                  document.documentElement.setAttribute('data-bs-theme','dark');   // bootstrap             
+                  document.documentElement.setAttribute('data-bs-theme','dark');   // bootstrap
             }
         }());
     </script>
-    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="/css/application.css" rel="stylesheet" type="text/css"  />
-    <link href="/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/application.css" rel="stylesheet" type="text/css"  />
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
     @* <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="https://weblog.west-wind.com/rss" /> *@
     <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="https://feeds.feedburner.com/RickStrahl" />
 
@@ -49,7 +52,7 @@
         .product-icon {
             max-width: 1.17em;
             display: inline;
-            vertical-align: middle;            
+            vertical-align: middle;
         }
     </style>
     
@@ -165,7 +168,7 @@
 
                             @if(isAdmin) {
                                 <div>
-                                    <a href="/admin"
+                                    <a href="~/admin"
                                        title="Weblog Administration">
                                         <i class="fas fa-fw fa-gears"  class="product-icon"></i>
                                         Administration
@@ -257,7 +260,7 @@
 
                     </aside>
 
-                    <main class="post-content">                           
+                    <main class="post-content">
                         @RenderBody()
                     </main>
                 </div>

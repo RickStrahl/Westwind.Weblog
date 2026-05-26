@@ -51,12 +51,15 @@ namespace Westwind.Weblog
         [HttpGet]
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
-        [Route("showpost.aspx")]        
         public async Task<IActionResult> ShowPost(int year, string month, int day, string slug, object html, string id= null)
         {
             Post post;
             if (!string.IsNullOrEmpty(id))
+            {
                 post = await PostRepo.GetPost(id);
+                if (post != null)
+                    return RedirectPermanent(post.GetPostUrl());
+            }
             else
                 post = await PostRepo.GetPost(slug);
 

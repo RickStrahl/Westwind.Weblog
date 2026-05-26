@@ -74,6 +74,9 @@ namespace Westwind.Weblog.Business.Test
             ClassicAssert.AreEqual(result.Username, email);
         }
 
+
+      
+
         WeblogContext GetContext()
         {
             var options = new DbContextOptionsBuilder<WeblogContext>()

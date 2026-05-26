@@ -19,22 +19,26 @@
 <!DOCTYPE HTML>
 <html>
 <head runat="server">
-    <title>@ViewBag.Title</title>
+    <title>@(ViewBag.Title ??  wlApp.Configuration.ApplicationName)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1">
 
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta content="favicon_128.png" itemprop="image">
     <script>
         (function(){
-            var t=localStorage.getItem('ww-theme');            
+            var t=localStorage.getItem('ww-theme');
             if(!t || t==='dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
+                  document.documentElement.setAttribute('data-theme', 'dark');
+                  document.documentElement.setAttribute('data-bs-theme','dark');   // bootstrap
             }
         }());
     </script>
-    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/application.css" rel="stylesheet" type="text/css"  />
-    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
-    <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="http://feeds.feedburner.com/RickStrahl" />
-
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/application.css" rel="stylesheet" type="text/css"  />
+    <link href="/lib/fontawesome/css/all.min.css" rel="stylesheet" type="text/css" async />
+    @* <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="https://weblog.west-wind.com/rss" /> *@
+    <link id="RssLink" rel="alternate" type="application/rss+xml" title="Rick Strahl's Weblog" href="https://feeds.feedburner.com/RickStrahl" />
 
     <meta name="twitter:creator" content="@@rickstrahl" />
     <meta name="twitter:domain" content="weblog.west-wind.com" />
@@ -48,7 +52,7 @@
         .product-icon {
             max-width: 1.17em;
             display: inline;
-            vertical-align: middle;            
+            vertical-align: middle;
         }
     </style>
     
@@ -57,7 +61,7 @@
     <link rel="search" type="application/opensearchdescription+xml" href="~/opensearch.xml" title="Search Rick Strahl's Blog">
     <link rel="EditURI" type="application/rsd+xml" title="RSD" href="~/rsd.xml" />
     
-    @RenderSection("headers",false)
+    @await RenderSectionAsync("headers",false)
 </head>
 <body>
 
@@ -88,7 +92,7 @@
                     <div class="marquee-bottom-sharing">
                    
                         <a href="http://twitter.com/rickstrahl" title="Rick Strahl on Twitter" style="text-decoration:none;">
-                            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;margin-top: 0.18em">
+                            <span class="fa-stack" style="line-height: 1em;width: 1em;height: 1em;margin-top: 0.12em">
                                 <i class="fa fa-circle fa-stack-1x" style="color: white; font-size: 0.8em"></i>
                                 <i class="fab fa-square-x-twitter fa-stack-1x" style="color: black"></i>
                             </span>
@@ -115,47 +119,15 @@
                         <a href="https://west-wind.com/articles.aspx">Articles</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
                         <a href="https://store.west-wind.com" class="hide-small">Products</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
                         <a href="https://support.west-wind.com" class="hide-small">Support</a>  <span class="hide-small">&nbsp; &bull; &nbsp;</span>
-                        <a href="https://weblog.west-wind.com/advertise" class="hide-small">Advertise</a>
+                        @* <a href="https://weblog.west-wind.com/advertise" class="hide-small">Advertise</a> *@
                     </span>
 
                 </div>
                 
    
-            @{
-                    string sponsorPanel;
+            
+                @Html.Raw(AdManager.Ads.GetRandomSponsorBanner())
 
-                    if (AdManager.Ads.SponsorBanners.Count > 1)
-                    {
-                        var random = new Random();
-                        sponsorPanel = AdManager.Ads.SponsorBanners[random.Next(AdManager.Ads.SponsorBanners.Count)];
-                    }
-                    else 
-				{
-					sponsorPanel = AdManager.Ads.SponsorBanners.Count == 1 ? AdManager.Ads.SponsorBanners[0] : string.Empty;
-				}
-            }
-                @Html.Raw(sponsorPanel)
-@* 
-                <div id="SponsorPanel"
-                     onclick="window.location.href='http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored'"
-                     style="cursor: pointer">
-
-                    <div class="ad-free-msg">
-                        Ad-free experience sponsored by:
-                    </div>
-                    <div style="flex: auto;">
-                        <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
-                           title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
-                            <img src="~/images/Sponsors/AspPoseLogoIconTransparent.png" style="height: 20px;  vertical-align:top" />
-                            <b>ASPOSE</b>
-                        </a>
-                        - the market leader of .NET and Java APIs for file formats – natively work with DOCX, XLSX, PPT, PDF, images and more
-                        <a href="http://www.aspose.com/products/total/net?utm_source=westwind&utm_medium=banner&utm_campaign=westwind-sponsored"
-                           title="Please stop by our friends at ASPOSE who graciously are providing sponsorship to remove all other ads on this site.">
-                            <i class="fa fa-external-link" style="padding: 0 5px; font-weight: bold"></i>
-                        </a>
-                    </div>
-                </div> *@
                 <div class="clearfix"></div>
             
                 <div class="post-container">
@@ -196,7 +168,7 @@
 
                             @if(isAdmin) {
                                 <div>
-                                    <a href="~/admin"
+                                    <a href="/admin"
                                        title="Weblog Administration">
                                         <i class="fas fa-fw fa-gears"  class="product-icon"></i>
                                         Administration
@@ -311,7 +283,7 @@
     <script src="~/scripts/ww.jquery.min.js"></script>    
     <script src="~/scripts/weblog.js"></script>
 
-    @RenderSectionAsync("scripts",false)
+    @await RenderSectionAsync("scripts",false)
 
     <script>
         (function (i, s, o, g, r, a, m) {

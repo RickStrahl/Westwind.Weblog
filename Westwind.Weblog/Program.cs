@@ -1,28 +1,29 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Westwind.AspNetCore.LiveReload;
-using Westwind.Weblog.Business.Configuration;
-using Westwind.Weblog.Business.Models;
-using Westwind.Weblog.Business;
-using Microsoft.Extensions.Caching.Memory;
 using System.Net.Http;
-using Microsoft.Extensions.Hosting;
-using Westwind.AspNetCore.Extensions;
 using System.Runtime.InteropServices;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
+using Westwind.AspNetCore.Extensions;
+using Westwind.AspNetCore.LiveReload;
 using Westwind.AspNetCore.Markdown;
 using Westwind.Utilities;
+using Westwind.Weblog.Business;
+using Westwind.Weblog.Business.Configuration;
+using Westwind.Weblog.Business.Models;
 using Westwind.Weblog.Business.Utilities;
 
 
@@ -41,6 +42,7 @@ wlApp.WebRootFolder = System.IO.Path.Combine(wlApp.StartupFolder, "wwwroot");
 
 services.AddMemoryCache();
 
+
 // initial read from disk
 var config = wlApp.Configuration;
 
@@ -51,6 +53,9 @@ services.AddSingleton(config);
 
 // write out to disk full configuration
 wlApp.Configuration.Write();
+
+// Limited Across Page Caching support
+services.AddMemoryCache();
 
 
 services.AddLiveReload(config =>
@@ -112,6 +117,16 @@ if (Environment.CommandLine.Contains("-createdb",StringComparison.OrdinalIgnoreC
 
 RequestLogger.EnsureTablesExist();
 
+
+
+// Key storage for cookies - so cookies can persist
+//if (env.IsProduction())
+//{
+//    services.AddDataProtection()
+//        .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(env.ContentRootPath, "DataProtectionKeys")))
+//        .SetApplicationName("Weblog");
+//}
+
 services
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(o =>
@@ -119,14 +134,12 @@ services
         o.LoginPath = "/account/login";
         o.LogoutPath = "/account/logout";
         o.SlidingExpiration = true;
-        o.ExpireTimeSpan = new TimeSpan(30, 0, 0, 0);
-        o.Cookie.Name = "ww_wl";
+        o.ExpireTimeSpan = new TimeSpan(0, 12, 0, 0); // overridden by login 
+        o.Cookie.Name = wlApp.Configuration.CookieName;
     });
 
 // disable user state authentication - just use plain cookie Auth
 UserStateWebSettings.Current.IsUserStateEnabled = false;
-
-
 //UserStateWebSettings.Current = new UserStateWebSettings()
 //{
 //    IsUserStateEnabled = true,
@@ -147,7 +160,7 @@ services.AddControllersWithViews()
 services.AddMarkdown(config =>
 {
     config.MarkdownRenderExtensions.Add(new FontAwesomeRenderExtension());
-    config.MarkdownRenderExtensions.Add(new PlantUmlMarkdownRenderExtension());
+    config.MarkdownRenderExtensions.Add(new PlantUmlMarkdownRenderExtension());    
 });
 
 // ***  BUILD ***
@@ -167,6 +180,8 @@ Task.Run(() =>
 
 wlApp.Cache = app.Services.GetService<IMemoryCache>();
 
+if (!string.IsNullOrEmpty(config.VirtualPath) && config.VirtualPath != "/")
+    app.UsePathBase($"/{config.VirtualPath}/");
 
 if (wlApp.Configuration.System.LiveReloadEnabled)
     app.UseLiveReload();
@@ -182,6 +197,9 @@ else
     ApiExceptionFilterAttribute.ShowExceptionDetail = config.System.ErrorDisplayMode != ErrorDisplayModes.Application;
 }
 
+
+if (!string.IsNullOrEmpty(config.VirtualPath) && config.VirtualPath != "/")
+    app.UsePathBase($"/{config.VirtualPath}/");
 
 //app.UseStatusCodePages(new StatusCodePagesOptions
 //{
@@ -215,10 +233,9 @@ else
 //});
 
 
-app.UseAuthentication();
-
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStatusCodePages();

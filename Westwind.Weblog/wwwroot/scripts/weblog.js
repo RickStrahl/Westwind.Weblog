@@ -66,7 +66,7 @@ function handleCommentClicks() {
         e.preventDefault();
 
         var id = $(this).data("id");
-        ajaxJson('/comments/' + id + '/approve', null,
+        ajaxJson(page.basePath + 'comments/' + id + '/approve', null,
             (res) => {
                 $("#" + id).removeClass("inactive");
                 $(this).remove();
@@ -80,7 +80,7 @@ function handleCommentClicks() {
     $(document).on('click', '.remove-comment', function (e) {
         e.preventDefault();
         var id = $(this).data("id");                
-        ajaxJson('/comments/' + id + '/remove', null,
+        ajaxJson(page.basePath + 'comments/' + id + '/remove', null,
             (res) => {                           
                 $("#" + id).remove();			                                    
             },

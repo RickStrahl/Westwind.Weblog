@@ -198,18 +198,18 @@
             Ctl2.text(Size.toString() + " of " + serverVars.commentMaxLength + " characters");
         }
 
-        ajaxJson("/comment/format", { commentText: Ctl.val() },
-            function (result) {
-                if (result)
-                    $("#divCommentPreview")
-                        .html(result).show();
+        // ajaxJson("/comment/format", { commentText: Ctl.val() },
+        //     function (result) {
+        //         if (result)
+        //             $("#divCommentPreview")
+        //                 .html(result).show();
 
-                setTimeout(function () {
-                    $('pre code').each(function (i, block) {
-                        hljs.highlightBlock(block);
-                    });
-                });
-            } );
+        //         setTimeout(function () {
+        //             $('pre code').each(function (i, block) {
+        //                 hljs.highlightBlock(block);
+        //             });
+        //         });
+        //     } );
     }
 
 
@@ -600,7 +600,7 @@
 
     function doSearch(searchText) {
         lastSearch = searchText;
-        ajaxJson('/api/posts/search?search=' + encodeURIComponent(searchText), null,
+        ajaxJson(page.basePath + 'api/posts/search?search=' + encodeURIComponent(searchText), null,
             function (results) {
                 renderResults(results);
             },

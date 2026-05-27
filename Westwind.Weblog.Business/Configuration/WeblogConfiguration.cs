@@ -103,7 +103,11 @@ namespace Westwind.Weblog.Business.Configuration
         public string WeblogAuthor { get; set; } = "Rick Strahl";
 
         public string WeblogHomeUrl { get; set; } = "https://weblog.west-wind.com";
-        public string WeblogImageUrl { get; set; } = "http://www.west-wind.com/images/WebLogBannerLogo.jpg";
+
+        /// <summary>
+        /// This is the image Url used for the RSS feed
+        /// </summary>
+        public string WeblogRssImageUrl { get; set; } = "https://www.west-wind.com/images/WestwindSiteLogo.jpg";
 
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
 

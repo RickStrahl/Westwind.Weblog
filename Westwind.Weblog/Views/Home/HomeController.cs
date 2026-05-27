@@ -19,19 +19,14 @@ using Westwind.Webstore.Business.Utilities;
 namespace Westwind.Weblog.Views.Home
 {
     public class HomeController : WeblogBaseController
-    {
-        // public HttpContextAccessor ContextAccessor { get; }
-        public ILogger<HomeController> Logger { get; }
-
-        //PostBusiness PostBusiness { get; set; }
+    {                
+        public ILogger<HomeController> Logger { get; }        
 
         public HomeController( ILogger<HomeController> logger)
-        {            
+        {
             Logger = logger;
         }
-
-        
-
+                      
 
         [HttpGet]
         [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any, NoStore = false)]
@@ -48,9 +43,8 @@ namespace Westwind.Weblog.Views.Home
                 Description = "Wind, waves, code and everything in between",
                 Generator = "Rick Strahl's West Wind Weblog",
                 PubDate = DateTime.UtcNow,
-                ImageUrl = config.WeblogImageUrl
+                ImageUrl = config.WeblogRssImageUrl
             };
-
 
             var posts = await postBusiness.GetLastPostsAsync(10, includeBody: true);
             var lastPost = posts.FirstOrDefault();
@@ -86,24 +80,23 @@ namespace Westwind.Weblog.Views.Home
                 string body = post.Body;
                 if (!string.IsNullOrEmpty(body))
                     body = body
-                        .Replace("##AD##", "")
+                        //.Replace("##AD##", "")
                         .Replace("##PAGEBREAK##", "");
+
+                body = postBusiness.EmbedAds(body);
 
                 if (count > 3)
                     body = post.Abstract ?? StringUtils.TextAbstract(body, 250);
 
                 rssItem.Body = body;
-
+                rssItem.Abstract = post.Abstract;
+                rssItem.FeaturedImage = post.FeaturedImageUrl;
 
                 rssFeed.Items.Add(rssItem);               
             }
 
             return Content(rssFeed.SerializeToString(), "text/xml"); // new MediaTypeHeaderValue("text/xml"));
         }
-
-
-
-
 
         public IActionResult MissingPage(string path, string url = null)
         {

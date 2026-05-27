@@ -33,6 +33,11 @@ namespace BlazePostApi.Rss
 
         public string CommentsUrl { get; set; }
 
-        public int CommentCount { get; set; }  
+        public int CommentCount { get; set; }
+
+
+        public string Abstract { get; set; }
+
+        public string FeaturedImage { get; set; }
     }
 }

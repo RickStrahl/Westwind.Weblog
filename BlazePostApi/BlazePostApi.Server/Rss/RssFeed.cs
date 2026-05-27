@@ -71,7 +71,7 @@ namespace BlazePostApi.Rss
             {
                 var itemElement = new XElement("item");
                 itemElement.Add(new XElement("title", item.Title));
-                itemElement.Add(new XElement("description", item.Body));
+                itemElement.Add(new XElement("description", new XCData(item.Body ?? item.Abstract ?? string.Empty)) );
                 itemElement.Add(new XElement("link", item.Link));
 
                 if (!string.IsNullOrEmpty(item.Guid))
@@ -99,6 +99,10 @@ namespace BlazePostApi.Rss
                 
                 if (item.PublishDate > DateTime.MinValue)
                     itemElement.Add(new XElement("pubDate", item.PublishDate.ToString("r")));
+
+                itemElement.Add(new XElement("abstract", new XCData(item.Abstract ?? string.Empty)));
+                itemElement.Add(new XElement("featuredImage",item.FeaturedImage ?? string.Empty));
+
 
                 channel.Add(itemElement);
             }

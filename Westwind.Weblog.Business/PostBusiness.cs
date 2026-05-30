@@ -29,7 +29,7 @@ namespace Westwind.Weblog.Business
         {
             return await Context.Posts
                 .Where(p => p.Active)
-                .Include("Comments")                
+                .Include("Comments")
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new Post
@@ -78,29 +78,29 @@ namespace Westwind.Weblog.Business
             postSearch = postSearch.ToLower();
 
             return await Context.Posts
-                .Where(p=> p.Active && 
-                           (p.Title.ToLower().Contains(postSearch) || 
-                           p.Abstract.ToLower().Contains(postSearch)) )                
+                .Where(p => p.Active &&
+                           (p.Title.ToLower().Contains(postSearch) ||
+                           p.Abstract.ToLower().Contains(postSearch)))
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new PostListItem
                 {
-                    PostId = p.Id,                                      
+                    PostId = p.Id,
                     Abstract = p.Abstract,
                     Title = p.Title,
                     Url = p.GetPostUrl(),
                     Location = p.Location,
                     CommentCount = p.CommentCount,
-                    Created = p.Created,                    
+                    Created = p.Created,
                     FeaturedImageUrl = p.FeaturedImageUrl
                 })
                 .ToListAsync();
         }
-        
+
 
         public async Task<List<Comment>> GetRecentCommentsAsync(int commentCount = 50)
         {
-            return await Context.Comments                
+            return await Context.Comments
                 .OrderByDescending(c => c.Created)
                 .Join(Context.Posts, c => c.PostId,
                                      p => p.Id,
@@ -118,7 +118,7 @@ namespace Westwind.Weblog.Business
                     Created = c.Comment.Created,
                     PostId = c.Comment.PostId,
                     IsActive = c.Comment.IsActive,
-                    PostUrl = c.Post.GetPostUrl()                    
+                    PostUrl = c.Post.GetPostUrl()
                 }).ToListAsync();
         }
 
@@ -134,7 +134,7 @@ namespace Westwind.Weblog.Business
                 return null;
 
             Entity = await Context.Posts
-                .Include(p=> p.Comments.OrderBy(c=> c.Created))
+                .Include(p => p.Comments.OrderBy(c => c.Created))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.SafeTitle == slugOrId || p.Id == slugOrId);
 
@@ -155,7 +155,7 @@ namespace Westwind.Weblog.Business
 
 
 
-        public List<PopularPost> GetRelatedPosts(IList<string> categories,  int maxItems = 5, string excludedPk = null)
+        public List<PopularPost> GetRelatedPosts(IList<string> categories, int maxItems = 5, string excludedPk = null)
         {
             var categoryClauses = new List<string>();
             foreach (string cat in categories)
@@ -170,7 +170,7 @@ namespace Westwind.Weblog.Business
                 ? $" AND ({string.Join(" OR ", categoryClauses)})"
                 : string.Empty;
 
-            string sql = 
+            string sql =
                 $"""
                 select top {maxItems} max(e.Created) as Created,
                               max(e.Id) as PostId,
@@ -190,9 +190,9 @@ namespace Westwind.Weblog.Business
             if (list == null)
                 return new List<PopularPost>();
 
-            foreach(var pp in list)
+            foreach (var pp in list)
             {
-                pp.SafeTitle = GetPostUrl(pp.SafeTitle, pp.Created, true);
+                pp.SafeTitle = GetPostUrl(pp.SafeTitle, pp.Created);
             }
 
             return list;
@@ -256,7 +256,7 @@ namespace Westwind.Weblog.Business
         /// Returns the full URL to this entry entity.
         /// </summary>
         /// <returns></returns>
-        public string GetPostUrl(Post post = null, bool fullyQualified = false)
+        public string GetPostUrl(Post post = null, PostUrlTypes urlType = PostUrlTypes.SiteRelative)
         {
             if (post == null)
                 post = Entity;
@@ -268,7 +268,7 @@ namespace Westwind.Weblog.Business
             if (string.IsNullOrEmpty(post.SafeTitle))
                 post.SafeTitle = GetSafeTitle(post.Title);
 
-            return GetPostUrl(post.SafeTitle, post.Created, fullyQualified);
+            return GetPostUrl(post.SafeTitle, post.Created, urlType);
         }
 
         /// <summary>
@@ -280,19 +280,28 @@ namespace Westwind.Weblog.Business
         /// Use GetSlug() to create a safetitle
         /// </param>
         /// <param name="entered">Created date of the post</param>
-        /// <param name="fullyQualified">If true returns a full http(s) url</param>
+        /// <param name="fullyQualified">If true returns a full http(s) url otherwise a site relative path including the configured VirtualPath is returned</param>
         /// <returns></returns>
-        public string GetPostUrl(string safeTitle, DateTime entered, bool fullyQualified = false)
+        public string GetPostUrl(string safeTitle, DateTime entered, PostUrlTypes  urlType = PostUrlTypes.SiteRelative)
         {
             DateTime date = entered;
-            string url = $"{Configuration.ApplicationBasePath}posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";
+            string url = $"posts/{date.Year}/{date:MMM}/{date:dd}/{safeTitle}";
 
-            if (!fullyQualified)
+            if (urlType == PostUrlTypes.Raw)
                 return url;
 
-            return Configuration.WeblogHomeUrl + url;
+            if (urlType == PostUrlTypes.SiteRelative) 
+            {
+                return string.IsNullOrEmpty(Configuration.VirtualPath)
+                        ? $"/{url}" 
+                        : $"/{Configuration.VirtualPath}/{url}";
+            }
+
+            return  Configuration.ApplicationBasePath + url;
         }
 
+
+        
 
         /// <summary>
         /// Returns a URL safe string for the title
@@ -519,5 +528,21 @@ namespace Westwind.Weblog.Business
         /// </summary>
         public int CommentCount { get; set; }
 
+    }
+
+    /// <summary>
+    /// Url Types for Posts in the base format of
+    /// posts/yyyy/MMM/dd/safetitle
+    /// Types determine site relative or fully qualified
+    /// Url combinations.
+    /// </summary>
+    public enum PostUrlTypes
+    {
+        // Path that is site relative and includes the VirtualPath if set
+        SiteRelative,
+        // Fully qualified Http path using the ApplicationBasePath
+        FullyQualified,
+        // Just the safe title prefixed by posts/yyyy/MMM/dd/safetitle without the base path
+        Raw
     }
 }

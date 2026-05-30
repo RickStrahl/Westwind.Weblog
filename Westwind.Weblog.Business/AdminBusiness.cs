@@ -48,7 +48,7 @@ namespace Westwind.Weblog.Business
             return WeblogDataImporter.EnsureWeblogData(Context, wlApp.Configuration.OldWeblogConnectionString);
         }
 
-        public StringBuilder DeleteOldImages(string imageFolder)
+        public StringBuilder DeleteUnusedImages(string imageFolder)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -72,19 +72,19 @@ namespace Westwind.Weblog.Business
             {
                 var dirName = Path.GetFileName(dir);
 
-                // only /image folders that start with a number
+                // only folders that start with a number
                 if (char.IsDigit(dirName[0]))
-                    DeleteOldImagesInFolder(dir, sb, postList);
+                    DeleteUnusedImagesInFolder(dir, sb, postList);
             }
 
             return sb;
         }
 
-        public void DeleteOldImagesInFolder(string imagePath, StringBuilder sb, string postList)
+        public void DeleteUnusedImagesInFolder(string imagePath, StringBuilder sb, string postList)
         {
             foreach (var dir in Directory.GetDirectories(imagePath))
             {
-                DeleteOldImagesInFolder(dir, sb, postList);
+                DeleteUnusedImagesInFolder(dir, sb, postList);
             }
 
             var files = Directory.GetFiles(imagePath);

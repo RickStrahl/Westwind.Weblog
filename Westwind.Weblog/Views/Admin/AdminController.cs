@@ -12,7 +12,6 @@ using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Utilities;
 using Westwind.Utilities;
 using Westwind.Utilities.Data;
-using Westwind.Web;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 
@@ -70,13 +69,13 @@ namespace Westwind.Weblog
             var model = CreateViewModel<AdminViewModel>();
             model.Message = "Unused Images updated.";
 
-            var sb = AdminRepo.DeleteOldImages(Path.Combine(Host.WebRootPath, "images"));
+            var sb = AdminRepo.DeleteUnusedImages(Path.Combine(Host.WebRootPath, "imageContent"));
             if (sb == null)
                 model.ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Image deletion failed");
             else
             {
                 model.ErrorDisplay.MessageAsRawHtml = true;
-                model.ErrorDisplay.ShowSuccess($"{StringUtils.CountLines(sb.ToString())} images deleted.\n" + (sb.Length > 0 ? "<pre>{sb}</pre>" : null), "Image Deletion Completed");
+                model.ErrorDisplay.ShowSuccess($"{StringUtils.CountLines(sb.ToString())} images deleted.\n" + (sb.Length > 0 ? $"<pre>{sb}</pre>" : null), "Image Deletion Completed");
             }
 
             return View("Index", model);

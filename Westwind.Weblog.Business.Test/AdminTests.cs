@@ -23,7 +23,7 @@ namespace Westwind.Weblog.Business.Test
             var context = GetContext();
             var repo = new AdminBusiness(context, new Configuration.WeblogConfiguration());
 
-            repo.DeleteOldImages(@"d:\projects\Westwind.Weblog\Westwind.Weblog\wwwroot\images");
+            repo.DeleteUnusedImages(@"d:\projects\Westwind.Weblog\Westwind.Weblog\wwwroot\images");
         }
         
         [Test]

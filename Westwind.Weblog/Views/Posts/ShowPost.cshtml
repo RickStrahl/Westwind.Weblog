@@ -326,24 +326,28 @@ No guarantees that changes will be accepted."
  }
     
 
-@if(Model.ActiveComment.IsCommentDialogVisible) {
-    <div id="CommentBox">
-        <partial name="Comment_Partial" model="Model" />
-    </div>
-}
-else {
-        <form action="@Url.Content("~" + Request.Path)#CommentBox" method="post">
-        <input type="hidden" name="force" value="1" />
-        <button class="btn btn-primary" id="CommentSubmit"
+    @if (!post.CommentsClosed)
+    {
+        if (Model.ActiveComment.IsCommentDialogVisible)
+        {
+            <div id="CommentBox">
+                <partial name="Comment_Partial" model="Model" />
+            </div>
+        }
+        else
+        {
+            <form action="@Url.Content("~" + Request.Path)#CommentBox" method="post">
+                <input type="hidden" name="force" value="1" />
+                <button class="btn btn-primary" id="CommentSubmit"
                 type="submit"
                 style="font-weight: bold; padding: 10px 30px;">
-            <i class="fad fa-comments"></i>&nbsp;
-            Add a Comment
-        </button>
+                    <i class="fad fa-comments"></i>&nbsp;
+                    Add a Comment
+                </button>
 
-    </form>
-}
-
+            </form>
+        }
+    }
 
 <br />
 

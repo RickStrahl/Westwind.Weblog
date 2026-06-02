@@ -148,13 +148,16 @@ UserStateWebSettings.Current.IsUserStateEnabled = false;
 //    CookieTimeoutDays = 5
 //};
 
-services.AddControllersWithViews()
+var mvcBuilder = services.AddControllersWithViews()
     .AddNewtonsoftJson(opt =>
     {
         if (builder.Environment.IsDevelopment())
             opt.SerializerSettings.Formatting = Formatting.Indented;
-    })
-    .AddRazorRuntimeCompilation();
+    });
+
+if (config.System.LiveReloadEnabled) {
+    mvcBuilder.AddRazorRuntimeCompilation();
+}
 
 
 services.AddMarkdown(config =>

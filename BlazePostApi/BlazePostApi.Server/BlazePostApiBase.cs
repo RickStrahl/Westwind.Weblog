@@ -21,11 +21,17 @@ namespace BlazePostApi
         /// </summary>
         protected string UserToken { get; set; }
 
+        /// <summary>
+        /// Connection string to the database that holds user tokens
+        /// for the base implementation and can also hold connection 
+        /// information for 
+        /// 
+        /// </summary>
         protected string ConnectionString { get; set;  }
 
-        public BlazePostApiBase(string connectionString) 
+        public BlazePostApiBase(string userTokenConnectionString) 
         {
-            ConnectionString = connectionString;
+            ConnectionString = userTokenConnectionString;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -98,17 +104,32 @@ namespace BlazePostApi
         /// </summary>
         /// <param name="getPostRequest">request parameter for blog id and post id</param>
         /// <returns></returns>
-        public abstract WeblogPost GetPost( string userId, string blogId);
+        public abstract WeblogPost GetPost( string userId);
 
+
+        /// <summary>
+        /// Retrieves the most recent blog post for a given blog id
+        /// </summary>
+        /// <param name="blogId"></param>
+        /// <returns></returns>
+        public abstract WeblogPost GetLastPost(string blogId);
+
+        /// <summary>
+        /// Returns a confirmation that a given post exists for a given blog id.
+        /// Clients can use this to check quickly whether a post exists without
+        /// having to download an entire post's content.
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <returns></returns>
+        public abstract bool PostExists(string postId);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="listFilter"></param>
         /// <returns></returns>
-        public abstract IList<WeblogMinimalPost> GetRecentPosts(PostListFilter listFilter);
+        public abstract IList<WeblogMinimalPost> GetRecentPosts(PostListFilter listFilter, string blogId);
 
-        public abstract WeblogPost GetLastPost(string blogId);
 
         #region Token Service Helpers
 

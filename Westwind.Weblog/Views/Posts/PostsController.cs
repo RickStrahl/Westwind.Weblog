@@ -22,27 +22,27 @@ namespace Westwind.Weblog
 {
     public class PostsController : WeblogBaseController
     {
-        PostBusiness PostRepo { get; }
+        PostBusiness Postbus { get; }
 
         WeblogConfiguration Config  { get; }
 
         IMemoryCache Cache { get; }
         
-        public PostsController(PostBusiness postRepo, 
+        public PostsController(PostBusiness postbus, 
                                WeblogConfiguration config,
                                IMemoryCache cache)
         {
-            PostRepo = postRepo;
+            Postbus = postbus;
             Config = config;
-            Cache = cache;
+            Cache = cache;            
         }
 
         [Route("")]
         [Route("/posts")]
         public async Task<IActionResult> Index()
         {
-            var posts = await PostRepo.GetLastPostsAsync(Config.HomePagePostCount);
-            return View(new PostViewModel { Posts = posts, PostRepo = PostRepo });
+            var posts = await Postbus.GetLastPostsAsync(Config.HomePagePostCount);
+            return View(new PostViewModel { Posts = posts, PostRepo = Postbus });
         }
 
 
@@ -56,12 +56,12 @@ namespace Westwind.Weblog
             Post post;
             if (!string.IsNullOrEmpty(id))
             {
-                post = await PostRepo.GetPost(id);
+                post = await Postbus.GetPost(id);
                 if (post != null)
                     return RedirectPermanent(post.GetPostUrl());
             }
             else
-                post = await PostRepo.GetPost(slug);
+                post = await Postbus.GetPost(slug);
 
             if (post == null)
             {
@@ -70,7 +70,7 @@ namespace Westwind.Weblog
 
             // Markdown
             string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
-            postHtml = PostRepo.EmbedAds(postHtml);
+            postHtml = Postbus.EmbedAds(postHtml);
 
             var page = Request.Query["page"].FirstOrDefault();
             int.TryParse(page, out int pageToDisplay);
@@ -109,10 +109,10 @@ namespace Westwind.Weblog
             }
 
             var cats = post.Categories?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray() ?? [];
-            var relatedPosts = PostRepo.GetRelatedPosts(cats, 5, post.Id) ?? [];
+            var relatedPosts = Postbus.GetRelatedPosts(cats, 5, post.Id) ?? [];
 
 
-            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = PostRepo, 
+            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = Postbus, 
                                             RelatedPosts = relatedPosts,
                                             PageToDisplay = pageToDisplay, 
                                             TotalPages = totalPages, 
@@ -138,9 +138,9 @@ namespace Westwind.Weblog
         {
             Post post;
             if (!string.IsNullOrEmpty(id))
-                post = await PostRepo.GetPost(id);
+                post = await Postbus.GetPost(id);
             else
-                post = await PostRepo.GetPost(slug);
+                post = await Postbus.GetPost(slug);
 
 
             var page = Request.Query["page"].FirstOrDefault();
@@ -165,12 +165,12 @@ namespace Westwind.Weblog
 
             // Markdown
             string postHtml = post.BodyMode == 2 ? Markdown.Parse(post.Markdown) : post.Body; // html already rendered                       
-            postHtml = PostRepo.EmbedAds(postHtml);
+            postHtml = Postbus.EmbedAds(postHtml);
 
             model.Post = post;
-            model.PostRepo = PostRepo;
+            model.PostRepo = Postbus;
 
-            var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostRepo = PostRepo, PageToDisplay = pageToDisplay, TotalPages = totalPages };
+            var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostRepo = Postbus, PageToDisplay = pageToDisplay, TotalPages = totalPages };
             InitializeViewModel(newModel);
 
             
@@ -205,7 +205,7 @@ namespace Westwind.Weblog
             if (!string.IsNullOrEmpty(comment.CommentText))
             {
 
-                var dataComment = PostRepo.Create<Comment>();
+                var dataComment = Postbus.Create<Comment>();
                 dataComment.Body = comment.CommentText;
                 dataComment.Title = "re: " + comment.Post.Title;
                 dataComment.Author = comment.CommentAuthor;
@@ -218,10 +218,10 @@ namespace Westwind.Weblog
                 post.Comments.Add(dataComment);
 
                 var hasError = false;
-                if (!PostRepo.ValidateComment(dataComment))
+                if (!Postbus.ValidateComment(dataComment))
                 {
                     hasError = true;
-                    ErrorDisplay.ShowError(PostRepo.ValidationErrors.ToHtml(), "Please fix the following:");
+                    ErrorDisplay.ShowError(Postbus.ValidationErrors.ToHtml(), "Please fix the following:");
                 }
 
                 if (!string.IsNullOrEmpty(wlApp.Configuration.CommentAutoApproveNamePart) &&
@@ -230,7 +230,7 @@ namespace Westwind.Weblog
                     dataComment.IsActive = true;  // Auto approve
                 }
 
-                if (!hasError && await PostRepo.SaveAsync(post))
+                if (!hasError && await Postbus.SaveAsync(post))
                 {
                     ModelState.Clear();
                     HttpContext.Items["CommentMessage"] = "Comment has been saved, but comment moderation is enabled, so it won't display until approved. Please check back later.";
@@ -280,7 +280,7 @@ namespace Westwind.Weblog
                 }
 
                 ErrorDisplay.MessageAsRawHtml = true;
-                ErrorDisplay.ShowError($"{PostRepo.ErrorMessage}", "Couldn't save comment");
+                ErrorDisplay.ShowError($"{Postbus.ErrorMessage}", "Couldn't save comment");
             }
 
             return null;
@@ -289,8 +289,8 @@ namespace Westwind.Weblog
         [Route("/comments")]
         public async Task<IActionResult> RecentComments()
         {
-            var comments = await PostRepo.GetRecentCommentsAsync(Config.HomePagePostCount);
-            var model = new PostViewModel { Comments = comments, PostRepo = PostRepo };
+            var comments = await Postbus.GetRecentCommentsAsync(Config.HomePagePostCount);
+            var model = new PostViewModel { Comments = comments, PostRepo = Postbus };
             InitializeViewModel(model);
             return View(model);
         }
@@ -300,18 +300,18 @@ namespace Westwind.Weblog
         public IActionResult ApproveComment(string commentId)
         {
 
-            var comment = PostRepo.Context.Comments.FirstOrDefault(c => c.Id == commentId);
+            var comment = Postbus.Context.Comments.FirstOrDefault(c => c.Id == commentId);
             if (comment == null) 
                 return Json( new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false });
 
             var result = new ApiResponse<bool>();
             comment.IsActive = true;
-            result.Data = PostRepo.Save(); // Context.SaveChanges() == 1;
+            result.Data = Postbus.Save(); // Context.SaveChanges() == 1;
 
 
             if (!Request.Headers.Accept.Any(h => h.Contains("application/json")))
             {
-                var post = PostRepo.Load(comment.PostId);
+                var post = Postbus.Load(comment.PostId);
                 var url = post != null ? post.GetPostUrl() + "#Comments": "#Comments";
                 return Redirect(url);
             }
@@ -330,17 +330,17 @@ namespace Westwind.Weblog
         [Route("/comments/{commentId}/remove")]
         public IActionResult RemoveComment(string commentId)
         {
-            var comment = PostRepo.Context.Comments.FirstOrDefault(c => c.Id == commentId);
+            var comment = Postbus.Context.Comments.FirstOrDefault(c => c.Id == commentId);
             if (comment == null)
                 return Json(new ApiResponse<bool> { IsError = true, Message = "Comment not found", Data = false });
 
-            PostRepo.Context.Remove<Comment>(comment);
+            Postbus.Context.Remove<Comment>(comment);
 
-            var res = PostRepo.Context.SaveChanges();
+            var res = Postbus.Context.SaveChanges();
 
             if (!Request.Headers.Accept.Any(h => h.Contains("application/json")))
             {
-                var post = PostRepo.Load(comment.PostId);
+                var post = Postbus.Load(comment.PostId);
                 var url = post != null ? post.GetPostUrl() + "#Comments" : "#Comments";
                 return Redirect(url);
             }
@@ -364,12 +364,12 @@ namespace Westwind.Weblog
         [Route("/posts/{postId}/delete")]
         public IActionResult DeletePost(string postId)
         {
-            var post = PostRepo.Context.Posts.FirstOrDefault(c => c.Id == postId);
+            var post = Postbus.Context.Posts.FirstOrDefault(c => c.Id == postId);
             if (post == null)
                 return Json(new ApiResponse<bool> { IsError = true, Message = "Post not found", Data = false });
 
-            PostRepo.Context.Remove<Post>(post);
-            var res = PostRepo.Context.SaveChanges();          
+            Postbus.Context.Remove<Post>(post);
+            var res = Postbus.Context.SaveChanges();          
 
             if (!Request.Headers.Accept.Any(h => h.Contains("application/json")))
             {
@@ -391,7 +391,7 @@ namespace Westwind.Weblog
             if (string.IsNullOrWhiteSpace(search))
                 return Json(new List<object>());
 
-            var results = await PostRepo.PostSearchAsync(search, count);
+            var results = await Postbus.PostSearchAsync(search, count);
             return Json(results);
         }
 

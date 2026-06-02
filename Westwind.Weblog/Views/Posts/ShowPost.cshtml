@@ -48,12 +48,17 @@
 <header>
 	@if(isAdmin)
 	{
-		<a href="#none" onclick="deletePost(); return false;" 
-		   title="Delete this post (admin)"
-		   style=" font-size: 1.3em; margin-right: -0.5em; "
-		   class="btn btn-link float-end">
-		<i class="fad fa-circle-xmark text-danger" style=" --fa-secondary-opacity: 0.7; --fa-primary-color: white"></i>
-		</a>
+        <div class="small float-end mt-2">
+                
+	        <span style="font-size: 0.7em">@Model.Post.Id</span>
+            
+            <a href="#none" onclick="deletePost(); return false;" 
+		       title="Delete this post (admin)"
+		       style=" font-size: 1.3em; margin-right: -0.5em; margin-top: -0.35em "
+		       class="btn btn-link float-end">
+		    <i class="fad fa-circle-xmark text-danger" style=" --fa-secondary-opacity: 0.7; --fa-primary-color: white"></i>
+		    </a>
+        </div>
     
 		<script>
 			deletePost = function () {
@@ -61,7 +66,7 @@
 					
 					ajaxJson(page.basePath + "posts/@post.Id/delete", null,
 						(res) => { 
-                            location.href = '/posts';
+                            location.href = page.basePath + "posts";
 						},
 						(err) => {
 							alert("Error deleting post: " + err.responseText);

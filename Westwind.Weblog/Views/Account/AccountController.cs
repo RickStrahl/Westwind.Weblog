@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Westwind.AspNetCore.Errors;
 using Westwind.Weblog.Business.Models;
 
 
@@ -18,9 +16,9 @@ namespace Westwind.Weblog.Views.Account
     {
         private readonly UserBusiness _userBus;
 
-        public AccountController(UserBusiness UserBus)
+        public AccountController(UserBusiness userBus)
         {
-            _userBus = UserBus;
+            _userBus = userBus;
         }
         
         [HttpGet]

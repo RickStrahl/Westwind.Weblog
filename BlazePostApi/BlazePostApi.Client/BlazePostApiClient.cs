@@ -147,6 +147,78 @@ namespace BlazePostApi.Client
             return post;
         }
 
+        public async Task<WeblogPost> GetLastPost(string blogId = null, string relativeUrl = "last")
+        {
+            if (!EnsureAuthToken())
+                return null;
+
+            var settings = new HttpClientRequestSettings
+            {
+                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
+                HttpVerb = "GET",
+                CaptureRequestAndResponse = true
+            };
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
+
+            WeblogPost post = null;
+            try
+            {
+                post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);
+                if (post == null)
+                {
+                    ParseJsonError(settings, "Failed to retrieve last post.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ParseJsonError(settings, "Failed to retrieve last post.", ex);
+            }
+
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
+
+            return post;
+        }
+
+
+        /// <summary>
+        /// Checks to see if a post exists by post id
+        /// </summary>
+        /// <param name="postId"></param>
+        /// <param name="blogId"></param>
+        /// <returns></returns>
+        public async Task<bool> PostExists(string postId)
+        {
+            if (!EnsureAuthToken())
+                return false;
+
+            var settings = new HttpClientRequestSettings
+            {
+                Url = ApiBaseUrl + "/exists/" + postId,
+                HttpVerb = "GET",
+                CaptureRequestAndResponse = true
+            };
+            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
+
+            bool exists = false;
+            try
+            {
+                exists = await HttpClientUtils.DownloadJsonAsync<bool>(settings);
+
+                if (!exists)
+                    SetError("Post does not exist.");
+            }
+            catch (Exception ex)
+            {
+                ParseJsonError(settings, "Failed to check if post exists.", ex);
+            }
+
+            LastRequestContent = settings.CapturedRequestContent;
+            LastResponseContent = settings.CapturedResponseContent;
+
+            return exists;
+        }
+
         public async Task<IList<WeblogMinimalPost>> GetRecentPosts(PostListFilter listFilter = null, string relativeUrl = "recent")
         {
             if (!EnsureAuthToken())
@@ -184,40 +256,6 @@ namespace BlazePostApi.Client
             return posts;
         }
 
-
-
-        public async Task<WeblogPost> GetLastPost(string blogId = null, string relativeUrl = "last")
-        {
-            if (!EnsureAuthToken())
-                return null;
-
-            var settings = new HttpClientRequestSettings
-            {
-                Url = ApiBaseUrl + "/" + relativeUrl.Trim('/'),
-                HttpVerb = "GET",
-                CaptureRequestAndResponse = true
-            };
-            settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
-
-            WeblogPost post = null;
-            try
-            {
-                post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);
-                if (post == null)
-                {
-                    ParseJsonError(settings, "Failed to retrieve last post.");
-                }
-            }
-            catch (Exception ex)
-            {
-                ParseJsonError(settings, "Failed to retrieve last post.", ex);
-            }
-
-            LastRequestContent = settings.CapturedRequestContent;
-            LastResponseContent = settings.CapturedResponseContent;
-
-            return post;
-        }
 
         public async Task<WeblogPost> UploadPost(WeblogPost post, string relativeUrl = "")
         {

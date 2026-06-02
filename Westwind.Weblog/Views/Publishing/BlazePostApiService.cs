@@ -180,8 +180,7 @@ namespace Westwind.AspNetCore.Controllers
         [HttpPost]
         [Route("media")]
         public override string UploadMediaObject([FromBody] WeblogMediaObject weblogMedia)
-        {
-
+        {            
             string postYear = DateTime.Now.Year.ToString();
 
             // ExtraData sends the year for now
@@ -189,7 +188,10 @@ namespace Westwind.AspNetCore.Controllers
             { 
                 postYear = weblogMedia.PostDate.Year.ToString();
             }
-            // var id = weblogMedia.PostId;
+
+            // This implementation doesn't need the Ids but they are available if the client sets them
+            // var postId = weblogMedia.PostId;
+            // var blogId = weblogMedia.BlogId;  
 
             var imagePath = Url.Content("~/imageContent/") + postYear;
             var rootPath = Host.WebRootPath;
@@ -220,8 +222,8 @@ namespace Westwind.AspNetCore.Controllers
             return url;
         }
 
-        [Route("{postId}/{blogId?}")]
-        public override WeblogPost GetPost(string postId, string blogId)
+        [Route("{postId}")]
+        public override WeblogPost GetPost(string postId)
         {
             if (string.IsNullOrEmpty(postId))
                 throw new ApiException("Invalid PostId. Please make sure you provide an Id of an existing post.", 400);
@@ -268,19 +270,30 @@ namespace Westwind.AspNetCore.Controllers
             return blogPost;
         }
 
-        [Route("last")]
+        [Route("last/{blogId?}")]
         public override WeblogPost GetLastPost(string blogId)
         {
 
-            var postId = PostBusiness.Context.Posts.OrderByDescending(p => p.Created).Select(p => p.Id).FirstOrDefault();
+            var postId = PostBusiness.Context.Posts
+                // Where(p=> p.BlogId == blogId)   // we only have one blog per db so we ignore the blogId
+                .OrderByDescending(p => p.Created)
+                .Select(p => p.Id).FirstOrDefault();
+
             if (string.IsNullOrEmpty(postId))
                 throw new ApiException("No posts found.", 404);
-            return GetPost(postId, blogId);
+            return GetPost(postId);
         }
 
+        [Route("exists/{postId}")]        
+        public override bool PostExists(string postId)
+        {            
+            return PostBusiness.Context.Posts.Any(p => p.Id == postId );            
+        }
+                
+
         [HttpPost]
-        [Route("recent")]
-        public override IList<WeblogMinimalPost> GetRecentPosts([FromBody] PostListFilter listFilter)
+        [Route("recent/{blogId?}")]
+        public override IList<WeblogMinimalPost> GetRecentPosts([FromBody] PostListFilter listFilter, string blogId)
         {
             if (listFilter == null)
             {
@@ -301,7 +314,7 @@ namespace Westwind.AspNetCore.Controllers
                     Location = post.Location,
                     Url = wlApp.Configuration.WeblogHomeUrl?.TrimEnd('/') + PostBusiness.GetPostUrl(post),
                     FeaturedImageUrl = post.FeaturedImageUrl,
-                    CommentCount = post.CommentCount,
+                    CommentCount = post.CommentCount,                    
                 };
                 if (listFilter.IncludeBody)
                     weblogPost.Body = post.Body;

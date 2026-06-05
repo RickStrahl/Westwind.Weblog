@@ -66,7 +66,7 @@ namespace Westwind.Weblog.Business
             }
 
             string postList = sbContent.ToString().ToLower();
-            sbContent.Clear();
+            sbContent.Clear();            
 
             foreach (var dir in Directory.GetDirectories(imageFolder))
             {

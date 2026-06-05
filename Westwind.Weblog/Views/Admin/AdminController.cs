@@ -73,7 +73,7 @@ namespace Westwind.Weblog
             if (sb == null)
                 model.ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Image deletion failed");
             else
-            {
+            {                
                 model.ErrorDisplay.MessageAsRawHtml = true;
                 model.ErrorDisplay.ShowSuccess($"{StringUtils.CountLines(sb.ToString())} images deleted.\n" + (sb.Length > 0 ? $"<pre>{sb}</pre>" : null), "Image Deletion Completed");
             }

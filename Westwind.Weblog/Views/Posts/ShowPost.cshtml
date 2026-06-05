@@ -36,7 +36,7 @@
     @if (!string.IsNullOrEmpty(post.FeaturedImageUrl))
     {        
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="og:image" content="@(config.WeblogHomeUrl + post.FeaturedImageUrl)"/>
+        <meta property="og:image" content="@(post.FeaturedImageUrl)"/>
     }
      
     <link href="~/css/post.css" rel="stylesheet" />

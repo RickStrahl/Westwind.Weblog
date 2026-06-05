@@ -51,7 +51,7 @@ namespace Westwind.Weblog
         [HttpGet]
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
-        public async Task<IActionResult> ShowPost(int year, string month, int day, string slug, object html, string id= null)
+        public async Task<IActionResult> ShowPost(int year, string month, int day, string slug, object html, string id= null, [FromQuery] string msg = null)
         {
             Post post;
             if (!string.IsNullOrEmpty(id))
@@ -93,12 +93,12 @@ namespace Westwind.Weblog
                 totalPages = 1;
 
 
-            // Message from previous Post request to display - comment moderation after approval
-            string commentMessage = TempData["CommentMessage"]?.ToString();
-            if (!string.IsNullOrEmpty(commentMessage))
+            // Message from previous Post (comment) request to display - comment moderation after approval                       
+            if (!string.IsNullOrEmpty(msg))
             {
-
-                ErrorDisplay.ShowWarning(commentMessage, "Comment Moderation");
+                msg = wlApp.Decrypt(msg);
+                if (!string.IsNullOrEmpty(msg))
+                    ErrorDisplay.ShowWarning(msg, "Comment Moderation");
             }
             else
             {
@@ -107,6 +107,7 @@ namespace Westwind.Weblog
                     RequestLogger.LogRequest(post.Id, Request.Headers?.Referer, Request.GetClientIpAddress()).FireAndForget();
                 }
             }
+            
 
             var cats = post.Categories?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray() ?? [];
             var relatedPosts = Postbus.GetRelatedPosts(cats, 5, post.Id) ?? [];
@@ -171,9 +172,7 @@ namespace Westwind.Weblog
             model.PostRepo = Postbus;
 
             var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostRepo = Postbus, PageToDisplay = pageToDisplay, TotalPages = totalPages };
-            InitializeViewModel(newModel);
-
-            
+            InitializeViewModel(newModel);            
             
             var actionResult = await HandleComment(newModel, post);
             if (actionResult != null)
@@ -273,10 +272,8 @@ namespace Westwind.Weblog
                     }
 
                     comment.CommentText = null;
-                    var message = "Your comment has been saved, but comment moderation is enabled which may cause a delay until your comment is displayed.";
-                    TempData["CommentMessage"] = message;
-
-                    return Redirect(post.GetPostUrl() + "#Comments");
+                    var message = "Your comment has been saved, but comment moderation is enabled which may cause a delay until your comment is displayed.";                                       
+                    return Redirect(post.GetPostUrl() + "?msg=" + wlApp.Encrypt(message) + "#Comments");
                 }
 
                 ErrorDisplay.MessageAsRawHtml = true;

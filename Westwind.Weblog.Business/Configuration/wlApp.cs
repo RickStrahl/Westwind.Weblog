@@ -50,6 +50,28 @@ namespace Westwind.Weblog.Business.Configuration
         {
             return DataUtils.GenerateUniqueId(12);
         }
+
+        /// <summary>
+        /// Generic application encryption
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string Encrypt(string text)
+        {
+            return Encryption.EncryptString(text, _enc, true);
+        }
+
+        /// <summary>
+        /// Generic application decryption
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string Decrypt(string text)
+        {
+            return Encryption.DecryptString(text, _enc, true);
+        }
+        // Encryption key - should be 16 characters for AES encryption
+        const string _enc = "4#2!5689qe@1!x23";
     }
 
     public class WeblogConstants

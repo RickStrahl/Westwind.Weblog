@@ -128,6 +128,7 @@ Authorization: Bearer peucqep08vafjjcz
   "SiteBaseUrl": "https://weblog.west-wind.com/",
   "RecentSiteBaseUrlList": [
     "https://weblog.west-wind.com/",
+    "https://weblog.west-wind.com/blog/",
     "https://localhost:5001/blazepostapi/",
     "https://localhost:5001/"
   ],

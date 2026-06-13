@@ -222,6 +222,7 @@ namespace Westwind.AspNetCore.Controllers
             return url;
         }
 
+       
         [Route("{postId}")]
         public override WeblogPost GetPost(string postId)
         {
@@ -234,7 +235,7 @@ namespace Westwind.AspNetCore.Controllers
 
             var blogPost = new WeblogPost()
             {
-                BlogId = "1", // only one blog so we hardcode this
+                BlogId = post.BlogId ?? "1", // only one blog so we hardcode this
                 PostId = post.Id.ToString(),
                 Abstract = post.Abstract,
                 Title = post.Title,
@@ -356,7 +357,7 @@ namespace Westwind.AspNetCore.Controllers
         public static void FromPost(this WeblogPost weblogPost, Post post)
         {
             weblogPost.PostId = post.Id.ToString();
-            weblogPost.BlogId = post.Id.ToString();
+            weblogPost.BlogId = post.BlogId.ToString();
             weblogPost.PostType = "blog";
             weblogPost.Abstract = post.Abstract;
             weblogPost.Author = post.Author;
@@ -371,7 +372,6 @@ namespace Westwind.AspNetCore.Controllers
             weblogPost.PostStatus = post.Active ? PostStatuses.Published : PostStatuses.Draft;
             weblogPost.SourceEditUrl = post.GithubUrl;
             weblogPost.SafeTitle = post.SafeTitle;
-
             weblogPost.RawPostText = post.Markdown;
             weblogPost.RawPostType = "markdown";
             weblogPost.SafeTitle = post.SafeTitle;

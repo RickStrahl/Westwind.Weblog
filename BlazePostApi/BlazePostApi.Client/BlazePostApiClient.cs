@@ -105,7 +105,7 @@ namespace BlazePostApi.Client
         }
 
 
-        public async Task<WeblogPost> GetPost(string postId, string blogId = null, string relativeUrl = "")
+        public async Task<WeblogPost> GetPost(string postId, string relativeUrl = "")
         {
             if (!EnsureAuthToken())
                 return null;
@@ -113,10 +113,7 @@ namespace BlazePostApi.Client
 
             var url = ("/" + relativeUrl + postId).Replace("//","/");
             url = ApiBaseUrl + url.Trim() ;
-            if (!string.IsNullOrWhiteSpace(blogId))
-                url += "/" + blogId;
-
-
+            
             var settings = new HttpClientRequestSettings
             {
                 Url = url,
@@ -126,7 +123,6 @@ namespace BlazePostApi.Client
             settings.Headers.Add("Authorization", $"Bearer {AuthenticationToken?.Token}");
 
             WeblogPost post = null;
-
             try
             {
                 post = await HttpClientUtils.DownloadJsonAsync<WeblogPost>(settings);

@@ -66,6 +66,7 @@ namespace Westwind.Weblog.Business
                     Location = p.Location,
                     CommentCount = p.CommentCount,
                     Created = p.Created,
+                    Active = p.Active,
                     Body = includeBody ? p.Body : null,
                     FeaturedImageUrl = p.FeaturedImageUrl
                 })
@@ -73,12 +74,13 @@ namespace Westwind.Weblog.Business
         }
 
 
-        public async Task<List<PostListItem>> PostSearchAsync(string postSearch, int postCount = 15)
+        public async Task<List<PostListItem>> PostSearchAsync(string postSearch, int postCount = 15, bool includeInactive = false)
         {
+            postSearch = postSearch ?? string.Empty;
             postSearch = postSearch.ToLower();
 
             return await Context.Posts
-                .Where(p => p.Active &&
+                .Where(p => (includeInactive || p.Active) &&
                            (p.Title.ToLower().Contains(postSearch) ||
                            p.Abstract.ToLower().Contains(postSearch)))
                 .OrderByDescending(p => p.Created)
@@ -92,8 +94,23 @@ namespace Westwind.Weblog.Business
                     Location = p.Location,
                     CommentCount = p.CommentCount,
                     Created = p.Created,
+                    Active = p.Active,                                        
                     FeaturedImageUrl = p.FeaturedImageUrl
                 })
+                .ToListAsync();
+        }
+
+
+        public async Task<List<Post>> PostSearchFullPostAsync(string postSearch, int postCount = 15)
+        {
+            postSearch = postSearch.ToLower();
+
+            return await Context.Posts
+                .Where(p => p.Active &&
+                            (p.Title.ToLower().Contains(postSearch) ||
+                             p.Abstract.ToLower().Contains(postSearch)))
+                .OrderByDescending(p => p.Created)
+                .Take(postCount)
                 .ToListAsync();
         }
 
@@ -515,6 +532,10 @@ namespace Westwind.Weblog.Business
         /// </summary>
         public string FeaturedImageUrl { get; set; }
 
+        /// <summary>
+        /// Whether the post is active or disabled.
+        /// </summary>
+        public bool Active { get; set; }
 
         /// <summary>
         /// A small image Url

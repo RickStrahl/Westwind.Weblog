@@ -1,0 +1,427 @@
+@model AdminPostEditorViewModel
+
+@{
+    ViewData["Title"] = "Blog Post Editor";
+}
+
+<div class="post-editor-page mt-3">
+    <div class="card mb-4 post-editor-header">
+        <div class="card-body d-flex justify-content-between align-items-start gap-3 flex-wrap">
+            <div>
+                <h1 class="page-header-text mb-0 mt-0" style="border: none;">
+                    <i class="fad fa-pen-to-square"></i>
+                    Blog Post Editor
+                </h1>                
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fa fa-arrow-left"></i>
+                    Back to Admin
+                </a>
+                <a asp-action="PostEditor" asp-route-isNew="true" asp-route-search="@Model.SearchText" class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    New Post
+                </a>
+                @if (Model.Post != null && !string.IsNullOrWhiteSpace(Model.Post.PermanentUrl))
+                {
+                    <a href="@Model.Post.GetPostUrl()" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+                        <i class="fa fa-up-right-from-square"></i>
+                        Open Post
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <error-display class="mt-3 mb-4" error-display-model="@Model.ErrorDisplay">
+    </error-display>
+
+    <div class="post-editor-layout">
+        <aside class="card post-list-card">
+            <div class="card-header d-flex justify-content-between align-items-center gap-2">
+                <span>
+                    <i class="fad fa-list"></i>
+                    Posts
+                </span>
+                <span class="badge text-bg-secondary">@Model.Posts.Count</span>
+            </div>
+
+            <div class="card-body border-bottom pb-3">
+                <form asp-action="PostEditor" method="get" class="post-search-form">
+                    <input type="hidden" name="postId" value="@Model.SelectedPostId" />
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                        <input asp-for="SearchText" name="search" class="form-control" placeholder="Search title, slug, id, categories..." />
+                        <button type="submit" class="btn btn-outline-secondary">Search</button>
+                        @if (!string.IsNullOrWhiteSpace(Model.SearchText))
+                        {
+                            <a asp-action="PostEditor" asp-route-postId="@Model.SelectedPostId" class="btn btn-outline-secondary">Clear</a>
+                        }
+                    </div>
+                </form>
+            </div>
+
+            <div class="list-group list-group-flush post-list-scroll">
+                @if (Model.Posts.Count == 0)
+                {
+                    <div class="p-3 text-muted">No posts found.</div>
+                }
+                else
+                {
+                    foreach (var post in Model.Posts)
+                    {
+                        var isSelected = string.Equals(post.PostId, Model.OriginalPostId ?? Model.SelectedPostId, StringComparison.OrdinalIgnoreCase);
+                        <a asp-action="PostEditor"
+                           asp-route-postId="@post.PostId"
+                                    asp-route-search="@Model.SearchText"
+                           class="list-group-item list-group-item-action post-list-item @(isSelected ? "active" : null)">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <div class="post-list-title">@post.Title</div>
+                                    <div class="post-list-meta">
+                                        @post.Created.ToString("yyyy-MM-dd")
+                                        @if (!post.Active)
+                                        {
+                                            <span>&bull; Draft</span>
+                                        }                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        </aside>
+
+        <section class="card post-editor-card">
+            <div class="card-header d-flex justify-content-between align-items-center gap-2 flex-wrap">
+               
+                	            
+                    <span>
+                        <i class="fad fa-file-pen"></i>
+                        @(Model.IsNewPost ? "New Post" : "Edit Post")
+                    </span>
+
+                    <div>                        
+	                    <span class="">
+		                    <input asp-for="Post.Active" class="form-check-input" />
+		                    <label asp-for="Post.Active" class="form-check-label">Active</label>
+	                    </span>
+
+                        &bull;
+
+                        @if (Model.Post != null)
+                        {
+                            <small class="text-muted">id: <b>@(string.IsNullOrWhiteSpace(Model.Post.Id) ? "Unsaved" : Model.Post.Id)</b></small>
+                        }
+                
+                    </div>                
+            </div>
+
+            @if (Model.Post == null)
+            {
+                <div class="card-body">
+                    <div class="text-muted">Select a post from the left or create a new one.</div>
+                </div>
+            }
+            else
+            {
+                <form asp-action="PostEditor" method="post" class="post-editor-form">
+                    @Html.AntiForgeryToken()
+                    <input asp-for="SelectedPostId" type="hidden" />
+                    <input asp-for="OriginalPostId" type="hidden" />
+                    <input asp-for="IsNewPost" type="hidden" />
+                    <input asp-for="SearchText" type="hidden" />
+
+                    <div class="card-body post-editor-scroll">
+                        <div class="row g-3">
+                            <div class="col-12 col-xl-4">
+                                <label asp-for="Post.Id" class="form-label">Id</label>
+                                <input asp-for="Post.Id" class="form-control" />
+                            </div>
+                            <div class="col-12 col-xl-4">
+                                <label asp-for="Post.BlogId" class="form-label">Blog Id</label>
+                                <input asp-for="Post.BlogId" class="form-control" />
+                            </div>
+                            <div class="col-12 col-xl-4">
+                                <label asp-for="Post.Author" class="form-label">Author</label>
+                                <input asp-for="Post.Author" class="form-control" />
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Post.Title" class="form-label">Title</label>
+                                <input asp-for="Post.Title" class="form-control" />
+                            </div>
+
+                            <div class="col-12 col-xl-12">
+                                <label asp-for="Post.SafeTitle" class="form-label">Safe Title</label>
+                                <input asp-for="Post.SafeTitle" class="form-control" />
+                            </div>
+@*                             <div class="col-12 col-xl-6">
+                                <label asp-for="Post.PermanentUrl" class="form-label">Permanent Url</label>
+                                <input asp-for="Post.PermanentUrl" class="form-control" />
+                            </div> *@
+
+                            <div class="col-12 col-xl-3">
+                                <label asp-for="Post.Created" class="form-label">Created</label>
+                                <input asp-for="Post.Created" class="form-control" type="date" value="@Model.Post.Created.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <div class="col-12 col-xl-3">
+                                <label asp-for="Post.Updated" class="form-label">Updated</label>
+                                <input asp-for="Post.Updated" class="form-control" type="date" value="@Model.Post.Updated.ToString("yyyy-MM-dd")" />
+                            </div>
+                            
+                            <div class="col-12 col-xl-6">
+	                            <label asp-for="Post.Location" class="form-label">Location</label>
+	                            <input asp-for="Post.Location" class="form-control" />
+                            </div>
+
+
+
+                            <div class="col-12 col-xl-4">
+                                <label asp-for="Post.BodyMode" class="form-label">Body Mode</label>
+                                <select asp-for="Post.BodyMode" class="form-select">
+                                    <option value="0">HTML</option>
+                                    <option value="2">Markdown</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-xl-4">
+                                <label asp-for="Post.CommentCount" class="form-label">Comment Count</label>
+                                <input asp-for="Post.CommentCount" class="form-control" disabled="disabled" type="number" />
+                            </div>
+                            <div class="col-12 col-xl-4">
+                                <label asp-for="Post.Hits" class="form-label">Hits</label>
+                                <input asp-for="Post.Hits" class="form-control" type="number" />
+                            </div>
+
+                            <div class="col-12 col-xl-4">
+	                            <label asp-for="Post.Categories" class="form-label">Categories</label>
+	                            <input asp-for="Post.Categories" class="form-control" />
+                            </div>
+                            <div class="col-12 col-xl-4">
+	                            <label asp-for="Post.Keywords" class="form-label">Keywords</label>
+	                            <input asp-for="Post.Keywords" class="form-control" />
+                            </div>
+
+
+                            <div class="col-12 col-xl-12">
+                                <label asp-for="Post.FeaturedImageUrl" class="form-label">Featured Image Url</label>
+                                <input asp-for="Post.FeaturedImageUrl" class="form-control" />
+
+                            </div>                            
+
+                            <div class="col-12">
+	                            <label asp-for="Post.RedirectUrl" class="form-label">Redirect Url</label>
+	                            <input asp-for="Post.RedirectUrl" class="form-control" />
+                            </div>
+
+                            <div class="col-12 col-xl-12">
+                                <label asp-for="Post.GithubUrl" class="form-label">GitHub Url</label>
+                                <input asp-for="Post.GithubUrl" class="form-control" />
+                            </div>
+
+                        
+
+                            <div class="col-12">
+                                <label asp-for="Post.Abstract" class="form-label">Abstract</label>
+                                <textarea asp-for="Post.Abstract" class="form-control" rows="4"></textarea>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="post-editor-flags">                                    
+                                    <div class="form-check">
+                                        <input asp-for="Post.CommentsClosed" class="form-check-input" />
+                                        <label asp-for="Post.CommentsClosed" class="form-check-label">Comments Closed</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input asp-for="Post.IsFeatured" class="form-check-input" />
+                                        <label asp-for="Post.IsFeatured" class="form-check-label">Featured</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input asp-for="Post.IsArticle" class="form-check-input" />
+                                        <label asp-for="Post.IsArticle" class="form-check-label">Article</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <details class="post-editor-details">
+                                    <summary>
+                                        <span>
+                                            <i class="fad fa-brackets-curly"></i>
+                                            Body
+                                        </span>
+                                        <span class="text-muted">HTML body content</span>
+                                    </summary>
+                                    <div class="post-editor-details-body">
+                                        <textarea asp-for="Post.Body" class="form-control post-editor-longtext" rows="18"></textarea>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <div class="col-12">
+                                <details class="post-editor-details">
+                                    <summary>
+                                        <span>
+                                            <i class="fab fa-markdown"></i>
+                                            Markdown
+                                        </span>
+                                        <span class="text-muted">Raw markdown source</span>
+                                    </summary>
+                                    <div class="post-editor-details-body">
+                                        <textarea asp-for="Post.Markdown" class="form-control post-editor-longtext" rows="18"></textarea>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                        <div class="text-muted small">Saving preserves all scalar post fields, including metadata fields shown above.</div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            @if (!Model.IsNewPost && !string.IsNullOrWhiteSpace(Model.OriginalPostId))
+                            {
+                                <button type="submit"
+                                        name="btnDeletePost"
+                                        value="true"
+                                        class="btn btn-outline-danger"
+                                        onclick="return confirm('Delete this post? This also removes related comments and hit log entries.');">
+                                    <i class="fa fa-trash"></i>
+                                    Delete Post
+                                </button>
+                            }
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-floppy-disk"></i>
+                                Save Post
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+        </section>
+    </div>
+</div>
+
+@section headers {
+    <style>
+        .post-editor-page {
+            margin-top: 1rem;
+        }
+
+        .post-editor-header,
+        .post-list-card,
+        .post-editor-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .post-editor-layout {
+            display: grid;
+            grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .post-list-card,
+        .post-editor-card {
+            min-height: 70vh;
+        }
+
+        .post-list-scroll,
+        .post-editor-scroll {
+            max-height: calc(100vh - 16rem);
+            overflow-y: auto;
+        }
+
+        .post-search-form {
+            margin: 0;
+        }
+
+        .post-list-item {
+            border-left: 3px solid transparent;
+        }
+
+        .post-list-item.active {
+            border-left-color: #d97706;
+            background: color-mix(in srgb, var(--surface, #fff) 75%, #d97706 25%);
+            color: inherit;
+        }
+
+        .post-list-title {
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .post-list-meta {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+        }
+
+        .post-editor-form {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        .post-editor-scroll {
+            flex: 1 1 auto;
+        }
+
+        .post-editor-flags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .post-editor-details {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: color-mix(in srgb, var(--surface, #fff) 92%, #000 8%);
+            overflow: hidden;
+        }
+
+        .post-editor-details summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .post-editor-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .post-editor-details-body {
+            padding: 0 1rem 1rem;
+        }
+
+        .post-editor-longtext {
+            min-height: 24rem;
+            font-family: Consolas, 'Courier New', monospace;
+        }
+
+        @@media (max-width: 991.98px) {
+            .post-editor-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .post-list-card,
+            .post-editor-card {
+                min-height: auto;
+            }
+
+            .post-list-scroll,
+            .post-editor-scroll {
+                max-height: none;
+            }
+        }
+    </style>
+}

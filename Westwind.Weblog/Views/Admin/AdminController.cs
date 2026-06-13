@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Utilities;
@@ -14,6 +15,7 @@ using Westwind.Utilities;
 using Westwind.Utilities.Data;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
+using Westwind.Weblog.Business.Models;
 
 namespace Westwind.Weblog
 {
@@ -47,6 +49,57 @@ namespace Westwind.Weblog
         {
             var model = CreateViewModel<AdminViewModel>();
             return View("index", model);
+        }
+
+        [HttpGet("/admin/posts")]
+        public async Task<IActionResult> PostEditor([FromQuery] string postId = null, [FromQuery] bool isNew = false, [FromQuery] string search = null)
+        {
+            var model = CreateViewModel<AdminPostEditorViewModel>();
+            await PopulatePostEditorModelAsync(model, postId, isNew, search);
+            LoadPostEditorMessage(model);
+            return View(model);
+        }
+
+        [HttpPost("/admin/posts")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PostEditor(AdminPostEditorViewModel model)
+        {
+            InitializeViewModel(model);
+
+            if (model.Post == null)
+            {
+                model.ErrorDisplay.ShowError("No post was submitted.");
+                await PopulatePostEditorModelAsync(model, model.SelectedPostId, model.IsNewPost, model.SearchText, preserveEditedPost: false);
+                return View(model);
+            }
+
+            if (Request.IsFormVar("btnDeletePost"))
+            {
+                if (!AdminRepo.DeletePostForEditor(model.OriginalPostId ?? model.Post.Id))
+                {
+                    model.ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Delete failed");
+                    await PopulatePostEditorModelAsync(model, model.OriginalPostId ?? model.Post.Id, false, model.SearchText, preserveEditedPost: true);
+                    return View(model);
+                }
+
+                TempData["PostEditorMessage"] = $"Deleted '{model.Post.Title ?? model.OriginalPostId}'.";
+                TempData["PostEditorIsError"] = false;
+                TempData["PostEditorError"] = null;
+                return RedirectToAction(nameof(PostEditor), new { search = model.SearchText });
+            }
+
+            if (!AdminRepo.SavePostForEditor(model.OriginalPostId, model.Post))
+            {
+                model.ErrorDisplay.ShowError(AdminRepo.ErrorMessage, "Save failed");
+                await PopulatePostEditorModelAsync(model, model.OriginalPostId ?? model.Post.Id, model.IsNewPost, model.SearchText, preserveEditedPost: true);
+                return View(model);
+            }
+
+            TempData["PostEditorMessage"] = $"Saved '{model.Post.Title}'.";
+            TempData["PostEditorIsError"] = false;
+            TempData["PostEditorError"] = null;
+
+            return RedirectToAction(nameof(PostEditor), new { postId = model.Post.Id, isNew = false, search = model.SearchText });
         }
 
 
@@ -424,6 +477,48 @@ namespace Westwind.Weblog
             var path = Path.Combine(Host.WebRootPath, "admin", "ads.xml");
             return ads.SaveToXml(path);
         }
+
+        private async Task PopulatePostEditorModelAsync(AdminPostEditorViewModel model, string postId, bool isNew, string search, bool preserveEditedPost = false)
+        {
+            model.SearchText = search;
+            model.Posts = await AdminRepo.GetRecentPostsForEditorAsync(search);            
+            model.SelectedPostId = postId;
+            model.IsNewPost = isNew;
+
+            if (preserveEditedPost && model.Post != null)
+            {
+                model.OriginalPostId ??= postId;
+                return;
+            }
+
+            if (isNew)
+            {
+                model.Post = AdminRepo.CreateNewPostForEditor();
+                model.OriginalPostId = null;
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(postId))
+                postId = model.Posts.FirstOrDefault()?.PostId;
+
+            model.SelectedPostId = postId;
+            model.Post = !string.IsNullOrWhiteSpace(postId)
+                ? AdminRepo.LoadPostForEditor(postId)
+                : AdminRepo.CreateNewPostForEditor();
+            model.OriginalPostId = model.Post?.Id;
+        }
+
+        private void LoadPostEditorMessage(AdminPostEditorViewModel model)
+        {
+            var isError = TempData["PostEditorIsError"] as bool?;
+            var message = TempData["PostEditorMessage"]?.ToString();
+            var error = TempData["PostEditorError"]?.ToString();
+
+            if (isError == true && !string.IsNullOrWhiteSpace(error))
+                model.ErrorDisplay.ShowError(error, "Post editor failed");
+            else if (!string.IsNullOrWhiteSpace(message))
+                model.ErrorDisplay.ShowSuccess(message, "Post editor updated");
+        }
     }
 
     public class AdminViewModel : WeblogBaseViewModel
@@ -476,5 +571,15 @@ namespace Westwind.Weblog
         public string TopPageAd { get; set; }
         public List<string> ContentAds { get; set; } = new();
         public List<string> SponsorBanners { get; set; } = new();
+    }
+
+    public class AdminPostEditorViewModel : WeblogBaseViewModel
+    {
+        public List<PostListItem> Posts { get; set; } = new();
+        public Post Post { get; set; }
+        public string SelectedPostId { get; set; }
+        public string OriginalPostId { get; set; }
+        public bool IsNewPost { get; set; }
+        public string SearchText { get; set; }
     }
 }

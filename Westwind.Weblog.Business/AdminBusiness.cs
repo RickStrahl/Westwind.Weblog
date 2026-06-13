@@ -156,6 +156,201 @@ namespace Westwind.Weblog.Business
             return true;
         }
 
+        public async Task<List<PostListItem>> GetRecentPostsForEditorAsync(string search = null, int count = 100)
+        {
+            List<PostListItem> posts = [];
+
+            var postBus = new PostBusiness(Context, WeblogConfiguration);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                
+                posts = await postBus.PostSearchAsync(search, 20, includeInactive: true);
+
+                //search = search.Trim().ToLower();
+                //posts = posts.Where(p =>
+                //    p.Title.ToLower().Contains(search) ||
+                //    p.SafeTitle.ToLower().Contains(search) ||
+                //    p.Id.ToLower().Contains(search) ||
+                //    (p.Categories != null && p.Categories.ToLower().Contains(search)) ||
+                //    (p.Keywords != null && p.Keywords.ToLower().Contains(search)) ||
+                //    (p.Abstract != null && p.Abstract.ToLower().Contains(search)));
+            }
+            else
+            {
+                posts = await postBus.PostSearchAsync(search, 200, includeInactive: true);
+            }
+
+            return posts;                
+        }
+
+        public Post LoadPostForEditor(string postId)
+        {
+            if (string.IsNullOrWhiteSpace(postId))
+                return null;
+
+            return Context.Posts
+                .AsNoTracking()
+                .FirstOrDefault(p => p.Id == postId);
+        }
+
+        public Post CreateNewPostForEditor()
+        {
+            var lastPost = Context.Posts
+                .OrderByDescending(p => p.Created)
+                .FirstOrDefault();
+
+            return new Post
+            {
+                BlogId = lastPost?.BlogId ?? Context.Weblogs.Select(w => w.Id).FirstOrDefault(),
+                Author = WeblogConfiguration.WeblogAuthor,
+                BodyMode = 2,
+                Active = true,
+                Created = DateTime.Now,
+                Updated = DateTime.Now,
+                Location = lastPost?.Location
+            };
+        }
+
+        public bool SavePostForEditor(string originalPostId, Post editedPost)
+        {
+            if (editedPost == null)
+            {
+                SetError("No post was submitted.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(editedPost.Title))
+            {
+                SetError("Title is required.");
+                return false;
+            }
+
+            var isNewPost = string.IsNullOrWhiteSpace(originalPostId);
+            var effectivePostId = string.IsNullOrWhiteSpace(editedPost.Id)
+                ? wlApp.NewId()
+                : editedPost.Id.Trim();
+
+            if (isNewPost && Context.Posts.Any(p => p.Id == effectivePostId))
+            {
+                SetError("A post with the specified Id already exists.");
+                return false;
+            }
+
+            if (!isNewPost && !string.Equals(originalPostId, effectivePostId, StringComparison.OrdinalIgnoreCase))
+            {
+                if (Context.Posts.Any(p => p.Id == effectivePostId))
+                {
+                    SetError("A post with the specified Id already exists.");
+                    return false;
+                }
+
+                var renameResult = Db.ExecuteNonQuery(
+                    """
+                    update Comments set PostId = @0 where PostId = @1;
+                    update PostHits set PostId = @0 where PostId = @1;
+                    update Posts set Id = @0 where Id = @1;
+                    """,
+                    effectivePostId,
+                    originalPostId);
+
+                if (renameResult < 0)
+                {
+                    SetError(Db.ErrorMessage);
+                    return false;
+                }
+
+                Context.ChangeTracker.Clear();
+                originalPostId = effectivePostId;
+            }
+
+            var existingPost = isNewPost
+                ? null
+                : Context.Posts.FirstOrDefault(p => p.Id == originalPostId);
+
+            var post = existingPost ?? new Post();
+            post.Id = effectivePostId;
+            post.BlogId = editedPost.BlogId;
+            post.Title = editedPost.Title?.Trim();
+            post.Body = editedPost.Body;
+            post.Abstract = editedPost.Abstract;
+            post.Created = editedPost.Created.Year > 2000 ? editedPost.Created : (existingPost?.Created ?? DateTime.Now);
+            post.Updated = editedPost.Updated.Year > 2000 ? editedPost.Updated : DateTime.Now;
+            post.Active = editedPost.Active;
+            post.Author = editedPost.Author;
+            post.BodyMode = editedPost.BodyMode;
+            post.CommentCount = editedPost.CommentCount;
+            post.CommentsClosed = editedPost.CommentsClosed;
+            post.Categories = editedPost.Categories;
+            post.Keywords = editedPost.Keywords;
+            post.Location = editedPost.Location;
+            post.RedirectUrl = editedPost.RedirectUrl;
+            post.SafeTitle = string.IsNullOrWhiteSpace(editedPost.SafeTitle)
+                ? PostBusiness.GetSafeTitleStatic(editedPost.Title)
+                : editedPost.SafeTitle.Trim();
+            post.IsFeatured = editedPost.IsFeatured;
+            post.Markdown = editedPost.Markdown;
+            post.PermanentUrl = editedPost.PermanentUrl;
+            post.FeaturedImageUrl = editedPost.FeaturedImageUrl;
+            post.GithubUrl = editedPost.GithubUrl;
+            post.IsArticle = editedPost.IsArticle;
+            post.Hits = editedPost.Hits;
+
+            if (string.IsNullOrWhiteSpace(post.PermanentUrl))
+                post.PermanentUrl = post.GetPostUrl();
+
+            if (existingPost == null)
+                Context.Posts.Add(post);
+
+            try
+            {
+                Context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return false;
+            }
+        }
+
+        public bool DeletePostForEditor(string postId)
+        {
+            if (string.IsNullOrWhiteSpace(postId))
+            {
+                SetError("No post was selected.");
+                return false;
+            }
+
+            var post = Context.Posts.FirstOrDefault(p => p.Id == postId);
+            if (post == null)
+            {
+                SetError("Post not found.");
+                return false;
+            }
+
+            try
+            {
+                var comments = Context.Comments.Where(c => c.PostId == postId).ToList();
+                if (comments.Count > 0)
+                    Context.Comments.RemoveRange(comments);
+
+                if (Db.ExecuteNonQuery("delete from PostHits where PostId = @0", postId) < 0)
+                {
+                    SetError(Db.ErrorMessage);
+                    return false;
+                }
+
+                Context.Posts.Remove(post);
+                Context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return false;
+            }
+        }
+
 
         #region Statistics
 

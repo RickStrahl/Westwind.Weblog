@@ -53,3 +53,7 @@
     color: var(--text-muted);
     font-size: 0.82em;
 }
+
+.post-item-wrapper.inactive {
+    opacity: 0.4;
+}

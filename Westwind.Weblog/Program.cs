@@ -40,8 +40,8 @@ wlApp.Constants.AppStartedOn = DateTime.Now;
 wlApp.StartupFolder = Environment.CurrentDirectory;
 wlApp.WebRootFolder = System.IO.Path.Combine(wlApp.StartupFolder, "wwwroot");
 
-services.AddMemoryCache();
 
+//services.AddMemoryCache();
 
 // initial read from disk
 var config = wlApp.Configuration;
@@ -53,10 +53,6 @@ services.AddSingleton(config);
 
 // write out to disk full configuration
 wlApp.Configuration.Write();
-
-// Limited Across Page Caching support
-services.AddMemoryCache();
-
 
 services.AddLiveReload(config =>
 {

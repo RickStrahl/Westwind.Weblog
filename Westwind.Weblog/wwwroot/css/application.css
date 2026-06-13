@@ -210,6 +210,7 @@ main {
 img {
     border: none;
     margin: 0;
+    width: auto;
     max-width: 100%;
     height: auto;
 }
@@ -1312,7 +1313,7 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
     }
 
     .hoverbutton:hover {
-        background: white url('images/dialoghighlight.png');
+        background: #535353;
         border: outset 1px silver;
         cursor: pointer;
     }

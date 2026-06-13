@@ -25,10 +25,10 @@ namespace Westwind.Weblog.Business
 
         #region Post Retrieval
 
-        public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody = false)
+        public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody = false, bool includeInactive = false)
         {
             return await Context.Posts
-                .Where(p => p.Active)
+                .Where(p =>  includeInactive || p.Active)
                 .Include("Comments")
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)

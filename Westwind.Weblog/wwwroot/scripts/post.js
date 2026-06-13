@@ -6,6 +6,7 @@
         createH3Links();
         createDocumentOutline();
         createImageLinks();
+        handleDraftClicks();
 
         // force hash to reload        
         if (window.location.hash)
@@ -21,9 +22,32 @@
         documentOutlineScrolling();
     });
 
+
+    function handleDraftClicks() {
+        // auth required for these actions so we can use GET and not worry about CSRF tokens
+        $(document).on('click', '.remove-draft,.putinto-draft', function (e) {            
+            //e.preventDefault();
+            var id = $(this).data("id");
+            let action = $(this).hasClass("putinto-draft") ? "putinto-draft" : "remove-draft";
+                                                    
+            ajaxJson(page.basePath + 'posts/' + action + '/' + id, null,
+                (res) => {
+                    $("#" + id).removeClass("inactive");
+                    $(this).remove();
+                },
+                (err) => {
+                    alert("couldn't remove draft mode: " + err.message);
+                },
+                { method: "GET", accepts: "application/json" });
+        });		                                        		                                   
+    }
+    handleDraftClicks();
+
+
     function documentOutlineScrolling() {           
         $(window).scroll(debounce(scrollFunc, 10, true));
     }
+
 
 
 

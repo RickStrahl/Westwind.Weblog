@@ -55,12 +55,11 @@
         {
             counter++;
 
-            if (!post.Active)
+            if (!post.Active && !isAdmin)
 			{
 				continue;
 			}   
-                   <div class="post-item-wrapper" id="@post.Id">
-
+                   <div class="post-item-wrapper @(isAdmin && !post.Active ? "inactive" : "")" id="@post.Id">
                             <h2 class="page-header mb-1">                
                                 <a href="@post.GetPostUrl()"
                                         style="text-decoration: none;">@post.Title</a>
@@ -98,6 +97,29 @@
                                 
                                 <p class="margin-top margin-bottom">
                                     <a href="@repo.GetPostUrl(post)">Read more...</a>
+                                    @if(isAdmin)
+                                    {
+                                        if(!post.Active ) {
+                                            <a class="hoverbutton remove-draft" data-id="@post.Id" 
+                                                    href="">
+                                                <i class="fas fa-xmark text-danger"></i>
+                                                Remove Draft Mode
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            // last post allow putting in draft mode
+                                            if (counter < 4)
+                                            {
+                                                <a class="hoverbutton putinto-draft" data-id="@post.Id"  href="">
+                                                    <i class="fad fa-circle-plus text-success"></i>
+                                                    Put into Draft Mode
+                                                </a>
+                                            }
+                                        }
+
+                                    }
+
                                 </p>
                             </div>
 
@@ -129,5 +151,4 @@
 
 @section scripts {
 	<script src="~/scripts/post.js"></script>
-    
 }

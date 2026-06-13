@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Westwind.AspNetCore.Errors;
 using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Markdown;
 using Westwind.AspNetCore.Messages;
@@ -41,7 +42,7 @@ namespace Westwind.Weblog
         [Route("/posts")]
         public async Task<IActionResult> Index()
         {
-            var posts = await Postbus.GetLastPostsAsync(Config.HomePagePostCount);
+            var posts = await Postbus.GetLastPostsAsync(Config.HomePagePostCount, includeInactive: true);
             return View(new PostViewModel { Posts = posts, PostRepo = Postbus });
         }
 
@@ -392,6 +393,36 @@ namespace Westwind.Weblog
             return Json(results);
         }
 
+
+        [HttpGet]
+        [Route("/posts/toggle-draft/{postId}")]
+        [Route("/posts/putinto-draft/{postId}")]
+        [Route("/posts/remove-draft/{postId}")]
+        public async Task<IActionResult> DraftMode(string postId)
+        {
+            var post = await Postbus.LoadAsync(postId);
+            if (post == null)
+            {
+                throw new ApiException("Post not found", 401);
+            }
+
+            var path = Request.Path.Value;
+            bool remove = path.Contains("/remove-draft/");
+            bool putInDraft = path.Contains("/putinto-draft/");
+            bool toggle = path.Contains("/toggle-draft/");
+
+            if (remove)
+                post.Active = true;
+            else if (putInDraft)
+                post.Active = false;
+            else if (toggle)
+                post.Active = !post.Active;
+
+            await Postbus.SaveAsync();
+            
+            return Json( new ApiResponse<bool>() {Data = true, Message = "Post draft status updated"});
+        }
+        
         private bool CanLogRequest()
         {
             var userAgent = Request.Headers.UserAgent.ToString();

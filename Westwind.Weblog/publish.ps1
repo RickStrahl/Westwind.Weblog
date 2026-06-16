@@ -17,4 +17,9 @@ $pwd = $credential.Password
 $pswd = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($pwd))
 if(!$pswd) {Exit;}
 
-dotnet publish /p:PublishProfile=Properties/PublishProfiles/WeblogLive.pubxml /p:Username=$uid /p:Password=$pswd -c Release
+
+if (Test-Path ../publish) 
+{
+    Remove-item ../publish -Recurse -Force
+}
+dotnet publish -o ../publish /p:PublishProfile=Properties/PublishProfiles/WeblogLive.pubxml /p:Username=$uid /p:Password=$pswd -c Release  

@@ -37,14 +37,12 @@
 		<div class="list-group list-group-flush">
             <a class="list-group-item list-group-item-action"
                asp-action="PostEditor">Blog Post Editor</a>
+            <a class="list-group-item list-group-item-action"
+               asp-action="Ads">Manage Ads</a>
 			<a class="list-group-item list-group-item-action "
 			   asp-action="UpdateCommentCounts">Update Comment Counts</a>
-			<a asp-action="DeleteUnusedImages" class="list-group-item list-group-item-action">Delete Unused Images</a>
 			<a asp-action="PostHits" class="list-group-item list-group-item-action">Post Hits Dashboard</a>
 			<a asp-action="Referrers" class="list-group-item list-group-item-action">Referrers Dashboard</a>
-			<a class="list-group-item list-group-item-action"
-			   asp-action="Ads">Manage Ads</a>
-
 
 		</div>
     </div>
@@ -55,9 +53,11 @@
             System Administration
         </div>
         <div class="list-group list-group-flush">
-			@* <a href="~/admin/import" class="list-group-item list-group-item-action">Import from Old Weblog</a> *@
+			@* <a href="~/admin/import" class="list-group-item list-group-item-action">Import from Old Weblog</a> *@            
+			
             <a href="~/admin/applicationlog.txt" class="list-group-item list-group-item-action">Show Error Log</a>
             <a href="~/admin/cleanupdatabase" class="list-group-item list-group-item-action">Cleanup and Shrink Database</a>
+            <a asp-action="DeleteUnusedImages" class="list-group-item list-group-item-action">Delete Unused Images</a>
             <a href="~/admin/configuration" class="list-group-item list-group-item-action">Weblog Configuration</a>
             <a class="list-group-item list-group-item-action"
                asp-action="Backup">Backup Database</a>

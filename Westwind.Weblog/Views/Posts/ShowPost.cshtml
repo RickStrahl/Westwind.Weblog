@@ -48,16 +48,26 @@
 <header>
 	@if(isAdmin)
 	{
-        <div class="small float-end mt-2">
+        <div class="float-end mt-2">
                 
-	        <span style="font-size: 0.7em">@Model.Post.Id</span>
-            
+	        <span style="font-size: 0.675em">@Model.Post.Id</span>
+	        
+            <a href="@(config.ApplicationBasePath)admin/posts?postId=@post.Id"
+	           title="Edit this post (admin)" target="_blank"
+	           style="margin-top: -0.35em; margin-right: 0.2em; font-size: 0.9em; "
+	           class="hoverbutton me-0">
+		        <i class="fad fa-edit" 
+                   style=" --fa-secondary-opacity: 0.7; --fa-secondary-color: darkgoldenrod; --fa-primary-color: #aaa"></i>
+	        </a>
+
             <a href="#none" onclick="deletePost(); return false;" 
 		       title="Delete this post (admin)"
-		       style=" font-size: 1.3em; margin-right: -0.5em; margin-top: -0.35em "
-		       class="btn btn-link float-end">
-		    <i class="fad fa-circle-xmark text-danger" style=" --fa-secondary-opacity: 0.7; --fa-primary-color: white"></i>
-		    </a>
+		       style="margin-top: -0.35em;margin-right: 0.1em; font-size: 0.9em;"
+		       class="hoverbutton me-0">
+		    <i class="fad fa-circle-xmark text-danger" 
+               style=" --fa-secondary-opacity: 0.7; --fa-primary-color: white"></i>
+		    </a>          
+
         </div>
     
 		<script>

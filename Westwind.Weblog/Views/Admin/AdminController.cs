@@ -140,10 +140,10 @@ namespace Westwind.Weblog
             var model = CreateViewModel<AdminViewModel>();
             if (!AdminRepo.UpdatePostCommentCounts())
             {
-                model.Message = "Comment updates failed: " + AdminRepo.ErrorMessage;
+                model.ErrorDisplay.ShowError("Comment updates failed: " + AdminRepo.ErrorMessage, "Update Failed");
             }
             else
-                model.Message = "Comment counts updated.";
+                model.ErrorDisplay.ShowSuccess("Comment counts updated.", "Update Completed");
 
             return View("Index", model);
         }

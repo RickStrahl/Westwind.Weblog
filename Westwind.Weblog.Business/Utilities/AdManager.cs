@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Westwind.Utilities;
 using Westwind.Weblog.Business.Configuration;
 
 namespace Westwind.Weblog.Business
@@ -31,9 +32,12 @@ namespace Westwind.Weblog.Business
 
         public List<string> SponsorBanners { get; } = [];
 
-        public string GetFirstContentAd()
+        public string GetFirstContentAd(bool resolveUrls = true)
         {
-            return GetFirstItem(ContentAds);
+            var ad = GetFirstItem(ContentAds);
+            if (resolveUrls)
+                ad = ResolveUrls(ad);
+            return ad;
         }
 
         public string GetFirstSponsorBanner()
@@ -47,11 +51,14 @@ namespace Westwind.Weblog.Business
             return Shuffle(ContentAds,1);
         }
 
-        public string GetRandomSponsorBanner()
+        public string GetRandomSponsorBanner(bool fixupSiteRelativeUrls = true)
         {
             var random = Random.Shared;
             var i = random.Next(SponsorBanners.Count);          
-            return SponsorBanners[i];
+            var banner = SponsorBanners[i];
+            if (fixupSiteRelativeUrls)
+                return ResolveUrls(banner);
+            return banner;
         }
 
 
@@ -167,5 +174,35 @@ namespace Westwind.Weblog.Business
 
             return shuffledItems;
         }
-    }
+
+        /// <summary>
+        /// Resolves site-relative Urls to a fully qualified Url base path.
+        /// </summary>
+        /// <param name="html">Input Html string</param>
+        /// <param name="basePath">Base path to resolve `/` or `~/` to</param>
+        /// <returns>Html string with resolved Urls</returns>
+
+        public static string ResolveUrls(string html, string basePath = null)
+        {
+            if (string.IsNullOrEmpty(html)) return html;
+
+            if (string.IsNullOrEmpty(basePath))
+                basePath = wlApp.Configuration.ApplicationBasePath;
+            if (string.IsNullOrEmpty(basePath))
+                return html;
+
+            basePath = StringUtils.TerminateString(basePath, "/");
+
+
+            if (!string.IsNullOrWhiteSpace(basePath))
+            {
+                html = html.Replace("src=\"/", $"src=\"{basePath}")
+                           .Replace("src=\"~/", $"src=\"{basePath}")
+                           .Replace("href=\"/", $"href=\"{basePath}")
+                           .Replace("href=\"~/", $"href=\"{basePath}");                         
+            }
+
+            return html;
+        }
+}
 }

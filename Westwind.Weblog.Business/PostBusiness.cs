@@ -427,6 +427,7 @@ namespace Westwind.Weblog.Business
 
             var ad = adMan.GetFirstContentAd();
             var restAds = adMan.GetShuffledContentAds().ToList();
+
             if (!string.IsNullOrEmpty(ad))
             {
                 postHtml = StringUtils.ReplaceStringInstance(postHtml, "##AD##", ad, 1, true); // no Ads at the moment exclusive
@@ -442,6 +443,10 @@ namespace Westwind.Weblog.Business
                     ad = restAds.Count < i - 1 ?
                         string.Empty : // too many ads in content
                         restAds[i];
+
+                    
+                    if (!string.IsNullOrEmpty(ad))
+                        ad = AdManager.ResolveUrls(ad);
 
                     postHtml = StringUtils.ReplaceStringInstance(postHtml, "##AD##", ad, 1, true);
                 }

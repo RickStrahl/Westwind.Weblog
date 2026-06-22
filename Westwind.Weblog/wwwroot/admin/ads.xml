@@ -58,26 +58,26 @@
   <ContentAds>
     <Ad><![CDATA[<a href="https://markdownmonster.west-wind.com?ut=weblog"  target="_blank"
 	  title="Markdown Monster - Easy to use, yet powerfully productive Markdown Editing for Windows">
-<img src="/images/sponsors/banner-example.png?v=1.2" class="da-content-image" />
+<img src="/images/sponsors/MarkdownMonster-Display2.jpg" class="da-content-image" />
 </a>]]></Ad>
-    <Ad><![CDATA[<a href="https://websurge.west-wind.com?ut=weblog"  target="_blank"
+    <Ad><![CDATA[<a href="https://documentationmonster.com?ut=weblog"  target="_blank"
+	  title="Documentation Monster - Creating documentation one Markdown at a time">
+<img src="/images/Sponsors/DocumentationMonster-Display2.jpg" alt="Documentation Monster" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://documentationmonster.com?ut=weblog"  target="_blank"
 	  title="West Wind WebSurge - A powerful, yet easy to use REST Client and HTTP Load Testing tool for Windows">
-<img src="/images/Sponsors/Websurge-Display.png" class="da-content-image" />
-</a>]]></Ad>
-    <Ad><![CDATA[<a href="https://amzn.to/3XmyPE0"  target="_blank"
-	  title="Needs More Bass Bear T-Shirt">
-<img src="/images/Sponsors/NeedsMoreBassTShirt-Display.png" class="da-content-image" />
+<img src="/images/Sponsors/Websurge-Display2.jpg" class="da-content-image" />
 </a>]]></Ad>
     <Ad><![CDATA[<a href="https://open.spotify.com/track/174gSk2IavDs7h8d715468" target="top"
 		  title="Anti-Trust - The Masters of Disaster">
 <img src="/images/sponsors/TheMastersOfDisaster-Display.png" class="da-content-image" />
 </a>]]></Ad>
     <Ad><![CDATA[<a href="https://goldenbeartshirts.com"  target="_blank"
-	  title="Bears and Beer">
-<img src="/images/Sponsors/BearsBeer-Display.jpg" class="da-content-image" />
+	  title="Pickleballs and Bears">
+<img src="/images/Sponsors/PickleBallBearTshirt-Display.jpg" class="da-content-image" alt="Pickleball Bear TShirt at Goldenbear T-Shirts"/>
 </a>]]></Ad>
     <Ad><![CDATA[<a href="https://goldenbeartshirts.com" target="_blank">
-<img src="/images/sponsors/BearingDownTheMountain-DisplayAd.jpg" class="da-content-image" />
+<img src="/images/sponsors/BearingDownTheMountain-DisplayAd.jpg" alt="Mountain Bike TShirt at Goldenbear T-Shirts" class="da-content-image" />
 </a>]]></Ad>
     <Ad><![CDATA[<a href="https://www.linqpad.net/?affiliate=4n4zaa6t"  target="_blank"
 		  title="LinqPad - The Scratchpad for .NET Developers">
@@ -90,6 +90,10 @@
     <Ad><![CDATA[<a href="https://www.amazon.com/dp/BT00LN946S?externalReferenceId=fdeaac92-deca-4ea5-92c1-442cdc15a646"  target="_blank"
 		  title="Sign up for an Amazon Visa - 5% cash back for Amazon and Whole Food Purchases">
 <img src="/images/sponsors/AmazonPrimeVisa-Display.jpg" class="da-content-image" />
+</a>]]></Ad>
+    <Ad><![CDATA[<a href="https://documentationmonster.com?ut=weblog"  target="_blank"
+	  title="Documentation Monster - Creating documentation one Markdown at a time">
+<img src="/images/Sponsors/DocumentationMonster-Display.jpg" alt="Documentation Monster" class="da-content-image" />
 </a>]]></Ad>
   </ContentAds>
 </Ads>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -78,10 +78,10 @@ namespace Westwind.Weblog.Business.Models
         {
             var builder = new DbContextOptionsBuilder<WeblogContext>();
             builder.UseSqlServer(connectionString ?? wlApp.Configuration.ConnectionString);
-            if (wlApp.Configuration.System.ShowConsoleDbCommands)
-                builder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted })
-                    .EnableSensitiveDataLogging();
-            var context = new WeblogContext(builder.Options);
+
+            var options = CreateDbContextOptions(builder);
+            var context = new WeblogContext(options);
+            
             return context;
         }
 

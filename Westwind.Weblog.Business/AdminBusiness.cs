@@ -177,7 +177,7 @@ namespace Westwind.Weblog.Business
             }
             else
             {
-                posts = await postBus.PostSearchAsync(search, 200, includeInactive: true);
+                posts = await postBus.PostSearchAsync(search, 100, includeInactive: true);
             }
 
             return posts;                

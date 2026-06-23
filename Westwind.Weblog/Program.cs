@@ -92,12 +92,8 @@ services.AddDbContext<WeblogContext>(builder =>
     var connStr = config.ConnectionString;
     if (string.IsNullOrEmpty(connStr))
         connStr = "server=.;database=WeblogCore; integrated security=true;MultipleActiveResultSets=true";
-
-    builder.UseSqlServer(connStr, opt =>
-    {
-        opt.EnableRetryOnFailure();
-        opt.CommandTimeout(15);
-    });
+    
+    WeblogContext.CreateDbContextOptions(builder, connStr);
 });
 
 services.AddScoped<PostBusiness>();

@@ -94,6 +94,9 @@
             </div>
         </aside>
 
+    <form asp-action="PostEditor" method="post" class="post-editor-form">
+    @Html.AntiForgeryToken()
+
         <section class="card post-editor-card">
             <div class="card-header d-flex justify-content-between align-items-center gap-2 flex-wrap">                  
                     <span>
@@ -101,18 +104,26 @@
                         @(Model.IsNewPost ? "New Post" : "Edit Post")
                     </span>
 
-                    <div>                        
+                    <div>       
+	                 
+
 	                    <span class="">
-		                    <input asp-for="Post.Active" class="form-check-input" />
-		                    <label asp-for="Post.Active" class="form-check-label">Active</label>
+		                    <input asp-for="Post.Active" class="form-check-input mt-2 me-1" />
+		                    <label class="form-check-label">Active</label>
 	                    </span>
 
-                        &bull;
+                        &nbsp;
 
                         @if (Model.Post != null)
                         {
                             <small class="text-muted">id: <b>@(string.IsNullOrWhiteSpace(Model.Post.Id) ? "Unsaved" : Model.Post.Id)</b></small>
                         }
+
+                        &nbsp;
+	                    <button type="submit" class="btn btn-sm btn-primary">
+		                    <i class="fa fa-floppy-disk"></i>
+		                    Save Post
+	                    </button>
                 
                     </div>                
             </div>
@@ -125,8 +136,8 @@
             }
             else
             {
-                <form asp-action="PostEditor" method="post" class="post-editor-form">
-                    @Html.AntiForgeryToken()
+              @*   <form asp-action="PostEditor" method="post" class="post-editor-form">
+                    @Html.AntiForgeryToken() *@
                     <input asp-for="SelectedPostId" type="hidden" />
                     <input asp-for="OriginalPostId" type="hidden" />
                     <input asp-for="IsNewPost" type="hidden" />
@@ -275,9 +286,7 @@
                         </div>
                     </div>
 
-                    <div class="card-footer d-flex justify-content-between align-items-center gap-2 flex-wrap">
-                        <div class="text-muted small">Saving preserves all scalar post fields, including metadata fields shown above.</div>
-                        <div class="d-flex gap-2 flex-wrap">
+                    <div class="card-footer d-flex justify-content-end gap-2 align-items-end  flex-wrap">                        
                             @if (!Model.IsNewPost && !string.IsNullOrWhiteSpace(Model.OriginalPostId))
                             {
                                 <button type="submit"
@@ -292,12 +301,12 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fa fa-floppy-disk"></i>
                                 Save Post
-                            </button>
-                        </div>
+                            </button>                        
                     </div>
-                </form>
+                
             }
         </section>
+    </form>
     </div>
 </div>
 

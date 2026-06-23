@@ -48,7 +48,7 @@
                 </div>
 
                 <div>
-                    @Html.Raw(Model.ContentAds[i])
+                    @Html.Raw(AdManager.ResolveUrls(Model.ContentAds[i]))
                 </div>
             </div>
         }

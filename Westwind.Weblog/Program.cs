@@ -96,6 +96,7 @@ services.AddDbContext<WeblogContext>(builder =>
     WeblogContext.CreateDbContextOptions(builder, connStr);
 });
 
+// Application Business Objects
 services.AddScoped<PostBusiness>();
 services.AddScoped<AdminBusiness>();
 services.AddScoped<UserBusiness>();

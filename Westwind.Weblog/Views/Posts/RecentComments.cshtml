@@ -3,8 +3,8 @@
 @{
     ViewBag.Title = "Comments - " + wlApp.Configuration.ApplicationName;
     var comments = Model.Comments;
-    var repo = Model.PostRepo;
-    var config = Model.PostRepo.Configuration;
+    var repo = Model.PostBus;
+    var config = Model.PostBus.Configuration;
     bool isAdmin = User.GetAppUser()?.IsAdmin ?? false;
 }
     

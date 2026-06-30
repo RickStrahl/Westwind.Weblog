@@ -125,6 +125,20 @@ namespace Westwind.Weblog.Business.Test
             }
         }
 
+        [Test]
+        public void GetCategoriesTest()
+        {
+            var ctx = GetContext();
+            var repo = new PostBusiness(ctx,  new Configuration.WeblogConfiguration());
+
+            var cats = repo.GetCategories();
+
+            foreach(var cat in cats)
+                Console.WriteLine($"{cat.Key}: {cat.Value}");
+
+            
+        }
+
         WeblogContext GetContext()
         {
             var options = new DbContextOptionsBuilder<WeblogContext>()
@@ -133,7 +147,7 @@ namespace Westwind.Weblog.Business.Test
 
             var ctx = new WeblogContext(options);
 
-            WeblogDataImporter.EnsureWeblogData(ctx,"server=.;database=Weblog;integrated security=true;");
+            WeblogDataImporter.EnsureWeblogData(ctx,ConnectionString);
             return ctx;
 
         }

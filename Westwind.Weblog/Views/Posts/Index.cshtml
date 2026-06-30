@@ -1,6 +1,6 @@
 @model Westwind.Weblog.PostViewModel
 @{
-    var config = Model.PostRepo.Configuration;
+    var config = Model.PostBus.Configuration;
     ViewData["Title"] = config.ApplicationName;
 
     
@@ -8,7 +8,7 @@
     bool isAdmin = appUser?.IsAdmin ?? false;
 
     var posts = Model.Posts;
-    var repo = Model.PostRepo;
+    var repo = Model.PostBus;
 }
 
 
@@ -47,6 +47,14 @@
         z-index: 1000;">
     </div>
 </div>
+
+
+@if (!string.IsNullOrEmpty(Model.PostListTitle))
+{
+        <h2 style=" opacity: 0.7;">@Model.PostListTitle</h2>
+        <hr/>
+}
+
 
 <div style="margin: 0 1em 1em 1em;">
     @{

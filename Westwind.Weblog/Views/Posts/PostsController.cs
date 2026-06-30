@@ -43,9 +43,19 @@ namespace Westwind.Weblog
         public async Task<IActionResult> Index()
         {
             var posts = await Postbus.GetLastPostsAsync(Config.HomePagePostCount, includeInactive: true);
-            return View(new PostViewModel { Posts = posts, PostRepo = Postbus });
+            return View(new PostViewModel { Posts = posts, PostBus = Postbus });
         }
 
+
+
+        [HttpGet]
+        [Route("/posts/categories/{category}")]
+        public async Task<IActionResult> PostCategories(string category)
+        {            
+            var posts = await Postbus.PostSearchFullPostAsync(new PostSearchFilter() { Category = category });
+            return View("Index", new PostViewModel { Posts = posts, PostBus = Postbus, PostListTitle = "Posts related to: " + category });
+        }
+        
 
 
         //[Route("ShowPost.aspx?id={id:int}")]
@@ -114,7 +124,7 @@ namespace Westwind.Weblog
             var relatedPosts = Postbus.GetRelatedPosts(cats, 5, post.Id) ?? [];
 
 
-            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostRepo = Postbus, 
+            return View(new PostViewModel { PostHtml = postHtml, Post = post, PostBus = Postbus, 
                                             RelatedPosts = relatedPosts,
                                             PageToDisplay = pageToDisplay, 
                                             TotalPages = totalPages, 
@@ -122,6 +132,8 @@ namespace Westwind.Weblog
         }
 
 
+        
+ 
         /// <summary>
         /// Post and Save Comment 
         /// </summary>
@@ -170,9 +182,9 @@ namespace Westwind.Weblog
             postHtml = Postbus.EmbedAds(postHtml);
 
             model.Post = post;
-            model.PostRepo = Postbus;
+            model.PostBus = Postbus;
 
-            var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostRepo = Postbus, PageToDisplay = pageToDisplay, TotalPages = totalPages };
+            var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostBus = Postbus, PageToDisplay = pageToDisplay, TotalPages = totalPages };
             InitializeViewModel(newModel);            
             
             var actionResult = await HandleComment(newModel, post);
@@ -288,7 +300,7 @@ namespace Westwind.Weblog
         public async Task<IActionResult> RecentComments()
         {
             var comments = await Postbus.GetRecentCommentsAsync(Config.HomePagePostCount);
-            var model = new PostViewModel { Comments = comments, PostRepo = Postbus };
+            var model = new PostViewModel { Comments = comments, PostBus = Postbus };
             InitializeViewModel(model);
             return View(model);
         }

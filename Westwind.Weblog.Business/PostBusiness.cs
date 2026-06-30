@@ -23,13 +23,48 @@ namespace Westwind.Weblog.Business
             Configuration = config;
         }
 
-        #region Post Retrieval
+
+        #region Individual Post Retrieval
+        /// <summary>
+        /// Retrieves a post by its title slug
+        /// </summary>
+        /// <param name="slugOrId">Post title created with GetSlug() and held in SafeTitle</param>
+        /// <returns></returns>
+        public async Task<Post> GetPost(string slugOrId)
+        {
+            if (string.IsNullOrEmpty(slugOrId))
+                return null;
+
+            Entity = await Context.Posts
+                .Include(p => p.Comments.OrderBy(c => c.Created))
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.SafeTitle == slugOrId || p.Id == slugOrId);
+
+            return Entity;
+        }
+
+        /// <summary>
+        ///  Loads the last post that was made
+        /// </summary>
+        public Post LoadLastPost()
+        {
+            Entity = Context.Posts.AsNoTracking()
+                .Include(p => p.Comments.OrderBy(c => c.Created))
+                .OrderByDescending(p => p.Created)
+                .FirstOrDefault();
+            return Entity;
+        }
+
+#endregion
+
+        #region Post Lists Retrieval
 
         public async Task<List<Post>> GetLastPostsAsync(int postCount = 75, bool includeBody = false, bool includeInactive = false)
         {
             return await Context.Posts
                 .Where(p =>  includeInactive || p.Active)
-                .Include("Comments")
+                //.Include("Comments")
+                .AsNoTracking()
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new Post
@@ -53,7 +88,8 @@ namespace Westwind.Weblog.Business
         {
             return Context.Posts
                 .Where(p => p.Active)
-                .Include("Comments")
+                //.Include("Comments")
+                .AsNoTracking()
                 .OrderByDescending(p => p.Created)
                 .Take(postCount)
                 .Select(p => new Post
@@ -74,17 +110,39 @@ namespace Westwind.Weblog.Business
         }
 
 
+    
+     
+
         public async Task<List<PostListItem>> PostSearchAsync(string postSearch, int postCount = 15, bool includeInactive = false)
         {
-            postSearch = postSearch ?? string.Empty;
-            postSearch = postSearch.ToLower();
+            var filter = new PostSearchFilter() { Search = postSearch, IncludeInactive = includeInactive, PostCount = postCount };
+            return await PostSearchAsync(filter);
+        }
 
-            return await Context.Posts
-                .Where(p => (includeInactive || p.Active) &&
-                           (p.Title.ToLower().Contains(postSearch) ||
-                           p.Abstract.ToLower().Contains(postSearch)))
+
+        public async Task<List<PostListItem>> PostSearchAsync(PostSearchFilter filter = null)
+        {
+            filter ??= new();
+
+            var query = Context.Posts
+                .Where(p => (filter.IncludeInactive || p.Active));
+
+            if (!string.IsNullOrEmpty(filter.Search)) 
+            {
+                var postSearch = filter.Search;
+                postSearch = postSearch.ToLower();
+
+                query = query.Where(p => p.Title.ToLower().Contains(postSearch) ||
+                             p.Abstract.ToLower().Contains(postSearch));
+            }
+            if (!string.IsNullOrEmpty(filter.Category))
+            {
+                query = query.Where(p => p.Categories.Contains(filter.Category));
+            }
+
+            return await query
                 .OrderByDescending(p => p.Created)
-                .Take(postCount)
+                .Take(filter.PostCount)
                 .Select(p => new PostListItem
                 {
                     PostId = p.Id,
@@ -94,11 +152,41 @@ namespace Westwind.Weblog.Business
                     Location = p.Location,
                     CommentCount = p.CommentCount,
                     Created = p.Created,
-                    Active = p.Active,                                        
+                    Active = p.Active,
                     FeaturedImageUrl = p.FeaturedImageUrl
-                })
+                }).ToListAsync();
+        }
+
+
+
+
+
+        public async Task<List<Post>> PostSearchFullPostAsync(PostSearchFilter filter = null)
+        {
+            filter ??= new();
+
+            var query = Context.Posts
+                .Where(p => (filter.IncludeInactive || p.Active));
+
+            if (!string.IsNullOrEmpty(filter.Search))
+            {
+                var postSearch = filter.Search;
+                postSearch = postSearch.ToLower();
+
+                query = query.Where(p => p.Title.ToLower().Contains(postSearch) ||
+                                         p.Abstract.ToLower().Contains(postSearch));
+            }
+            if (!string.IsNullOrEmpty(filter.Category))
+            {
+                query = query.Where(p => p.Categories.Contains(filter.Category));
+            }
+
+            return await query
+                .OrderByDescending(p => p.Created)
+                .Take(filter.PostCount)
                 .ToListAsync();
         }
+
 
 
         public async Task<List<Post>> PostSearchFullPostAsync(string postSearch, int postCount = 15)
@@ -138,38 +226,6 @@ namespace Westwind.Weblog.Business
                     PostUrl = c.Post.GetPostUrl()
                 }).ToListAsync();
         }
-
-
-        /// <summary>
-        /// Retrieves a post by its title slug
-        /// </summary>
-        /// <param name="slugOrId">Post title created with GetSlug() and held in SafeTitle</param>
-        /// <returns></returns>
-        public async Task<Post> GetPost(string slugOrId)
-        {
-            if (string.IsNullOrEmpty(slugOrId))
-                return null;
-
-            Entity = await Context.Posts
-                .Include(p => p.Comments.OrderBy(c => c.Created))
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.SafeTitle == slugOrId || p.Id == slugOrId);
-
-            return Entity;
-        }
-
-        /// <summary>
-        ///  Loads the last post that was made
-        /// </summary>
-        public Post LoadLastPost()
-        {
-            Entity = Context.Posts.AsNoTracking()
-                                  .Include(p => p.Comments.OrderBy(c => c.Created))
-                                  .OrderByDescending(p => p.Created)
-                                  .FirstOrDefault();
-            return Entity;
-        }
-
 
 
         public List<PopularPost> GetRelatedPosts(IList<string> categories, int maxItems = 5, string excludedPk = null)
@@ -215,16 +271,38 @@ namespace Westwind.Weblog.Business
             return list;
         }
 
-        public class PopularPost
-        {
-            public string PostId { get; set; }
-            public string Title { get; set; }
 
-            public string SafeTitle { get; set; }
-            public DateTime Created { get; set; }
+        public Dictionary<string, int> GetCategories(int maxItems = 20)
+        {
+            var cats = Context.Posts
+                .Where(p => p.Active && !string.IsNullOrEmpty(p.Categories))
+                .Select(p => p.Categories)
+                .ToList();
+
+            var catList = new Dictionary<string, int>();
+            foreach (var cat in cats)
+            {
+                var splitCats = cat.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var c in splitCats)
+                {
+                    var trimmed = c.Trim();
+                    if (!catList.ContainsKey(trimmed))
+                        catList[trimmed] = 1;
+                    else
+                        catList[trimmed]++;
+                }
+            }
+            return catList.OrderByDescending(c => c.Value).Take(maxItems).ToDictionary(c => c.Key, c => c.Value);
         }
 
-        #endregion 
+
+        class CategoryCount
+        {
+            public string Category { get; set; }
+            public int Count { get; set; }
+        }
+
+        #endregion
 
         #region Comments
         /// <summary>
@@ -570,5 +648,26 @@ namespace Westwind.Weblog.Business
         FullyQualified,
         // Just the safe title prefixed by posts/yyyy/MMM/dd/safetitle without the base path
         Raw
+    }
+
+    public class PopularPost
+    {
+        public string PostId { get; set; }
+        public string Title { get; set; }
+
+        public string SafeTitle { get; set; }
+        public DateTime Created { get; set; }
+    }
+
+    public class PostSearchFilter
+    {
+        public string Search { get; set; }
+        public string Category { get; set; }
+
+
+        public bool IncludeInactive { get; set; }
+
+        public int PostCount { get; set; } = 15;
+
     }
 }

@@ -7,6 +7,7 @@ namespace Westwind.Weblog
     public class PostViewModel : WeblogBaseViewModel
     {
         public List<Post> Posts { get; set; }
+        public string PostListTitle { get; set; }
 
 
         public Post Post { get; set; }
@@ -15,7 +16,7 @@ namespace Westwind.Weblog
 
         public List<Comment> Comments { get; set; }
 
-        public PostBusiness PostRepo { get; set; }
+        public PostBusiness PostBus { get; set; }
 
         public int PageToDisplay { get; set; } = 1;
 
@@ -23,8 +24,8 @@ namespace Westwind.Weblog
 
         public CommentViewModel ActiveComment { get; set; }
 
-        public List<PostBusiness.PopularPost> RelatedPosts { get; set; }
-
+        public List<PopularPost> RelatedPosts { get; set; }
+        
         public PostViewModel()
         {
             ActiveComment = new CommentViewModel(this);

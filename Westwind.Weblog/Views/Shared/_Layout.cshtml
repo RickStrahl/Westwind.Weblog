@@ -1,9 +1,12 @@
 @using System.Security.Claims
 @inject WeblogConfiguration Configuration
+@inject PostBusiness PostBusiness
 @{
 	string FeedUrl = "https://feeds.feedburner.com/rickstrahl";    
 	var appUser = User.GetAppUser();
 	bool isAdmin = appUser.IsAdmin;
+
+    var categories = PostBusiness.GetCategories(30);
 
 	string HeroImage()
 	{
@@ -12,6 +15,8 @@
 	    return Westwind.AspNetCore.Utilities.WebUtils.ResolveUrl("~/images/HeroImages/RickHero" + val + ".jpg");
     }
 	string HeroImageSmall() => HeroImage().Replace(".jpg", "-640.jpg");	
+    string CategoryUrl(string category) => $"/posts/categories/{Uri.EscapeDataString(category)}";
+    
 
 	var heroImage = HeroImage();
 	var heroImageSmall = HeroImageSmall();
@@ -259,7 +264,24 @@
                             </a>
                         </div>
                     </nav>
+
+                    @if (categories.Count > 0)
+                    {
+                        <div class="sidebar-header">Categories</div>
+                        <nav class="sidebar-group tag-cloud" aria-label="Post categories">
+                            @foreach (var category in categories)
+                            {
+                                <a class="tag-cloud-link"
+                                   href="@CategoryUrl(category.Key)"
+                                   title="@($"{category.Key} ({category.Value} posts)")">
+                                    @category.Key
+                                </a>
+                            }
+                        </nav>
+                    }
                   
+
+                    
 
                     </aside>
 

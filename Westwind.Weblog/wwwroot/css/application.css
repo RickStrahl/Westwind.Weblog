@@ -823,6 +823,36 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
             color: var(--text-muted);
         }
 
+    .tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem 0.55rem;
+        line-height: 1.2;
+    }
+
+        .tag-cloud .tag-cloud-link {
+            display: inline-block;
+            text-decoration: none;
+            white-space: nowrap;
+            font-size: 0.86rem;
+            font-weight: 600;
+            line-height: 1.1;
+            padding: 0.24rem 0.58rem;
+            border-radius: 999px;
+            border: 1px solid color-mix(in srgb, var(--accent) var(--tag-border-mix, 24%), var(--border));
+            background: color-mix(in srgb, var(--accent) var(--tag-bg-mix, 14%), var(--bg));
+            color: color-mix(in srgb, var(--accent) var(--tag-text-mix, 78%), var(--text));
+            transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .tag-cloud .tag-cloud-link:hover,
+        .tag-cloud .tag-cloud-link:active {
+            color: color-mix(in srgb, var(--accent) 88%, var(--text));
+            border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+            background: color-mix(in srgb, var(--accent) 20%, var(--bg-selected));
+            transform: translateY(-1px);
+        }
+
 
 
 

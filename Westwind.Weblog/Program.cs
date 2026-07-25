@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +10,10 @@ using Serilog;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Westwind.AspNetCore;
 using Westwind.AspNetCore.Errors;
-using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.LiveReload;
 using Westwind.AspNetCore.Markdown;
 using Westwind.Utilities;
@@ -170,8 +166,8 @@ Task.Run(() =>
 {
     // can't inject configuration here :-( So we use explict
     string connectionString = wlApp.Configuration.ConnectionString; // Configuration["Data:SqlServerConnectionString"];
-    var context = WeblogContext.CreateContext(connectionString);
-    context.Posts.Any(p => p.Id == "@!");
+    using var context = WeblogContext.CreateContext(connectionString);
+    context.Posts.Any(p => p.Id == "100567");    
 }).FireAndForget();
 
 wlApp.Cache = app.Services.GetService<IMemoryCache>();

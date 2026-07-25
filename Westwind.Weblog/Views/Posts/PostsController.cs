@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,6 @@ using Westwind.AspNetCore.Errors;
 using Westwind.AspNetCore.Extensions;
 using Westwind.AspNetCore.Markdown;
 using Westwind.AspNetCore.Messages;
-using Westwind.AspNetCore.Utilities;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
@@ -42,7 +40,7 @@ namespace Westwind.Weblog
         [Route("/posts")]
         public async Task<IActionResult> Index()
         {
-            var posts = await Postbus.GetLastPostsAsync(Config.HomePagePostCount, includeInactive: true);
+            var posts = await Postbus.GetLastPostsAsync(Config.HomePagePostCount, includeInactive: true);            
             return View(new PostViewModel { Posts = posts, PostBus = Postbus });
         }
 
@@ -52,7 +50,7 @@ namespace Westwind.Weblog
         [Route("/posts/categories/{category}")]
         public async Task<IActionResult> PostCategories(string category)
         {            
-            var posts = await Postbus.PostSearchFullPostAsync(new PostSearchFilter() { Category = category });
+            var posts = await Postbus.PostSearchFullPostAsync(new PostSearchFilter() { Category = category });       
             return View("Index", new PostViewModel { Posts = posts, PostBus = Postbus, PostListTitle = "Posts related to: " + category });
         }
         
@@ -119,7 +117,6 @@ namespace Westwind.Weblog
                 }
             }
             
-
             var cats = post.Categories?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(c => c.Trim()).ToArray() ?? [];
             var relatedPosts = Postbus.GetRelatedPosts(cats, 5, post.Id) ?? [];
 

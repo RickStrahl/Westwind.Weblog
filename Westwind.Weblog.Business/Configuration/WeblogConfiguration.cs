@@ -109,6 +109,8 @@ namespace Westwind.Weblog.Business.Configuration
         /// </summary>
         public string WeblogRssImageUrl { get; set; } = "https://www.west-wind.com/images/WestwindSiteLogo.jpg";
 
+        public bool DisableComments { get; set;  }
+
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
 
         public SystemConfiguration System { get; set; } = new SystemConfiguration();

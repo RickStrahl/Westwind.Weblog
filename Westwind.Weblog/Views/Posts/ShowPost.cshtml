@@ -337,7 +337,7 @@ No guarantees that changes will be accepted."
  }
     
 
-    @if (!post.CommentsClosed)
+    @if (!post.CommentsClosed && !WeblogConfiguration.Current.DisableComments)
     {
         if (Model.ActiveComment.IsCommentDialogVisible)
         {

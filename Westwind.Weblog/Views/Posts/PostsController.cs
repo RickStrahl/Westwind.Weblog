@@ -152,8 +152,7 @@ namespace Westwind.Weblog
                 post = await Postbus.GetPost(id);
             else
                 post = await Postbus.GetPost(slug);
-
-
+            
             var page = Request.Query["page"].FirstOrDefault();
             int.TryParse(page, out int pageToDisplay);
             if (pageToDisplay < 1)
@@ -182,14 +181,16 @@ namespace Westwind.Weblog
             model.PostBus = Postbus;
 
             var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostBus = Postbus, PageToDisplay = pageToDisplay, TotalPages = totalPages };
-            InitializeViewModel(newModel);            
-            
-            var actionResult = await HandleComment(newModel, post);
-            if (actionResult != null)
-                return actionResult;
+            InitializeViewModel(newModel);
+
+            if (!post.CommentsClosed && !wlApp.Configuration.DisableComments)
+            {
+                var actionResult = await HandleComment(newModel, post);
+                if (actionResult != null)
+                    return actionResult;
+            }
 
             return View("ShowPost", newModel);
-                                    
         }
 
         public async Task<IActionResult> HandleComment(PostViewModel newModel, Post post)

@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Westwind.Utilities" Version="5.3.1.2" />
+	  <PackageReference Include="Westwind.Utilities" Version="5.3.4" />
 	</ItemGroup>
 
 

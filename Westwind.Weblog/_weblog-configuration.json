@@ -2,7 +2,7 @@
   "ApplicationName": "Rick Strahl's Weblog (Custom)",
   "ApplicationByLineHtml": "Wind, waves, code and everything in between...<br />\r\n.NET • C# • Markdown • WPF • All things Web",
   "CookieName": "ww_wl",
-  "ConnectionString": "server=.;database=WebLogCore;integrated security=true;encrypt=false",
+  "ConnectionString": "server=west-wind.com;database=WebLogCore;integrated security=true;encrypt=false",
   "OldWeblogConnectionString": "server=.;database=Weblog;integrated security=true;encrypt=false",
   "ApplicationBasePath": "https://localhost:5001/",
   "VirtualPath": null,
@@ -13,6 +13,7 @@
   "WeblogAuthor": "Rick Strahl",
   "WeblogHomeUrl": "https://localhost:5001/",
   "WeblogRssImageUrl": "https://www.west-wind.com/images/WestwindSiteLogo.jpg",
+  "DisableComments": true,
   "Email": {
     "MailServer": "127.0.0.1",
     "MailServerUsername": null,

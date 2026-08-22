@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -155,6 +158,22 @@ services.AddMarkdown(config =>
     config.MarkdownRenderExtensions.Add(new PlantUmlMarkdownRenderExtension());    
 });
 
+if (wlApp.Configuration.System.UseRateLimiting)
+{
+    services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
+        options.AddFixedWindowLimiter("WeblogLimiter", opt =>
+        {
+            opt.PermitLimit = 70;
+            opt.Window = TimeSpan.FromSeconds(5);
+            opt.QueueLimit = 2;
+            opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        });
+    });
+}
+
+
 // ***  BUILD ***
 var app = builder.Build();
 
@@ -232,9 +251,11 @@ app.UseAuthorization();
 
 app.UseStatusCodePages();
 
+if(wlApp.Configuration.System.UseRateLimiting)
+    app.UseRateLimiter();
+
 
 app.UseStaticFiles();
-
 
 app.MapControllerRoute(
     name: "default",

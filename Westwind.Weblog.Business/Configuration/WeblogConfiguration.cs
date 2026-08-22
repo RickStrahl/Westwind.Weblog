@@ -152,7 +152,7 @@ namespace Westwind.Weblog.Business.Configuration
     public class SystemConfiguration
     { 
         public bool LiveReloadEnabled { get; set; } 
-
+        public bool UseRateLimiting { get; set; }
         public bool ShowConsoleDbCommands { get; set; }
         public ErrorDisplayModes ErrorDisplayMode { get; set; }
     }

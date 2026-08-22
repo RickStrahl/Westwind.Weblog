@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -58,6 +59,7 @@ namespace Westwind.Weblog
 
         //[Route("ShowPost.aspx?id={id:int}")]
         [HttpGet]
+        [EnableRateLimiting("WeblogLimiter")]
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
         public async Task<IActionResult> ShowPost(int year, string month, int day, string slug, object html, string id= null, [FromQuery] string msg = null)

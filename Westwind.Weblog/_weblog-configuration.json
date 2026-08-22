@@ -13,6 +13,7 @@
   "WeblogAuthor": "Rick Strahl",
   "WeblogHomeUrl": "https://localhost:5001/",
   "WeblogRssImageUrl": "https://www.west-wind.com/images/WestwindSiteLogo.jpg",
+  "DisableComments": true,
   "Email": {
     "MailServer": "127.0.0.1",
     "MailServerUsername": null,

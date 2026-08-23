@@ -172,6 +172,17 @@ if (wlApp.Configuration.System.UseRateLimiting)
         });
     })
     .AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
+            options.AddFixedWindowLimiter("WeblogPostLimiter", opt =>
+            {
+                opt.PermitLimit = 15;
+                opt.Window = TimeSpan.FromSeconds(5);
+                opt.QueueLimit = 1;
+                opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            });
+        })
+    .AddRateLimiter(options =>
     {
         options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
         options.AddFixedWindowLimiter("ErrorLimiter", opt =>

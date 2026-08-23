@@ -144,6 +144,7 @@ namespace Westwind.Weblog
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
+        [EnableRateLimiting("WeblogPostLimiter")]
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
         [Route("showpost.aspx")]

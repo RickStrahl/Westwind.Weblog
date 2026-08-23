@@ -14,6 +14,7 @@ using Westwind.Utilities;
 using Westwind.Weblog.Business;
 using Westwind.Weblog.Business.Configuration;
 using Westwind.Webstore.Business.Utilities;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace Westwind.Weblog.Views.Home
@@ -107,7 +108,8 @@ namespace Westwind.Weblog.Views.Home
             return View(model);
         }
 
-        [Route("/home/error")]
+        [EnableRateLimiting("ErrorLimiter")]
+        [Route("/home/error")]        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Error(Exception ex = null)
         {
@@ -198,7 +200,7 @@ body {{ font-family: sans-serif }}
                 {
                     var emailer = new Emailer();
                     emailer.SendEmail(wlApp.Configuration.Email.SenderEmail,
-                        $"Web Store Error: {model.StatusCode} " + exceptionHandlerPath?.Path,
+                        $"Weblog Error: {model.StatusCode} " + exceptionHandlerPath?.Path,
                         Markdown.Parse(msg), EmailModes.html);
                 }
             }

@@ -170,6 +170,16 @@ if (wlApp.Configuration.System.UseRateLimiting)
             opt.QueueLimit = 2;
             opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         });
+    })
+    .AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
+        options.AddFixedWindowLimiter("ErrorLimiter", opt =>
+        {
+            opt.PermitLimit = 3;
+            opt.Window = TimeSpan.FromSeconds(5);
+            opt.QueueLimit = 0;
+        });
     });
 }
 
@@ -186,7 +196,7 @@ Task.Run(() =>
     // can't inject configuration here :-( So we use explict
     string connectionString = wlApp.Configuration.ConnectionString; // Configuration["Data:SqlServerConnectionString"];
     using var context = WeblogContext.CreateContext(connectionString);
-    context.Posts.Any(p => p.Id == "100567");    
+    context.Posts.Any(p => p.Id == "100567");
 }).FireAndForget();
 
 wlApp.Cache = app.Services.GetService<IMemoryCache>();

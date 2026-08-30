@@ -114,7 +114,9 @@ namespace Westwind.Weblog.Business.Configuration
         public EmailConfiguration Email { get; set; } = new EmailConfiguration();
 
         public SystemConfiguration System { get; set; } = new SystemConfiguration();
-        
+
+        public RateLimitConfiguration RateLimiting { get; set; } = new RateLimitConfiguration();
+
         /// <summary>
         /// Optional full or partial name  part that is used to auto approve comments.
         /// Leave empty for no auto-validation. Matches the email address entered.
@@ -153,10 +155,28 @@ namespace Westwind.Weblog.Business.Configuration
 
     public class SystemConfiguration
     { 
-        public bool LiveReloadEnabled { get; set; } 
-        public bool UseRateLimiting { get; set; }
+        public bool LiveReloadEnabled { get; set; }         
+
         public bool ShowConsoleDbCommands { get; set; }
-        public ErrorDisplayModes ErrorDisplayMode { get; set; }
+        public ErrorDisplayModes ErrorDisplayMode { get; set; }     
+    }
+
+    public class RateLimitConfiguration
+    {
+        public bool UseRateLimiting { get; set; }
+
+        public int WeblogLimiterCount { get; set; } = 70;
+
+        public int WeblogLimiterSeconds { get; set; } = 5;
+
+
+        public int WeblogPostLimiterCount { get; set; } = 1;
+
+        public int WeblogPostLimiterSeconds { get; set; } = 5;
+
+        public int ErrorLimiterCount { get; set; } = 3;
+
+        public int ErrorLimiterSeconds { get; set; } = 5;
     }
 
     public enum ErrorDisplayModes

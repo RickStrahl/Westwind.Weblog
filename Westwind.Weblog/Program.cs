@@ -158,39 +158,41 @@ services.AddMarkdown(config =>
     config.MarkdownRenderExtensions.Add(new PlantUmlMarkdownRenderExtension());    
 });
 
-if (wlApp.Configuration.System.UseRateLimiting)
+if (wlApp.Configuration.RateLimiting.UseRateLimiting)
 {
+    var cfg = wlApp.Configuration.RateLimiting;
+
     services.AddRateLimiter(options =>
     {
-        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         options.AddFixedWindowLimiter("WeblogLimiter", opt =>
         {
-            opt.PermitLimit = 70;
-            opt.Window = TimeSpan.FromSeconds(5);
+            opt.PermitLimit = cfg.WeblogLimiterCount;    // 70
+            opt.Window = TimeSpan.FromSeconds(cfg.WeblogLimiterSeconds);  // 5
             opt.QueueLimit = 2;
             opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         });
     })
     .AddRateLimiter(options =>
         {
-            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  
             options.AddFixedWindowLimiter("WeblogPostLimiter", opt =>
             {
-                opt.PermitLimit = 15;
-                opt.Window = TimeSpan.FromSeconds(5);
+                opt.PermitLimit = cfg.WeblogPostLimiterCount;  // 1
+                opt.Window = TimeSpan.FromSeconds(cfg.WeblogPostLimiterSeconds); // 1
                 opt.QueueLimit = 1;
                 opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
             });
         })
     .AddRateLimiter(options =>
     {
-        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  // 429
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;  
         options.AddFixedWindowLimiter("ErrorLimiter", opt =>
         {
-            opt.PermitLimit = 3;
-            opt.Window = TimeSpan.FromSeconds(5);
+            opt.PermitLimit = cfg.ErrorLimiterCount; // 3
+            opt.Window = TimeSpan.FromSeconds(cfg.ErrorLimiterSeconds);  // 5
             opt.QueueLimit = 0;
-        });
+        });        
     });
 }
 
@@ -272,7 +274,7 @@ app.UseAuthorization();
 
 app.UseStatusCodePages();
 
-if(wlApp.Configuration.System.UseRateLimiting)
+if(wlApp.Configuration.RateLimiting.UseRateLimiting)
     app.UseRateLimiter();
 
 

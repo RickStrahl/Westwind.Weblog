@@ -18,6 +18,8 @@ bower_components/
 # IDEs and editors
 /.idea
 /.vs
+/.claude
+/_prompts
 .vscode
 .project
 .classpath

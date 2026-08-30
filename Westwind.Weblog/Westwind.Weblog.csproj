@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<Version>0.1.4.1</Version>
+		<Version>0.1.5</Version>
 		<UserSecretsId>826df5fe-bc20-4b17-9e36-39ccd496c1aa</UserSecretsId>
 		<MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
 	</PropertyGroup>

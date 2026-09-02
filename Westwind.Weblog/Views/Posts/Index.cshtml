@@ -1,3 +1,4 @@
+@using Westwind.AspNetCore.Markdown
 @model Westwind.Weblog.PostViewModel
 @{
     var config = Model.PostBus.Configuration;
@@ -101,7 +102,16 @@
             }            
 
                             <div class="postcontent mt-0" style="margin-bottom: 20px">
-                                @(string.IsNullOrEmpty(post.Abstract) ? StringUtils.TextAbstract(post.Abstract, 500) : post.Abstract.TrimEnd())
+	                            @{
+		                            var abs =  StringUtils.TextAbstract(post.Abstract?.TrimEnd(), 500);
+		                            if (!string.IsNullOrEmpty(abs))
+		                            {
+			                            abs = Markdown.Parse(abs);	
+		                            }
+                        
+	                            }
+	                            @Html.Raw(abs)
+
                                 
                                 <p class="margin-top margin-bottom">
                                     <a href="@repo.GetPostUrl(post)">Read more...</a>

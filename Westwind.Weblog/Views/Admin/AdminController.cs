@@ -200,7 +200,7 @@ namespace Westwind.Weblog
 
                 //return File(outputFile, "application/zip", baseFileName + ".zip");
                 ErrorDisplay.MessageAsRawHtml = true;
-                ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + WebUtils.ResolveUrl("~/admin/temp/" + baseFileName + ".zip") + "'>Download</a>");
+                ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + HttpContext.ResolveUrl("~/admin/temp/" + baseFileName + ".zip") + "'>Download</a>");
             }
 
             return View("Index", model);

@@ -20,6 +20,8 @@ namespace Westwind.Weblog.Business.Configuration
         /// </summary>
         public string ApplicationName { get; set; }
 
+        public string ApplicationIdentifier { get; set; } 
+
         public string ApplicationByLineHtml { get; set; } =
             """
             Wind, waves, code and everything in between...<br />

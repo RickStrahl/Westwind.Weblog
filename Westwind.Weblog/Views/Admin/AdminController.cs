@@ -182,7 +182,10 @@ namespace Westwind.Weblog
                 file.Delete();
             }
 
-            string baseFileName = "weblog-backup-" + DateTime.Now.ToString("yyyy-MM-dd");
+
+            string appName = FileUtils.SafeFilename(wlApp.Configuration.ApplicationIdentifier, spaceReplacement: "-");
+      
+            string baseFileName = $"weblog-{appName}-backup-" + DateTime.Now.ToString("yyyy-MM-dd");
             string backupFile = basePath + baseFileName + ".bak";
             int res = sql.ExecuteNonQuery("backup database weblogCore to DISK = @0", backupFile);
 
@@ -200,7 +203,9 @@ namespace Westwind.Weblog
 
                 //return File(outputFile, "application/zip", baseFileName + ".zip");
                 ErrorDisplay.MessageAsRawHtml = true;
-                ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + HttpContext.ResolveUrl("~/admin/temp/" + baseFileName + ".zip") + "'>Download</a>");
+                ErrorDisplay.ShowSuccess("Backup succeeded<hr><a href='" + 
+                    HttpContext.ResolveUrl("~/admin/temp/" + StringUtils.UrlEncode(baseFileName) + ".zip") + 
+                    "'>Download</a>");
             }
 
             return View("Index", model);

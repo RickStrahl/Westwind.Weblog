@@ -1,6 +1,7 @@
 @using System.Security.Claims
 @inject WeblogConfiguration Configuration
 @inject PostBusiness PostBusiness
+
 @{
 	string FeedUrl = "https://feeds.feedburner.com/rickstrahl";    
 	var appUser = User.GetAppUser();
@@ -12,10 +13,10 @@
 	{
 		Random shared = Random.Shared;
 		int val = shared.Next(wlApp.Configuration.HeroImageCount) + 1;
-	    return Westwind.AspNetCore.Utilities.WebUtils.ResolveUrl("~/images/HeroImages/RickHero" + val + ".jpg");
+	    return this.Context.ResolveUrl("~/images/HeroImages/RickHero" + val + ".jpg");
     }
 	string HeroImageSmall() => HeroImage().Replace(".jpg", "-640.jpg");	
-    string CategoryUrl(string category) => $"/posts/categories/{Uri.EscapeDataString(category)}";
+    string CategoryUrl(string category) => Context.ResolveUrl($"~/posts/categories/{Uri.EscapeDataString(category)}");
     
 
 	var heroImage = HeroImage();

@@ -267,7 +267,10 @@ if (!string.IsNullOrEmpty(config.VirtualPath) && config.VirtualPath != "/")
 //});
 
 if (wlApp.Configuration.System.RedirectToHttps)
-    app.UseHttpsRedirection();
+{
+    app.UseHsts(); 
+    //app.UseHttpsRedirection();    
+}
 
 app.UseRouting();
 

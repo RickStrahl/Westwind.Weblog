@@ -190,7 +190,11 @@ namespace Westwind.Weblog
             {
                 var actionResult = await HandleComment(newModel, post);
                 if (actionResult != null)
-                    return actionResult;
+                    return actionResult;                
+            }
+            else
+            {
+                ErrorDisplay.ShowWarning("Comments are closed for this post.", "Comments Closed");
             }
 
             return View("ShowPost", newModel);

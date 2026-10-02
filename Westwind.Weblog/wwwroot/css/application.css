@@ -530,7 +530,9 @@ input[type=text], input[type=password], input[type=email], select, textarea, .fo
 .text-warning {
     color: gold
 }
-
+.text-lowlight, .lowlight {
+    opacity: 0.7;
+}
 
 
 

@@ -160,7 +160,8 @@ namespace Westwind.Weblog.Business.Configuration
         public bool LiveReloadEnabled { get; set; }         
 
         public bool ShowConsoleDbCommands { get; set; }
-        public ErrorDisplayModes ErrorDisplayMode { get; set; }     
+        public ErrorDisplayModes ErrorDisplayMode { get; set; }
+        public bool RedirectToHttps { get; set; }
     }
 
     public class RateLimitConfiguration

@@ -28,7 +28,8 @@
   "System": {
     "LiveReloadEnabled": true,
     "ShowConsoleDbCommands": true,
-    "ErrorDisplayMode": "Developer"
+    "ErrorDisplayMode": "Developer",
+    "RedirectToHttps": false
   },
   "RateLimiting": {
     "UseRateLimiting": false,

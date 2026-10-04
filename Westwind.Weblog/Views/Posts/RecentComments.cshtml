@@ -4,7 +4,7 @@
     ViewBag.Title = "Comments - " + wlApp.Configuration.ApplicationName;
     var comments = Model.Comments;
     var repo = Model.PostBus;
-    var config = Model.PostBus.Configuration;
+    var config = wlApp.Configuration;
     bool isAdmin = User.GetAppUser()?.IsAdmin ?? false;
 }
     
@@ -12,6 +12,17 @@
         
     <hr />
     
+    @if(isAdmin)
+    {
+        if (config.DisableComments)
+        {
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                Comments are disabled. <a href="~/admin/configuration" class="small">enable in config</a>
+            </div>
+        }
+    }
+
     <div style="margin-top: 32px;">
         @{
             foreach (var comment in comments)

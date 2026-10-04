@@ -31,12 +31,11 @@ namespace Westwind.Weblog
 
 
 
-        public AdminController(AdminBusiness repo,
-                               WeblogConfiguration configuration,
+        public AdminController(AdminBusiness repo,                               
                                IWebHostEnvironment host,
                                IHostApplicationLifetime appLifeTime)
         {
-            Configuration = configuration;
+            Configuration = wlApp.Configuration;
             Host = host;
             AdminRepo = repo;
             AppLifeTime = appLifeTime;

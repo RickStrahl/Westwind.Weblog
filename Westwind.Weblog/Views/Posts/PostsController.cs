@@ -28,12 +28,11 @@ namespace Westwind.Weblog
 
         IMemoryCache Cache { get; }
         
-        public PostsController(PostBusiness postbus, 
-                               WeblogConfiguration config,
+        public PostsController(PostBusiness postbus,                                
                                IMemoryCache cache)
         {
             Postbus = postbus;
-            Config = config;
+            Config = wlApp.Configuration;
             Cache = cache;            
         }
 
@@ -148,6 +147,7 @@ namespace Westwind.Weblog
         [Route("/posts/{id}")]
         [Route("/posts/{year:int}/{month}/{day:int}/{slug}")]
         [Route("showpost.aspx")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ShowPostPost([FromForm] PostViewModel model, [FromRoute] int year, [FromRoute] string month, [FromRoute] int day, [FromRoute] string slug, [FromRoute] string id = null)
         {
             Post post;
@@ -186,15 +186,16 @@ namespace Westwind.Weblog
             var newModel = new PostViewModel { PostHtml = postHtml, Post = post, ActiveComment = model.ActiveComment, PostBus = Postbus, PageToDisplay = pageToDisplay, TotalPages = totalPages };
             InitializeViewModel(newModel);
 
-            if (!post.CommentsClosed && !wlApp.Configuration.DisableComments)
+            if (post.CommentsClosed || wlApp.Configuration.DisableComments)
             {
-                var actionResult = await HandleComment(newModel, post);
-                if (actionResult != null)
-                    return actionResult;                
+                ErrorDisplay.ShowWarning("Comments are closed for this post.", "Comments Closed");
+                
             }
             else
             {
-                ErrorDisplay.ShowWarning("Comments are closed for this post.", "Comments Closed");
+                var actionResult = await HandleComment(newModel, post);
+                if (actionResult != null)
+                    return actionResult;
             }
 
             return View("ShowPost", newModel);
@@ -202,9 +203,14 @@ namespace Westwind.Weblog
 
         public async Task<IActionResult> HandleComment(PostViewModel newModel, Post post)
         {
+            if (post.CommentsClosed || wlApp.Configuration.DisableComments)
+            {
+                ErrorDisplay.ShowError("Comments are closed for this post.", "Comments Closed");
+                return null;
+            }
+
             var comment = newModel.ActiveComment;
          
-
             comment.IsCommentDialogVisible = true;
             comment.Post = post;
             comment.CommentErrorMessage = HttpContext.Items["CommentMessage"]?.ToString();
@@ -280,7 +286,7 @@ namespace Westwind.Weblog
                         
 
                         Task.Run(() =>
-                        {
+                        {                            
                             // Send admin a notification
                             var emailer = new Emailer();                           
                             bool result = emailer.SendEmail(wlApp.Configuration.Email.SenderEmail,

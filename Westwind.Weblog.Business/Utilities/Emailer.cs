@@ -9,16 +9,11 @@ namespace Westwind.Webstore.Business.Utilities
     /// <summary>
     /// Email wrapper using MailKitLight and use Email configuration from
     /// app configuration.    
+    /// 
+    /// Depends on wlApp.Configuration.Email
     /// </summary>
     public class Emailer
-    {
-        /// <summary>
-        /// Resused Email Server configuration that is implicitly used.
-        ///
-        /// By default uses configuration settings from WebStore configuration
-        /// </summary>
-        public EmailServerConfiguration EmailServerConfiguration { get; set; } = new EmailServerConfiguration(wlApp.Configuration.Email);
-
+    {  
         /// <summary>
         /// Send customer facing emails for confirmations, password validation and recovery
         /// etc.
@@ -56,19 +51,19 @@ namespace Westwind.Webstore.Business.Utilities
                 using var client = new SmtpClient();
 
                 // Server and Port (ie. smtp.server.com:587)
-                var serverTokens = EmailServerConfiguration.MailServer.Split(':');
+                var serverTokens = emailConfig.MailServer.Split(':');
                 var mailServer = serverTokens[0];
                 var mailServerPort = 25;
                 if (serverTokens.Length > 1)
                     mailServerPort = Westwind.Utilities.StringUtils.ParseInt(serverTokens[1], 25);
 
-                client.Connect(mailServer, mailServerPort, EmailServerConfiguration.UseTls ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
+                client.Connect(mailServer, mailServerPort, emailConfig.UseTls ? SecureSocketOptions.StartTls : SecureSocketOptions.None);
 
                 // Note: only needed if the SMTP server requires authentication
-                if (!string.IsNullOrEmpty(EmailServerConfiguration.MailServerUsername))
+                if (!string.IsNullOrEmpty(emailConfig.MailServerUsername))
                 {
-                    client.Authenticate(EmailServerConfiguration.MailServerUsername,
-                        EmailServerConfiguration.MailServerPassword);
+                    client.Authenticate(emailConfig.MailServerUsername,
+                        emailConfig.MailServerPassword);
                 }
 
                 client.Send(message);
@@ -163,25 +158,7 @@ namespace Westwind.Webstore.Business.Utilities
         #endregion
     }
 
-    public class EmailServerConfiguration
-    {
-        /// <summary>
-        /// Format: `domainOrIp:port`
-        /// </summary>
-        public string MailServer { get; set; } = "localhost";
-        public bool UseTls { get; set;  }
-        public string MailServerUsername { get; set; }
-        public string MailServerPassword { get; set;  }
 
-        public EmailServerConfiguration(EmailConfiguration emailConfig)
-        {
-            MailServer = emailConfig.MailServer;            
-            MailServerUsername = emailConfig.MailServerUsername;
-            MailServerPassword = emailConfig.MailServerPassword;
-            UseTls = emailConfig.UseTls;
-        }
-
-    }
 
     public enum EmailModes
     {

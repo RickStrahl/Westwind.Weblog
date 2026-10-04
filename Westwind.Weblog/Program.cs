@@ -51,7 +51,7 @@ services.AddSingleton(config);
 
 
 // write out to disk full configuration
-wlApp.Configuration.Write();
+//wlApp.Configuration.Write();
 
 services.AddLiveReload(config =>
 {

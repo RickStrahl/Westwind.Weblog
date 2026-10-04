@@ -1,5 +1,4 @@
 using BlazePostApi;
-using BlazePostApi.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,8 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using BlazePostApi.Client;
 using Westwind.AspNetCore.Errors;
 using Westwind.Utilities;
 using Westwind.Weblog.Business;

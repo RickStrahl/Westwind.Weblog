@@ -82,3 +82,5 @@ dist
 *.sqlite
 *.lock.json
 images/2017
+/Westwind.Weblog/appsettings.json
+/Westwind.Weblog/_weblog-configuration.json
